@@ -5,24 +5,18 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_home"
-            android:title="Home" />
+            android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_friendslist"
-            android:title="Profile" />
+            android:title="@string/menu_profile" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/menu_settings" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="@string/menu_help" />
     </group>
-
-    <item android:title="Tools">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@android:drawable/ic_menu_manage"
-                android:title="Settings" />
-            <item
-                android:id="@+id/nav_help"
-                android:icon="@android:drawable/ic_menu_help"
-                android:title="Help" />
-        </menu>
-    </item>
-
 </menu>
