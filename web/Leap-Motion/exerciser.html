@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Leap</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        line-height: 2em;
+        font-size: 12pt;
+        font-family: Helvetica;
+      }
+	  #output{
+		  font-size: 18pt;
+	  }
+	  .jumbotron{
+		  padding: 30px 0;
+	  } 
+    </style>
+
+  </head>
+
+  <body>
+	  <div class="container">
+	  	  <div class="jumbotron">
+			  <h2>WRKR</h2>
+	  		  <p>Welcome to wrist-fingers exerciser. You need a Leap Motion device to proceed. To start the daily exercise hit the button below.</p>
+	          <p>
+	            <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">Start exercise</a>
+	          </p>
+	      </div>
+	  	<div class="row">
+	  		<div class="col-md-4">
+					  <button id="twistsH" class="action list-group-item">Twists Horizontal</button>	  
+					  <button id="twistsV" class="action list-group-item">Twists Vertical</button>
+				<!-- <button id="fist" class="action">Fist stretch</button> -->
+					  <button id="knuckle_bend" class="action list-group-item">Knuckle Bend</button>
+					  <button id="thumb_bend" class="action list-group-item">Thumb Bend</button>
+	  		</div>
+			<div class="col-md-8">
+				<div>Number of exercises made: <span id="exerciseProgress"></span>/5</div>
+			</div>
+	  	</div>
+	  </div>
+	  <div class="container-fluid">
+		<div id="output"></div>
+	  </div>
+	  
+
+<footer>
+	<div class="progress navbar-fixed-bottom">
+	  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+	    <span class="sr-only"></span>
+	  </div>
+	</div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="http://js.leapmotion.com/leap-0.6.3.js"></script>
+<script>
+
+var exercise;
+$(".action").click(function(){
+	exercise = this.id;
+	exerciseCounter = 0;
+})
+
+
+function concat_data(id, data){
+	
+	return id + ": " + Math.round(data * 1000)/1000 + "</br>";
+}
+function concat_joint_position(id, position){
+	return id + ": " + Math.round(position[0]) + ", " + Math.round(position[1]) + ", " + Math.round(position[2]) + "</br>";
+}
+	var controller = new Leap.Controller({
+	    enableGestures: true,
+	    frameEventName: 'animationFrame'
+	        });
+
+		var frameString = "";
+		var handString = " ";
+		var fingerString = "";
+		var output = document.getElementById("output");
+		var counter = document.getElementById("exerciseProgress")
+		var hand, finger;
+		var extendedFingers = 0;
+		var wristNormal, oldNormal = 0;
+		var repDone = 0;
+		
+			
+			//var for counting
+			var exerciseCounter = 0;
+			
+	controller.on('frame', function(frame){
+		
+		
+		//frameString = concat_data("num hands", frame.hands.length);
+		for(i = 0, len = frame.hands.length; i < len; i++){
+			hand = frame.hands[i];
+			
+			 /*  Debug mode 
+			handString = "hand type: " + hand.type + "</br>";
+			handString += concat_data("confidence", hand.confidence);
+			
+			handString += concat_data("pinch strength", hand.pinchStrength);
+			handString += concat_data("grab strength", hand.grabStrength);
+			handString += concat_joint_position("spere coordinates", hand.sphereCenter);
+			handString += concat_data("sphere radius", hand.sphereRadius);
+			handString += concat_joint_position("palm normal", hand.palmNormal);
+			handString += "</br>";
+			
+			
+			//frameString += concat_data("finger type", finger.type);
+			for(j = 0, len1 = hand.fingers.length; j < len1; j++){
+				
+				finger = hand.fingers[j];
+				fingerString = "finger " +  finger.type; 
+				//handString += concat_data("finger type", finger.type);
+				//handString += concat_joint_position("finger dip", finger.dipPosition);
+				if(finger.extended){ 
+						fingerString += " extended";
+				}
+				fingerString += "</br>";
+				
+				
+				//if(finger.type >= 1 && finger.type <=4 && finger.extended == true){
+			//		claw++;
+			//	}
+				
+				
+				
+				handString += fingerString;
+			}
+			*/
+			//frameString += handString;
+			
+		$(".progress-bar").attr({
+			"aria-valuenow" : Math.round(hand.confidence*100),
+			"style" : "width:" + Math.round(hand.confidence*100) + "%"  
+		});
+			////exercises here
+			if(exercise == "twistsH"){
+	
+				wristNormal = Math.round(hand.palmNormal[1]);
+				console.log(wristNormal +","+ oldNormal);
+				if(wristNormal !== oldNormal && wristNormal != -1){
+					exerciseCounter += 0.5;
+					oldNormal = wristNormal;
+				}
+			}else if(exercise == "twistsV"){
+		
+				wristNormal = Math.round(hand.palmNormal[2]);
+				console.log(wristNormal +","+ oldNormal);
+				if(wristNormal !== oldNormal && wristNormal != 1){
+					exerciseCounter += 0.5;
+					oldNormal = wristNormal;
+				}
+			
+				
+			}/*
+				else if(exercise == "fist"){
+				var fingerExt = 0; 
+				for(j = 0, len1 = hand.fingers.length; j < len1; j++){
+					finger = hand.fingers[j];
+					if(finger.extended) 
+						fingerExt ++;
+				}
+				if(fingerExt == 5){
+					oldNormal = 1;
+				}
+
+				if(fingerExt <= 1 && hand.grabStrength == 1 && oldNormal == 1){
+					exerciseCounter += 1;
+					oldNormal = null;
+				}
+				
+			}*/
+			else if(exercise == "knuckle_bend"){
+				var clawState = 0;
+				for(j = 0, len1 = hand.fingers.length; j < len1; j++){
+					finger = hand.fingers[j];
+					if(finger.type >= 1 && finger.type <=4 && finger.extended == true){
+						clawState++;
+					}
+				}
+				if(clawState == 4)
+					repDone = 0;
+				
+				else if(clawState == 0 && repDone == 0){
+					exerciseCounter++;
+					repDone = 1;
+				}
+				
+			}
+			else if(exercise == "thumb_bend"){
+				var thumbState = 0;
+				
+				if(hand.fingers[0].extended == true){
+					thumbState = 1;
+				}
+				
+				if(thumbState == 1){
+					repDone = 0;
+				}
+				else if(repDone == 0){
+					exerciseCounter++;
+					repDone = 1;
+				}
+				
+				
+			}
+			
+		}
+		
+		counter.innerHTML = exerciseCounter;
+		//output.innerHTML = frameString;  
+	  });
+	  
+	
+	controller.connect();
+	  
+	 
+    </script>
+
+  </body>
+
+</html>
