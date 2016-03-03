@@ -27,26 +27,26 @@
 			  <h2>WRKR</h2>
 	  		  <p>Welcome to wrist-fingers exerciser. You need a Leap Motion device to proceed. To start the daily exercise hit the button below.</p>
 	          <p>
-	            <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">Start exercise</a>
+	            <a class="btn btn-lg btn-primary" href="#" role="button" id="start-wrkr">Start exercise</a>
 	          </p>
 	      </div>
 	  	<div class="row">
 	  		<div class="col-md-4">
-					  <button id="twistsH" class="action list-group-item">Twists Horizontal</button>	  
-					  <button id="twistsV" class="action list-group-item">Twists Vertical</button>
+					  <button id="twistsH" type="button" class="action list-group-item">Twists Horizontal</button>	  
+					  <button id="twistsV" type="button" class="action list-group-item">Twists Vertical</button>
 				<!-- <button id="fist" class="action">Fist stretch</button> -->
-					  <button id="knuckle_bend" class="action list-group-item">Knuckle Bend</button>
-					  <button id="thumb_bend" class="action list-group-item">Thumb Bend</button>
+					  <button id="knuckle_bend" type="button" class="action list-group-item">Knuckle Bend</button>
+					  <button id="thumb_bend" type="button" class="action list-group-item">Thumb Bend</button>
 	  		</div>
 			<div class="col-md-8">
-				<div>Number of exercises made: <span id="exerciseProgress"></span>/5</div>
+				<div>Number of exercises made: <span id="exerciseProgress"></span>/3</div>
 			</div>
 	  	</div>
 	  </div>
-	  <div class="container-fluid">
+	 <!-- <div class="container-fluid">
 		<div id="output"></div>
 	  </div>
-	  
+	  -->
 
 <footer>
 	<div class="progress navbar-fixed-bottom">
@@ -61,37 +61,87 @@
 <script src="http://js.leapmotion.com/leap-0.6.3.js"></script>
 <script>
 
-var exercise;
-$(".action").click(function(){
-	exercise = this.id;
-	exerciseCounter = 0;
-})
 
-function concat_data(id, data){
+	var counter = document.getElementById("exerciseProgress")
+	var hand, finger;
+	var extendedFingers = 0;
+	var wristNormal, oldNormal = 0;
+	var repDone = 0;
+	var exerciseCounter = 0;
+	var exercise;
+
+
+	function concat_data(id, data){
 	
-	return id + ": " + Math.round(data * 1000)/1000 + "</br>";
-}
-function concat_joint_position(id, position){
-	return id + ": " + Math.round(position[0]) + ", " + Math.round(position[1]) + ", " + Math.round(position[2]) + "</br>";
-}
+		return id + ": " + Math.round(data * 1000)/1000 + "</br>";
+	}
+	function concat_joint_position(id, position){
+		return id + ": " + Math.round(position[0]) + ", " + Math.round(position[1]) + ", " + Math.round(position[2]) + "</br>";
+	}
 	var controller = new Leap.Controller({
 	    enableGestures: true,
 	    frameEventName: 'animationFrame'
-	        });
+	}), 
+	callMuteRequestMade = false;
+	
+    
+ 	
+	//var frameString = "";
+	//var handString = " ";
+	//var fingerString = "";
+	//var output = document.getElementById("output");
 
-		var frameString = "";
-		var handString = " ";
-		var fingerString = "";
-		var output = document.getElementById("output");
-		var counter = document.getElementById("exerciseProgress")
-		var hand, finger;
-		var extendedFingers = 0;
-		var wristNormal, oldNormal = 0;
-		var repDone = 0;
+	
+	
+	$(".action").click(function(){
+		exercise = this.id;
+		exerciseCounter = 0;
+	});
+	
+	$("#start-wrkr").click(function(){
 		
+		//.function(){
+		
+		//$(".action").each(function(index) {
+			//this.innerHTML = this + " is the element, " + index + " is the position";
+			var current_wrkr = $( ".action" ).first();
+			$(current_wrkr).addClass( "active" );
+			exerciseCounter = 0;
+			exercise = $(current_wrkr).attr( "id" );
+		
+		
+		    controller.loop(function(frame) {
+    			
+				if(exerciseCounter == 3){
+					$(current_wrkr).removeClass( "active" );
+					$(current_wrkr).addClass( "list-group-item-success");
+					
+					
+					find_wrkr();
+				}
+					
+		    });
 			
-			//var for counting
-			var exerciseCounter = 0;
+			function find_wrkr(){
+				exerciseCounter = 0;
+				
+				next_wrkr = $(current_wrkr).next();
+				
+				if(next_wrkr == 0){
+					////done
+				}
+				$(next_wrkr).addClass( "active" );
+				exercise = $(next_wrkr).attr( "id" );
+				
+				current_wrkr = next_wrkr;
+				
+			}
+			
+			
+			return false;
+
+	});
+
 			
 	controller.on('frame', function(frame){
 		
@@ -144,15 +194,17 @@ function concat_joint_position(id, position){
 			if(exercise == "twistsH"){
 	
 				wristNormal = Math.round(hand.palmNormal[1]);
-				console.log(wristNormal +","+ oldNormal);
+				//console.log(wristNormal +","+ oldNormal);
 				if(wristNormal !== oldNormal && wristNormal != -1){
 					exerciseCounter += 0.5;
 					oldNormal = wristNormal;
 				}
+				
+				
 			}else if(exercise == "twistsV"){
 		
 				wristNormal = Math.round(hand.palmNormal[2]);
-				console.log(wristNormal +","+ oldNormal);
+				//console.log(wristNormal +","+ oldNormal);
 				if(wristNormal !== oldNormal && wristNormal != 1){
 					exerciseCounter += 0.5;
 					oldNormal = wristNormal;
@@ -179,7 +231,7 @@ function concat_joint_position(id, position){
 			}*/
 			else if(exercise == "knuckle_bend"){
 				var clawState = 0;
-				for(j = 0, len1 = hand.fingers.length; j < len1; j++){
+				for(j = 0; j < hand.fingers.length; j++){
 					finger = hand.fingers[j];
 					if(finger.type >= 1 && finger.type <=4 && finger.extended == true){
 						clawState++;
@@ -195,16 +247,12 @@ function concat_joint_position(id, position){
 				
 			}
 			else if(exercise == "thumb_bend"){
-				var thumbState = 0;
-				
-				if(hand.fingers[0].extended == true){
-					thumbState = 1;
-				}
-				
-				if(thumbState == 1){
+			
+				if(hand.thumb.extended == true){
 					repDone = 0;
 				}
-				else if(repDone == 0){
+				
+				if(hand.thumb.extended == false && repDone == 0){
 					exerciseCounter++;
 					repDone = 1;
 				}
