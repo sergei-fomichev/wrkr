@@ -2,6 +2,7 @@ package edu.uml.cs.mstowell.wrkr;
 
 import android.accounts.AccountManager;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -31,8 +32,11 @@ public class MainActivity extends AppCompatActivity
     // global UI elements
     private TextView email;
     private NavigationView navigationView;
+    private View root;
 
     // other constants/variables
+    public static Context mContext;
+    public static MainActivity mActivity;
     private static final int REQUEST_CODE_EMAIL = 1;
     int fragmentIndex = -1;
 
@@ -40,6 +44,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mContext = this;
+        mActivity = this;
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -99,6 +107,9 @@ public class MainActivity extends AppCompatActivity
         } else {
             email.setText(strEmail);
         }
+
+        // get root view (useful for making snackbars)
+        root = (View) findViewById(R.id.main_root_view);
     }
 
     @Override
