@@ -6,6 +6,7 @@
     <title>Leap</title>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
+	
       body {
         line-height: 2em;
         font-size: 12pt;
@@ -17,6 +18,24 @@
 	  .jumbotron{
 		  padding: 30px 0;
 	  } 
+	  .progress{
+		  margin-bottom: 0px;
+	  }
+	  circle {
+	    fill: #ddd;
+	    stroke: #0074d9;
+	    stroke-width: 50;
+	    stroke-dasharray: 0 158;
+	    transition: stroke-dasharray .3s ease;
+		  
+	  }
+
+	  svg {
+		transform: rotate(-90deg);
+	    background: #ddd;
+	    border-radius: 50%;
+	  }
+	  
     </style>
 
   </head>
@@ -38,8 +57,14 @@
 					  <button id="knuckle_bend" type="button" class="action list-group-item">Knuckle Bend</button>
 					  <button id="thumb_bend" type="button" class="action list-group-item">Thumb Bend</button>
 	  		</div>
-			<div class="col-md-8">
-				<div>Number of exercises made: <span id="exerciseProgress"></span>/3</div>
+			<div class="col-md-4">
+				<p>Blah Blah Blah</p>
+			</div>
+			<div class="col-md-4">
+				<div>You have done: <span id="exerciseProgress"></span>/5</div>
+				<svg width="100" height="100" class="chart">
+				    <circle r="25" cx="50" cy="50" id="pie"/>
+				  </svg>
 			</div>
 	  	</div>
 	  </div>
@@ -62,15 +87,28 @@
 <script>
 
 
-	var counter = document.getElementById("exerciseProgress")
+	var counter = document.getElementById("exerciseProgress");
+	var pie = document.getElementById("pie");
+	
 	var hand, finger;
 	var extendedFingers = 0;
 	var wristNormal, oldNormal = 0;
-	var repDone = 0;
+	var repDone = 1;
 	var exerciseCounter = 0;
 	var exercise;
+	var total = 158;
 
+	var numToPie = function(num){
+	  var result = ((20 * num * total) / 100);
+	  return result;
+	}
+	    
+	//result = ;
+  
+	  
+	
 
+	/*
 	function concat_data(id, data){
 	
 		return id + ": " + Math.round(data * 1000)/1000 + "</br>";
@@ -78,6 +116,7 @@
 	function concat_joint_position(id, position){
 		return id + ": " + Math.round(position[0]) + ", " + Math.round(position[1]) + ", " + Math.round(position[2]) + "</br>";
 	}
+	*/
 	var controller = new Leap.Controller({
 	    enableGestures: true,
 	    frameEventName: 'animationFrame'
@@ -99,22 +138,17 @@
 	});
 	
 	$("#start-wrkr").click(function(){
-		
-		//.function(){
-		
-		//$(".action").each(function(index) {
-			//this.innerHTML = this + " is the element, " + index + " is the position";
-			var current_wrkr = $( ".action" ).first();
-			$(current_wrkr).addClass( "active" );
+			var curr_wrkr = $( ".action" ).first();
+			$(curr_wrkr).addClass( "active" );
 			exerciseCounter = 0;
-			exercise = $(current_wrkr).attr( "id" );
+			exercise = $(curr_wrkr).attr( "id" );
 		
 		
 		    controller.loop(function(frame) {
     			
-				if(exerciseCounter == 3){
-					$(current_wrkr).removeClass( "active" );
-					$(current_wrkr).addClass( "list-group-item-success");
+				if(exerciseCounter == 5){
+					$(curr_wrkr).removeClass( "active" );
+					$(curr_wrkr).addClass( "list-group-item-success");
 					
 					
 					find_wrkr();
@@ -125,15 +159,15 @@
 			function find_wrkr(){
 				exerciseCounter = 0;
 				
-				next_wrkr = $(current_wrkr).next();
-				
-				if(next_wrkr == 0){
-					////done
+				next_wrkr = $(curr_wrkr).next();
+				exercise = $(next_wrkr).attr( "id" );
+				if(exercise === undefined){
+					console.log("Done");
+					return false;
 				}
 				$(next_wrkr).addClass( "active" );
-				exercise = $(next_wrkr).attr( "id" );
 				
-				current_wrkr = next_wrkr;
+				curr_wrkr = next_wrkr;
 				
 			}
 			
@@ -263,6 +297,7 @@
 		}
 		
 		counter.innerHTML = exerciseCounter;
+		pie.style.strokeDasharray = numToPie(exerciseCounter) + ' ' + total;
 		//output.innerHTML = frameString;  
 	  });
 	  
