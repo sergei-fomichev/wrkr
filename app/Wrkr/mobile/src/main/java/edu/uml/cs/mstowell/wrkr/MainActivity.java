@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,9 +26,14 @@ import android.widget.TextView;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks {
 
     // global UI elements
     private TextView email;
@@ -39,6 +45,9 @@ public class MainActivity extends AppCompatActivity
     public static MainActivity mActivity;
     private static final int REQUEST_CODE_EMAIL = 1;
     int fragmentIndex = -1;
+
+    // android wear comm
+    private GoogleApiClient mApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +119,9 @@ public class MainActivity extends AppCompatActivity
 
         // get root view (useful for making snackbars)
         root = (View) findViewById(R.id.main_root_view);
+
+        // initialize GoogleApiClient to talk to wear
+        initGoogleApiClient();
     }
 
     @Override
@@ -199,4 +211,83 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.frame, fragment);
         fragmentTransaction.commit();
     }
+
+    /* BEGIN ANDROID WEAR COMMUNICATION */
+
+    private void initGoogleApiClient() {
+        mApiClient = new GoogleApiClient.Builder( this )
+                .addApi( Wearable.API )
+                .build();
+
+        if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
+            mApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        sendMessage(Globals.START_ACTIVITY, "Hello, wrkr");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.e("wrkr", "ABCDE CONNECTION TO WEAR DEVICE SUSPENDED");
+    }
+
+    public void sendMessage( final String path, final String text ) {
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+
+                    Log.d("wrkr", "ABCDE RESULT = " + result.getStatus().toString());
+                }
+//                runOnUiThread( new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mEditText.setText( "" );
+//                    }
+//                });
+            }
+        }).start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
+            mApiClient.connect();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        if ( mApiClient != null ) {
+            //Wearable.MessageApi.removeListener( mApiClient, this ); //TODO enable once listening
+            if ( mApiClient.isConnected() ) {
+                mApiClient.disconnect();
+            }
+        }
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if( mApiClient != null )
+            mApiClient.unregisterConnectionCallbacks( this );
+        super.onDestroy();
+    }
+
+//    @Override
+//    public void onMessageReceived(MessageEvent messageEvent) {
+//        Log.d("wrkr", "MessageEvent received: " + messageEvent.getData());
+//        //do work
+//    }
 }

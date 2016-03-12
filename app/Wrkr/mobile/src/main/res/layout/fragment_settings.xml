@@ -10,4 +10,14 @@
         android:textColor="#fff"
         android:background="#bbb"
         android:textSize="28sp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_send_notif"
+        android:text="Send Wear Notification"/>
+    <TextView
+        android:id="@+id/setting_debug_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="[wear debug text shows here]"/>
 </LinearLayout>

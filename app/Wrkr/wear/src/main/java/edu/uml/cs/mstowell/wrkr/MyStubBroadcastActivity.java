@@ -14,7 +14,7 @@ public class MyStubBroadcastActivity extends Activity {
 
         Intent i = new Intent();
         i.setAction("edu.uml.cs.mstowell.wrkr.SHOW_NOTIFICATION");
-        i.putExtra(MyPostNotificationReceiver.CONTENT_KEY, getString(R.string.title));
+        i.putExtra(MyPostNotificationReceiver.CONTENT_KEY, "Wrist exercise due");
         sendBroadcast(i);
         finish();
     }

@@ -3,6 +3,7 @@
     package="edu.uml.cs.mstowell.wrkr">
 
     <uses-feature android:name="android.hardware.type.watch" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -33,6 +34,12 @@
                 <action android:name="edu.uml.cs.mstowell.wrkr.SHOW_NOTIFICATION" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".WearableMessageListenerService">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

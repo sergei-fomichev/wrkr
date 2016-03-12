@@ -8,10 +8,23 @@
     tools:deviceIds="wear">
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:text="@string/hello" />
+        android:layout_marginTop="3dp"
+        android:text="Wrist exercise time!" />
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="Open Wrkr on your mobile" />
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="device to see more." />
 </LinearLayout>
