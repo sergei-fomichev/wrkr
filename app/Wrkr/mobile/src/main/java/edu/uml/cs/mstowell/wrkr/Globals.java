@@ -5,16 +5,22 @@ package edu.uml.cs.mstowell.wrkr;
  */
 public interface Globals {
 
-    final int FRAGMENT_INDEX_HOME = 0;
-    final int FRAGMENT_INDEX_PROFILE = 1;
-    final int FRAGMENT_INDEX_SETTINGS = 2;
-    final int FRAGMENT_INDEX_HELP = 3;
+    final static int FRAGMENT_INDEX_HOME = 0;
+    final static int FRAGMENT_INDEX_PROFILE = 1;
+    final static int FRAGMENT_INDEX_SETTINGS = 2;
+    final static int FRAGMENT_INDEX_HELP = 3;
 
     // account
-    final String GLOBAL_PREFS = "wrkr_global_prefs";
-    final String USER_EMAIL = "wrkr_user_email";
+    final static String GLOBAL_PREFS = "wrkr_global_prefs";
+    final static String USER_EMAIL = "wrkr_user_email";
+    final static int REQUEST_CODE_EMAIL = 1;
 
     // wear comm
-    final String START_ACTIVITY = "/start_activity";
-    final String WRIST_EXER_TIME = "/wrist_exer_time";
+    final static String MSG_WRIST_EXER_TIME = "/wrist_exer_time";
+    final static String MSG_WEAR_MSG_ACK = "/wear_message_ack";
+    final static String MSG_INIT_FROM_DEVICE = "/init_from_device";
+
+    // listener service and broadcast receiver comm
+    final static String WEAR_DATA_KEY = "wear_data_key";
+    final static String WEAR_DATA_VALUES = "wear_data_values";
 }

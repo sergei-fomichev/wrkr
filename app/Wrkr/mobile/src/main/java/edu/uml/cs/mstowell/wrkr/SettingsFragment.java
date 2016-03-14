@@ -1,5 +1,8 @@
 package edu.uml.cs.mstowell.wrkr;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,10 +15,10 @@ import android.widget.TextView;
 /**
  * Created by Mike on 3/1/2016.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements Globals {
 
     private Button sendMsg;
-    private TextView wearDebug;
+    private static TextView wearDebug;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,11 +30,26 @@ public class SettingsFragment extends Fragment {
         sendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) getActivity()).sendMessage(Globals.WRIST_EXER_TIME, "hi wear from mobile");
+                ((MainActivity) getActivity()).sendMessage(MSG_WRIST_EXER_TIME, "");
                 Log.d("wrkr", "ABCDE Message sent to wear device");
             }
         });
 
         return v;
+    }
+
+    public static class WearListenerReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (wearDebug != null) {
+
+                String event = intent.getStringExtra(WEAR_DATA_KEY);
+                byte[] rawData = intent.getByteArrayExtra(WEAR_DATA_VALUES);
+                String data = new String(rawData);
+
+                if (event == null) event = "ERROR";
+                wearDebug.setText("From wear: " + event + " --- " + data);
+            }
+        }
     }
 }

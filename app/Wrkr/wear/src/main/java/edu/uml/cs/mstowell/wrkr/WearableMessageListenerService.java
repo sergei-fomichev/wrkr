@@ -11,10 +11,12 @@ import com.google.android.gms.wearable.WearableListenerService;
  */
 public class WearableMessageListenerService extends WearableListenerService {
 
-    private static final String START_ACTIVITY = "/start_activity";
-
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
+
+        // TODO - check the message ID to make sure its an expected string --
+        // TODO - otherwise, call super.OnMessageReceived
+
         Log.d("wrkr", "ABCDE GOT A MESSAGE FROM THE MOBILE WOOOOOOOO");
         Intent intent = new Intent( this, MyStubBroadcastActivity.class );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

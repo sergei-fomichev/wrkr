@@ -33,17 +33,17 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks, Globals {
 
     // global UI elements
     private TextView email;
     private NavigationView navigationView;
     private View root;
 
-    // other constants/variables
+    // context
     public static Context mContext;
     public static MainActivity mActivity;
-    private static final int REQUEST_CODE_EMAIL = 1;
     int fragmentIndex = -1;
 
     // android wear comm
@@ -95,11 +95,11 @@ public class MainActivity extends AppCompatActivity
 
         // set to the main fragment
         setTitle(getResources().getString(R.string.menu_home));
-        transitionFragment(new HomeFragment(), Globals.FRAGMENT_INDEX_HOME);
+        transitionFragment(new HomeFragment(), FRAGMENT_INDEX_HOME);
 
         // get the user's google profile if none saved yet
-        SharedPreferences prefs = getSharedPreferences(Globals.GLOBAL_PREFS, 0);
-        String strEmail = prefs.getString(Globals.USER_EMAIL, "");
+        SharedPreferences prefs = getSharedPreferences(GLOBAL_PREFS, 0);
+        String strEmail = prefs.getString(USER_EMAIL, "");
         if (strEmail.isEmpty()) {
             try {
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null,
@@ -129,9 +129,9 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE_EMAIL && resultCode == RESULT_OK) {
             // got back the user's email address - save to preferences
             String strEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            SharedPreferences prefs = getSharedPreferences(Globals.GLOBAL_PREFS, 0);
+            SharedPreferences prefs = getSharedPreferences(GLOBAL_PREFS, 0);
             SharedPreferences.Editor edit = prefs.edit();
-            edit.putString(Globals.USER_EMAIL, strEmail).apply();
+            edit.putString(USER_EMAIL, strEmail).apply();
             email.setText(strEmail);
         }
     }
@@ -181,23 +181,23 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_home:
                 setTitle(getResources().getString(R.string.menu_home));
-                if (fragmentIndex != Globals.FRAGMENT_INDEX_HOME)
-                    transitionFragment(new HomeFragment(), Globals.FRAGMENT_INDEX_HOME);
+                if (fragmentIndex != FRAGMENT_INDEX_HOME)
+                    transitionFragment(new HomeFragment(), FRAGMENT_INDEX_HOME);
                 break;
             case R.id.nav_profile:
                 setTitle(getResources().getString(R.string.menu_profile));
-                if (fragmentIndex != Globals.FRAGMENT_INDEX_PROFILE)
-                    transitionFragment(new ProfileFragment(), Globals.FRAGMENT_INDEX_PROFILE);
+                if (fragmentIndex != FRAGMENT_INDEX_PROFILE)
+                    transitionFragment(new ProfileFragment(), FRAGMENT_INDEX_PROFILE);
                 break;
             case R.id.nav_settings:
                 setTitle(getResources().getString(R.string.menu_settings));
-                if (fragmentIndex != Globals.FRAGMENT_INDEX_SETTINGS)
-                    transitionFragment(new SettingsFragment(), Globals.FRAGMENT_INDEX_SETTINGS);
+                if (fragmentIndex != FRAGMENT_INDEX_SETTINGS)
+                    transitionFragment(new SettingsFragment(), FRAGMENT_INDEX_SETTINGS);
                 break;
             case R.id.nav_help:
                 setTitle(getResources().getString(R.string.menu_help));
-                if (fragmentIndex != Globals.FRAGMENT_INDEX_HELP)
-                    transitionFragment(new HelpFragment(), Globals.FRAGMENT_INDEX_HELP);
+                if (fragmentIndex != FRAGMENT_INDEX_HELP)
+                    transitionFragment(new HelpFragment(), FRAGMENT_INDEX_HELP);
                 break;
         }
 
@@ -225,7 +225,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-        sendMessage(Globals.START_ACTIVITY, "Hello, wrkr");
+        // initialize connection to wear
+        sendMessage(MSG_INIT_FROM_DEVICE, "");
     }
 
     @Override
@@ -233,6 +234,7 @@ public class MainActivity extends AppCompatActivity
         Log.e("wrkr", "ABCDE CONNECTION TO WEAR DEVICE SUSPENDED");
     }
 
+    // TODO - make a Common.java that mobile and wear share that contains common code like this method
     public void sendMessage( final String path, final String text ) {
         new Thread( new Runnable() {
             @Override
@@ -245,12 +247,6 @@ public class MainActivity extends AppCompatActivity
 
                     Log.d("wrkr", "ABCDE RESULT = " + result.getStatus().toString());
                 }
-//                runOnUiThread( new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mEditText.setText( "" );
-//                    }
-//                });
             }
         }).start();
     }
@@ -284,10 +280,4 @@ public class MainActivity extends AppCompatActivity
             mApiClient.unregisterConnectionCallbacks( this );
         super.onDestroy();
     }
-
-//    @Override
-//    public void onMessageReceived(MessageEvent messageEvent) {
-//        Log.d("wrkr", "MessageEvent received: " + messageEvent.getData());
-//        //do work
-//    }
 }

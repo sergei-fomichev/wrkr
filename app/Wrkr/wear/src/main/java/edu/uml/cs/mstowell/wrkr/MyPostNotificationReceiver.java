@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 public class MyPostNotificationReceiver extends BroadcastReceiver {
     public static final String CONTENT_KEY = "contentText";
@@ -30,6 +29,6 @@ public class MyPostNotificationReceiver extends BroadcastReceiver {
                 .build();
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, notification);
 
-        Toast.makeText(context, context.getString(R.string.notification_posted), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, context.getString(R.string.notification_posted), Toast.LENGTH_SHORT).show();
     }
 }
