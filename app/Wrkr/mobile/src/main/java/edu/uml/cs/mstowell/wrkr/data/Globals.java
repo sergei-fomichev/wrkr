@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.data;
 
 /**
  * Created by Mike on 3/2/2016.

@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.list;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import edu.uml.cs.mstowell.wrkr.MainActivity;
+import edu.uml.cs.mstowell.wrkr.R;
 
 /**
  * Created by Mike on 3/2/2016.

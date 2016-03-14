@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import edu.uml.cs.mstowell.wrkr.MainActivity;
+import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkr.data.Globals;
 
 /**
  * Created by Mike on 3/1/2016.

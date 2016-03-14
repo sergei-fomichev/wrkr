@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.app.Activity;
 import android.content.Intent;

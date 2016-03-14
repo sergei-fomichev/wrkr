@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import edu.uml.cs.mstowell.wrkr.R;
 
 public class MyPostNotificationReceiver extends BroadcastReceiver {
     public static final String CONTENT_KEY = "contentText";

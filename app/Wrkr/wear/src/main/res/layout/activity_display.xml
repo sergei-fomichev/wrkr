@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.uml.cs.mstowell.wrkr.MyDisplayActivity"
+    tools:context=".ui.MyDisplayActivity"
     tools:deviceIds="wear">
 
     <TextView

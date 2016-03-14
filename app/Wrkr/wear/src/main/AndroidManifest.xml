@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
-            android:name=".MyStubBroadcastActivity"
+            android:name=".ui.MyStubBroadcastActivity"
             android:label="MyStubBroadcastActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,21 +21,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MyDisplayActivity"
+            android:name=".ui.MyDisplayActivity"
             android:allowEmbedded="true"
             android:exported="true"
             android:taskAffinity=""
             android:theme="@android:style/Theme.DeviceDefault.Light"></activity>
 
         <receiver
-            android:name=".MyPostNotificationReceiver"
+            android:name=".ui.MyPostNotificationReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="edu.uml.cs.mstowell.wrkr.SHOW_NOTIFICATION" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".WearableMessageListenerService">
+        <service android:name=".service.MobileListenerService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>

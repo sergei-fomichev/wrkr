@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import edu.uml.cs.mstowell.wrkr.list.MListAdapter;
+import edu.uml.cs.mstowell.wrkr.MainActivity;
+import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkr.list.SwipeDismissListViewTouchListener;
 
 /**
  * Created by Mike on 3/1/2016.

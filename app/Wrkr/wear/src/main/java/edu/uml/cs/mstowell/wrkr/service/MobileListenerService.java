@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.service;
 
 import android.content.Intent;
 import android.util.Log;
@@ -6,10 +6,12 @@ import android.util.Log;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
+import edu.uml.cs.mstowell.wrkr.ui.MyStubBroadcastActivity;
+
 /**
  * Created by Mike on 3/12/2016.
  */
-public class WearableMessageListenerService extends WearableListenerService {
+public class MobileListenerService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {

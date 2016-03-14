@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
+
+import edu.uml.cs.mstowell.wrkr.R;
 
 public class MyDisplayActivity extends Activity implements GoogleApiClient.ConnectionCallbacks {
 

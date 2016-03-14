@@ -32,6 +32,12 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import edu.uml.cs.mstowell.wrkr.data.Globals;
+import edu.uml.cs.mstowell.wrkr.ui.HelpFragment;
+import edu.uml.cs.mstowell.wrkr.ui.HomeFragment;
+import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;
+import edu.uml.cs.mstowell.wrkr.ui.SettingsFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks, Globals {

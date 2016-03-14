@@ -1,10 +1,12 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.service;
 
 import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
+
+import edu.uml.cs.mstowell.wrkr.data.Globals;
 
 /**
  * Created by Mike on 3/13/2016.
