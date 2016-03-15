@@ -9,13 +9,8 @@
         <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/.." />
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/mobile" />
-            <option value="$PROJECT_DIR$/wear" />
-            <option value="$PROJECT_DIR$/../WrkrLib" />
-            <option value="$PROJECT_DIR$/../WrkrLib/wrkrlib" />
+            <option value="$PROJECT_DIR$/wrkrlib" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -5,19 +5,29 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="settings page will be here soon"
+        android:text="Debug Options"
         android:padding="8dp"
-        android:textColor="#fff"
-        android:background="#bbb"
-        android:textSize="28sp" />
+        android:textSize="16sp" />
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/settings_send_notif"
         android:text="Send Wear Notification"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_start_accel"
+        android:text="Start Accel Data Recording"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_stop_accel"
+        android:text="Stop Accel Data Recording"/>
     <TextView
         android:id="@+id/setting_debug_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="[wear debug text shows here]"/>
+        android:text="[wear debug text shows here]"
+        android:scrollbars="vertical"
+        android:padding="8dp"/>
 </LinearLayout>

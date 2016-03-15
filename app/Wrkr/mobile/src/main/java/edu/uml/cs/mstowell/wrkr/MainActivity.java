@@ -32,7 +32,7 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import edu.uml.cs.mstowell.wrkr.data.Globals;
+import edu.uml.cs.mstowell.wrkrlib.data.Globals;
 import edu.uml.cs.mstowell.wrkr.ui.HelpFragment;
 import edu.uml.cs.mstowell.wrkr.ui.HomeFragment;
 import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;

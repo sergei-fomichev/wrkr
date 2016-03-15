@@ -26,7 +26,6 @@
             android:exported="true"
             android:taskAffinity=""
             android:theme="@android:style/Theme.DeviceDefault.Light"></activity>
-
         <receiver
             android:name=".ui.MyPostNotificationReceiver"
             android:exported="true">
@@ -34,12 +33,14 @@
                 <action android:name="edu.uml.cs.mstowell.wrkr.SHOW_NOTIFICATION" />
             </intent-filter>
         </receiver>
-
         <service android:name=".service.MobileListenerService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
+        <service
+            android:name=".service.WristTrackingService"
+            android:enabled="true" >
+        </service>
     </application>
-
 </manifest>

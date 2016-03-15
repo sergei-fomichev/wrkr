@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr.data;
+package edu.uml.cs.mstowell.wrkrlib.data;
 
 /**
  * Created by Mike on 3/2/2016.
@@ -19,8 +19,18 @@ public interface Globals {
     final static String MSG_WRIST_EXER_TIME = "/wrist_exer_time";
     final static String MSG_WEAR_MSG_ACK = "/wear_message_ack";
     final static String MSG_INIT_FROM_DEVICE = "/init_from_device";
+    final static String MSG_START_ACCEL = "/start_accel";
+    final static String MSG_STOP_ACCEL = "/stop_accel";
 
     // listener service and broadcast receiver comm
     final static String WEAR_DATA_KEY = "wear_data_key";
     final static String WEAR_DATA_VALUES = "wear_data_values";
+
+    // activity detection
+    public static final String WRIST_BROADCAST_ACTION = "edu.uml.cs.mstowell.wrkr.ACTIVITY_UPDATE";
+    public static final String WRIST_BROADCAST_ACTIVITY_UPDATE = "activity";
+    public static final int USER_ACTIVITY_STANDING = 0;
+    public static final int USER_ACTIVITY_WALKING = 1;
+    public static final int USER_ACTIVITY_RUNNING = 2;
+    public static final int USER_ACTIVITY_CHEATING = 3;
 }

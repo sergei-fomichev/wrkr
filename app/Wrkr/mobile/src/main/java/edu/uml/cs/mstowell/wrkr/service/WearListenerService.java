@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
-import edu.uml.cs.mstowell.wrkr.data.Globals;
+import edu.uml.cs.mstowell.wrkrlib.data.Globals;
 
 /**
  * Created by Mike on 3/13/2016.

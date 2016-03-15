@@ -1,6 +1,9 @@
 package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -11,19 +14,16 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import edu.uml.cs.mstowell.wrkr.R;
+import java.util.List;
 
-public class MyDisplayActivity extends Activity implements GoogleApiClient.ConnectionCallbacks {
+import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkrlib.data.Globals;
+
+public class MyDisplayActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, Globals {
 
     private TextView mTextView;
     private GoogleApiClient mApiClient;
     public static final String TAG = "wrkr";
-
-    // wear comm // TODO from Globals in mobile app
-    final static String MSG_WRIST_EXER_TIME = "/wrist_exer_time";
-    final static String MSG_WEAR_MSG_ACK = "/wear_message_ack";
-    final static String MSG_INIT_FROM_DEVICE = "/init_from_device";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,13 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
         // received a message since we're here, so init a GoogleAPIClient and respond
         initGoogleApiClient();
         sendMessage(MSG_WEAR_MSG_ACK, "notification received");
+
+        // TODO - remove
+        SensorManager smm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> sensor = smm.getSensorList(Sensor.TYPE_ALL);
+        for (Sensor s : sensor) {
+            Log.w("wrkr", "ABCDE supplies sensor: " + s.getName());
+        }
     }
 
     private void initGoogleApiClient() {

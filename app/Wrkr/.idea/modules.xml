@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../...iml" filepath="$PROJECT_DIR$/../...iml" />
       <module fileurl="file://$PROJECT_DIR$/Wrkr.iml" filepath="$PROJECT_DIR$/Wrkr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WrkrLib/WrkrLib.iml" filepath="$PROJECT_DIR$/../WrkrLib/WrkrLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/wear/wear.iml" filepath="$PROJECT_DIR$/wear/wear.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WrkrLib/wrkrlib/wrkrlib.iml" filepath="$PROJECT_DIR$/../WrkrLib/wrkrlib/wrkrlib.iml" />
     </modules>
   </component>
 </project>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +15,16 @@ import android.widget.TextView;
 
 import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkr.data.Globals;
+import edu.uml.cs.mstowell.wrkrlib.data.Globals;
 
 /**
  * Created by Mike on 3/1/2016.
  */
 public class SettingsFragment extends Fragment implements Globals {
 
-    private Button sendMsg;
+    private Button pingWear;
+    private Button startAccel;
+    private Button stopAccel;
     private static TextView wearDebug;
 
     @Override
@@ -30,12 +33,30 @@ public class SettingsFragment extends Fragment implements Globals {
 
         wearDebug = (TextView) v.findViewById(R.id.setting_debug_info);
 
-        sendMsg = (Button) v.findViewById(R.id.settings_send_notif);
-        sendMsg.setOnClickListener(new View.OnClickListener() {
+        pingWear = (Button) v.findViewById(R.id.settings_send_notif);
+        pingWear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity) getActivity()).sendMessage(MSG_WRIST_EXER_TIME, "");
                 Log.d("wrkr", "ABCDE Message sent to wear device");
+            }
+        });
+
+        startAccel = (Button) v.findViewById(R.id.settings_start_accel);
+        startAccel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).sendMessage(MSG_START_ACCEL, "");
+                Log.d("wrkr", "ABCDE accel start sent to wear device");
+            }
+        });
+
+        stopAccel = (Button) v.findViewById(R.id.settings_stop_accel);
+        stopAccel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).sendMessage(MSG_STOP_ACCEL, "");
+                Log.d("wrkr", "ABCDE accel stop sent to wear device");
             }
         });
 
@@ -52,7 +73,8 @@ public class SettingsFragment extends Fragment implements Globals {
                 String data = new String(rawData);
 
                 if (event == null) event = "ERROR";
-                wearDebug.setText("From wear: " + event + " --- " + data);
+                wearDebug.setText(Html.fromHtml("From wear:<br/>Event: "
+                        + event + "<br/>Data: " + data));
             }
         }
     }
