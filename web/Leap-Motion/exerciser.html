@@ -16,13 +16,19 @@
 		  font-size: 18pt;
 	  }
 	  .jumbotron{
-		  padding: 30px 0;
+		  padding: 20px 0;
+		  margin-bottom: 20px;
 	  } 
 	  .progress{
 		  margin-bottom: 0px;
 	  }
-	  canvas{
-		  border: 1px solid;
+	  .hand{
+		  border-radius: 6px;
+		  margin: 0 15px 10px;
+	  }
+	  .hand>p{
+	  	padding: 10px 0;
+		margin: 0;
 	  }
 	  circle {
 	    fill: #ddd;
@@ -49,23 +55,27 @@
 			  <h2>WRKR</h2>
 	  		  <p>Welcome to wrist-fingers exerciser. You need a Leap Motion device to proceed. To start the daily exercise hit the button below.</p>
 	          <p>
-	            <a class="btn btn-lg btn-primary" href="#" role="button" id="start-wrkr">Start exercise</a>
+	            <a class="btn btn-lg btn-primary" href="#" role="button" id="start-wrkr">Start exercising</a>
 	          </p>
 	      </div>
+		<div class="row">
+			<div class="col-md-12 hand">
+			</div>
+		</div>  
 	  	<div class="row">
 	  		<div class="col-md-4">
 					  <button id="twistsH" type="button" class="action list-group-item">Twists Horizontal</button>	  
 					  <!-- ><button id="twistsV" type="button" class="action list-group-item">Twists Vertical</button> -->
-				<!-- <button id="fist" class="action">Fist stretch</button> -->
+					  <!-- <button id="fist" class="action">Fist stretch</button> -->
 					  <button id="knuckle_bend" type="button" class="action list-group-item">Knuckle Bend</button>
 					  <button id="thumb_bend" type="button" class="action list-group-item">Thumb Bend</button>
 					  <button id="circle" type="button" class="action list-group-item">Circle</button>
 	  		</div>
-			<div class="col-md-4">
-				<p>Blah Blah Blah</p>
+			<div class="col-md-5 exDescription">
+				
 			</div>
-			<div class="col-md-4">
-				<div>You have done: <span id="exerciseProgress"></span>/5</div>
+			<div class="col-md-3">
+				<div>You have done: <span id="exerciseProgress"></span>/<span id="exerciseRepeats"></span></div>
 				
 				<canvas id="Circle" width="200" height="200"></canvas>
 				<!--
@@ -100,22 +110,39 @@
 	var output = document.getElementById("output");
 	var circleImg = new Image();
 	circleImg.src = "img/CircleGesture.png";
-	$("#output").html(circleImg);
+
+	var knuckleImg = new Image();
+	knuckleImg.src = "img/knuckle.jpg";
+
+	var thumbImg = new Image();
+	thumbImg.src = "img/thumb.jpg";
+	
+	var twistsImg = new Image();
+	twistsImg.src = "img/twists.jpg";
+
 	
 	var hand, finger;
+	var handStatus;
 	var extendedFingers = 0;
 	var wristNormal, oldNormal = 0;
 	var repDone = 1;
 	var exerciseCounter = 0;
+	var exerciseRepeats = 0;
 	var exercise;
+	var currWrkrDOM;
 
 	var ctx = canvas.getContext('2d');
 	var centerX = canvas.width / 2;
 	var centerY = canvas.height / 2;
 	var radius = 50;
 	var amount = 0;
-	var progressStep = 0.5;
+	var progressStep = 1;
 	
+	var controller = new Leap.Controller({
+	    enableGestures: true,
+	    frameEventName: 'animationFrame'
+	}), 
+	callMuteRequestMade = false;
 	
 	function draw_circle(){
 	    ctx.beginPath(); 
@@ -133,132 +160,56 @@
 	function draw(){	
 		counter.innerHTML = exerciseCounter; //digital counter
 		
+		
+		
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
    		ctx.clip(); 
-		ctx.fillStyle = '#13a8a4';
-		if(amount !== exerciseCounter*20){
+		ctx.fillStyle = '#5cb85c';
+		
+
+		
+		if(amount !== exerciseCounter*(Math.round(100/exerciseRepeats))){ /////here is a thing with exercise repeats
 			amount += progressStep;
 			ctx.fillRect(centerX - radius, centerY + radius, radius * 2, -amount);
+			//return false;
 		}
-		
-		
+		else{
+			return true;
+		}
 		
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
         ctx.lineWidth = 5;
         ctx.strokeStyle = '#000000';
  	    ctx.stroke();
+		
+
 		 
 	}
-
- 	draw_circle();
 	
-	var controller = new Leap.Controller({
-	    enableGestures: true,
-	    frameEventName: 'animationFrame'
-	}), 
-	callMuteRequestMade = false;
 	
-
-	$(".action").click(function(){
-		exercise = this.id;
-		exerciseCounter = 0;
-	});
-	
-	$("#start-wrkr").click(function(){
-			var curr_wrkr = $( ".action" ).first();
-			$(curr_wrkr).addClass( "active" );
-			exerciseCounter = 0;
-			exercise = $(curr_wrkr).attr( "id" );
-		
-		
-		    controller.loop(function(frame) {
-    			if(exerciseCounter == 0){
-    				clear();
-					draw_circle();
-    			}
-				else if(exerciseCounter == 5){
-					$(curr_wrkr).removeClass( "active" );
-					$(curr_wrkr).addClass( "list-group-item-success");
-					clear();
-					draw_circle();
-					
-					find_wrkr();
-				}
-					
-		    });
-			
-			function find_wrkr(){
-				exerciseCounter = 0;
-				
-				next_wrkr = $(curr_wrkr).next();
-				exercise = $(next_wrkr).attr( "id" );
-				if(exercise === undefined){
-					console.log("Done");
-					return false;
-				}
-				$(next_wrkr).addClass( "active" );
-				
-				curr_wrkr = next_wrkr;
-				
-			}
-			
-			
-			return false;
-
-	});
-
-			
-	controller.on('frame', function(frame){
-		for(i = 0, len = frame.hands.length; i < len; i++){
-			hand = frame.hands[i];
-			
-		$(".progress-bar").attr({
-			"aria-valuenow" : Math.round(hand.confidence*100),
-			"style" : "width:" + Math.round(hand.confidence*100) + "%"  
-		});
-			////exercises here
-			if(exercise == "twistsH"){
-	
+	var exercises = {
+		twistsH : {
+			name: "Palm twists",
+			numRepeats: 5,
+			text: "Rotate your forearm, so that your palm faces up and then down.",
+			picture: twistsImg,
+			exercise: function(){
 				wristNormal = Math.round(hand.palmNormal[1]);
-				//console.log(wristNormal +","+ oldNormal);
+			//console.log(wristNormal +","+ oldNormal);
 				if(wristNormal !== oldNormal && wristNormal != -1){
 					exerciseCounter += 0.5;
 					oldNormal = wristNormal;
 				}
-				
-				
 			}
-			/*else if(exercise == "twistsV"){
-		
-				wristNormal = Math.round(hand.palmNormal[2]);
-				console.log(wristNormal +","+ oldNormal);
-				if(wristNormal !== oldNormal && wristNormal != 1){
-					exerciseCounter += 0.5;
-					oldNormal = wristNormal;
-				}
-			
-				
-			}
-				else if(exercise == "fist"){
-				var fingerExt = 0; 
-				for(j = 0, len1 = hand.fingers.length; j < len1; j++){
-					finger = hand.fingers[j];
-					if(finger.extended) 
-						fingerExt ++;
-				}
-				if(fingerExt == 5){
-					oldNormal = 1;
-				}
-
-				if(fingerExt <= 1 && hand.grabStrength == 1 && oldNormal == 1){
-					exerciseCounter += 1;
-					oldNormal = null;
-				}
-			}
-					*/
-			else if(exercise == "knuckle_bend"){
+		},
+		knuckle_bend: {
+			name: "Knuckle bend",
+			numRepeats: 3,
+			text: "Bend your fingers using the middle and end joints, but keep the knuckles straight.",
+			picture: knuckleImg,
+			exercise: function(){
 				var clawState = 0;
 				for(j = 0; j < hand.fingers.length; j++){
 					finger = hand.fingers[j];
@@ -268,15 +219,19 @@
 				}
 				if(clawState == 4)
 					repDone = 0;
-				
+			
 				else if(clawState == 0 && repDone == 0){
 					exerciseCounter++;
 					repDone = 1;
 				}
-				
 			}
-			else if(exercise == "thumb_bend"){
-			
+		},
+		thumb_bend: {
+			name: "Thumb bend",
+			numRepeats: 5,
+			text: "Move the thumb across the palm and back to the starting position.",
+			picture: thumbImg,
+			exercise: function(){
 				if(hand.thumb.extended == true){
 					repDone = 0;
 				}
@@ -285,9 +240,14 @@
 					exerciseCounter++;
 					repDone = 1;
 				}
-	
 			}
-			else if(exercise == "circle"){
+		},
+		circle: {
+			name: "Draw a circle",
+			numRepeats: 2,
+			text: "Draw a circle with your picky finger.",
+			picture: circleImg,
+			exercise: function(frame){
 				var duration;
 				frame.gestures.forEach(function(gesture){
 					if(frame.valid && frame.gestures.length > 0){
@@ -295,22 +255,168 @@
 						//counter.innerHTML = duration;
 						
 						duration /= 1000000;
-						exerciseCounter = Math.round(duration);
-						
+						exerciseCounter = Math.round(duration);	
 					}
-				
-				
 				});
 			}
-		}
+		},
+		hand_type: ["Right", "Left"]
+	}
 	
+	function next_wrkr(){
+		exerciseCounter = 0;
+		
+		var nextWrkrDOM = $(currWrkrDOM).next();
+		exercise = $(nextWrkrDOM).attr( "id" );
+		if(exercise === undefined){
+			$(".action").removeClass("list-group-item-success");
+			handType = exercises.hand_type[1];
+			$(".hand").html("<p>"+ handType +" hand</p>");
+			exercise = Object.keys(exercises)[0];
+		
+			exerciseRepeats = exercises[exercise].numRepeats;
+			$("#exerciseRepeats").text(exerciseRepeats);
+			
+			return false;
+		}
+		$(nextWrkrDOM).addClass( "active" );
+		$(".exDescription").html("<h3>"+ exercises[exercise].name +"</h3><p>"+ exercises[exercise].text +"</p>");
+		$(".exDescription").append(exercises[exercise].picture);
+		exerciseRepeats = exercises[exercise].numRepeats;
+		$("#exerciseRepeats").text(exerciseRepeats);
+		
+		
+		currWrkrDOM = nextWrkrDOM;
+		
+	}
 
-		draw();
-		//output.innerHTML = frameString;  
-	  });
+	$(".action").click(function(){
+		exercise = this.id;
+		$(this).addClass( "active" );
+		exerciseCounter = 0;
+	});
+	
+	$("#start-wrkr").click(function(){
+		//for(var keys in exercises){
+		//	console.log(exercises[keys].name);
+		//}
+		//console.log(Object.keys(exercises)[0]); //get key
+		//console.log(exercises[Object.keys(exercises)[0]].name); //get value
+		//console.log(exercises.hand_type[1]); // same value
+		
+		
+		handType = exercises.hand_type[0];
+		$(".hand").html("<p>"+ handType +" hand</p>");
+		
+		exercise = Object.keys(exercises)[0];
+		$(".exDescription").append("<h3>"+ exercises[exercise].name +"</h3><p>"+ exercises[exercise].text +"</p>");
+		$(".exDescription").append(exercises[exercise].picture);
+		
+		currWrkrDOM = $( ".action" ).first();
+		$(currWrkrDOM).addClass( "active" );
+		exerciseCounter = 0;
+		exerciseRepeats = exercises[exercise].numRepeats;
+		$("#exerciseRepeats").text(exerciseRepeats);
+		
+			//exercise = $(currWrkrDOM).attr( "id" );
+		
+		
+	    controller.loop(function(frame) {
+			if(exerciseCounter == 0){
+				clear();
+				draw_circle();
+			}
+			else if(exerciseCounter == exerciseRepeats && draw()){
+				$(currWrkrDOM).removeClass( "active" ).addClass( "list-group-item-success");
+				clear();
+				draw_circle();
+				
+				next_wrkr();
+			}
+				
+			for(i = 0, len = frame.hands.length; i < len; i++){
+				hand = frame.hands[i];
+				
+				$(".progress-bar").attr({
+					"aria-valuenow" : Math.round(hand.confidence*100),
+					"style" : "width:" + Math.round(hand.confidence*100) + "%"  
+				});
+				
+				if(handType.toLowerCase() === hand.type){
+					$(".hand").removeClass("bg-danger").addClass("bg-success");
+					exercises[exercise].exercise(frame);
+				}else{
+					$(".hand").removeClass("bg-success").addClass("bg-danger");
+				}
+
+				
+			}
+	
+			draw();	
+	    });
+
+		draw_circle();
+		
+		
+		return false;
+
+	});
+
+			
+//	controller.on('frame', function(frame){
+	/*
+	////exercises here
+	if(exercise == "twistsH"){
+
+		exercises.twistsH.exercise();
+	
+		}
+	/*else if(exercise == "twistsV"){
+
+		wristNormal = Math.round(hand.palmNormal[2]);
+		console.log(wristNormal +","+ oldNormal);
+		if(wristNormal !== oldNormal && wristNormal != 1){
+			exerciseCounter += 0.5;
+			oldNormal = wristNormal;
+		}
+
+	
+	}
+		else if(exercise == "fist"){
+		var fingerExt = 0; 
+		for(j = 0, len1 = hand.fingers.length; j < len1; j++){
+			finger = hand.fingers[j];
+			if(finger.extended) 
+				fingerExt ++;
+		}
+		if(fingerExt == 5){
+			oldNormal = 1;
+		}
+
+		if(fingerExt <= 1 && hand.grabStrength == 1 && oldNormal == 1){
+			exerciseCounter += 1;
+			oldNormal = null;
+		}
+	}
+			
+	else if(exercise == "knuckle_bend"){
+		exercises.knuckle_bend.exercise();
+	}
+
+	else if(exercise == "thumb_bend"){
+		exercises.thumb_bend.exercise();
+
+	}
+	else if(exercise == "circle"){
+		exercises.circle.exercise(frame);
+	}
+	
+	
+	*/
+//	  });
 	  
 	
-	controller.connect();
+	//controller.connect();
 	  
 	 
     </script>
