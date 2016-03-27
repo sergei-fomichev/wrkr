@@ -1,2 +1,1 @@
-include ':mobile', ':wear'
-include ':app', '..:WrkrLib:wrkrlib'
+include '..:WrkrLib:wrkrlib', ':app', ':mobile', ':wear'

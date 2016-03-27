@@ -27,16 +27,13 @@ import android.widget.TextView;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
 
-import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 import edu.uml.cs.mstowell.wrkr.ui.HelpFragment;
 import edu.uml.cs.mstowell.wrkr.ui.HomeFragment;
 import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;
 import edu.uml.cs.mstowell.wrkr.ui.SettingsFragment;
+import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
+import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
 /**
  * MainActivity for the entire UI, including all fragments
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity
     int fragmentIndex = -1;
 
     // android wear comm
-    private GoogleApiClient mApiClient;
+    private APIClientCommon mApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // initialize GoogleApiClient to talk to wear
-        initGoogleApiClient();
+        mApiClient = new APIClientCommon(this);
     }
 
     public void getGoogleAccount() {
@@ -222,19 +219,14 @@ public class MainActivity extends AppCompatActivity
 
     /* BEGIN ANDROID WEAR COMMUNICATION */
 
-    private void initGoogleApiClient() {
-        mApiClient = new GoogleApiClient.Builder( this )
-                .addApi( Wearable.API )
-                .build();
-
-        if(!(mApiClient.isConnected() || mApiClient.isConnecting()))
-            mApiClient.connect();
+    public void sendMessage(final String path, final String text) {
+        mApiClient.sendMessage(path, text);
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         // initialize connection to wear
-        sendMessage(MSG_INIT_FROM_DEVICE, "");
+        mApiClient.sendMessage(MSG_INIT_FROM_DEVICE, "");
     }
 
     @Override
@@ -242,27 +234,10 @@ public class MainActivity extends AppCompatActivity
         Log.e("wrkr", "ABCDE CONNECTION TO WEAR DEVICE SUSPENDED");
     }
 
-    // TODO - make a Common.java that mobile and wear share that contains common code like this method
-    public void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-
-                    Log.d("wrkr", "ABCDE RESULT = " + result.getStatus().toString());
-                }
-            }
-        }).start();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
+        if(mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting()))
             mApiClient.connect();
     }
 
@@ -273,9 +248,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        if ( mApiClient != null ) {
+        if (mApiClient != null) {
             //Wearable.MessageApi.removeListener( mApiClient, this ); //TODO enable once listening
-            if ( mApiClient.isConnected() ) {
+            if (mApiClient.isConnected()) {
                 mApiClient.disconnect();
             }
         }
@@ -284,7 +259,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        if( mApiClient != null )
+        if (mApiClient != null)
             mApiClient.unregisterConnectionCallbacks( this );
         super.onDestroy();
     }

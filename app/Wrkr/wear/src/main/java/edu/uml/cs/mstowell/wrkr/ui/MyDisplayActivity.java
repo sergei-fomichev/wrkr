@@ -9,14 +9,11 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
 
 import java.util.List;
 
 import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
 /**
@@ -25,7 +22,7 @@ import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 public class MyDisplayActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, Globals {
 
     private TextView mTextView;
-    private GoogleApiClient mApiClient;
+    private APIClientCommon mApiClient;
     public static final String TAG = "wrkr";
 
     @Override
@@ -35,8 +32,8 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
         mTextView = (TextView) findViewById(R.id.text1);
 
         // received a message since we're here, so init a GoogleAPIClient and respond
-        initGoogleApiClient();
-        sendMessage(MSG_WEAR_MSG_ACK, "notification received");
+        mApiClient = new APIClientCommon(this);
+        mApiClient.sendMessage(MSG_WEAR_MSG_ACK, "notification received");
 
         // TODO - remove
         SensorManager smm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -44,15 +41,6 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
         for (Sensor s : sensor) {
             Log.w("wrkr", "ABCDE supplies sensor: " + s.getName());
         }
-    }
-
-    private void initGoogleApiClient() {
-        mApiClient = new GoogleApiClient.Builder( this )
-                .addApi( Wearable.API )
-                .build();
-
-        if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
-            mApiClient.connect();
     }
 
     @Override
@@ -93,27 +81,5 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
     @Override
     public void onConnectionSuspended(int i) {
         Log.e(TAG, "ABCDE WEAR DISCONNECTED FROM MOBILE");
-    }
-
-//    @Override
-//    public void onMessageReceived(MessageEvent messageEvent) {
-//        Log.d(TAG, "ABCDE MESSAGE RECEIVED!!! WOO!!!!!!");
-//    }
-
-    // TODO - make a Common.java that mobile and wear share that contains common code like this method
-    public void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-
-                    Log.d("wrkr", "ABCDE RESULT SEND TO MOBILE = " + result.getStatus().toString());
-                }
-            }
-        }).start();
     }
 }

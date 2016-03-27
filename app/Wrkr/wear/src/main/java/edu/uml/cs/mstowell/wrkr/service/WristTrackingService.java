@@ -10,15 +10,10 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
 /**
@@ -33,7 +28,7 @@ public class WristTrackingService extends Service implements Globals {
 
     private WristTrackingListener mWristListener;
     private WristBroadcastReceiver mReceiver;
-    private GoogleApiClient mApiClient;
+    private APIClientCommon mApiClient;
 
     // default constructor
     public WristTrackingService() {
@@ -50,7 +45,7 @@ public class WristTrackingService extends Service implements Globals {
         mReceiver = new WristBroadcastReceiver();
 
         // initialize GoogleAPIClient
-        initGoogleApiClient();
+        mApiClient = new APIClientCommon(this);
 
         // create a notification to link back to the RunFragment as well
         // as allow the application to record data with the screen off
@@ -58,7 +53,7 @@ public class WristTrackingService extends Service implements Globals {
 
             // send a message to the app to display a notification that
             // recording has started
-            sendMessage(MSG_START_ACCEL_ACK, "Starting wear accelerometer now");
+            mApiClient.sendMessage(MSG_START_ACCEL_ACK, "Starting wear accelerometer now");
         }
     }
 
@@ -145,7 +140,7 @@ public class WristTrackingService extends Service implements Globals {
         }
 
         // send the app a termination message
-        sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
+        mApiClient.sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
     }
 
     private class WristBroadcastReceiver extends BroadcastReceiver {
@@ -157,39 +152,12 @@ public class WristTrackingService extends Service implements Globals {
             String data = intent.getStringExtra(WRIST_BROADCAST_DATA);
 
             // send the data back to the wrkr mobile app
-            sendMessage(MSG_WEAR_DATA, data);
+            mApiClient.sendMessage(MSG_WEAR_DATA, data);
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    // TODO - should be a common method
-    private void initGoogleApiClient() {
-        mApiClient = new GoogleApiClient.Builder( this )
-                .addApi( Wearable.API )
-                .build();
-
-        if(!(mApiClient.isConnected() || mApiClient.isConnecting()))
-            mApiClient.connect();
-    }
-
-    // TODO - should be a common method
-    public void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-
-                    Log.d("wrkr", "ABCDE RESULT SEND TO MOBILE = " + result.getStatus().toString());
-                }
-            }
-        }).start();
     }
 }
