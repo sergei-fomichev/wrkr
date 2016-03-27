@@ -32,20 +32,21 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import edu.uml.cs.mstowell.wrkrlib.data.Globals;
+import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 import edu.uml.cs.mstowell.wrkr.ui.HelpFragment;
 import edu.uml.cs.mstowell.wrkr.ui.HomeFragment;
 import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;
 import edu.uml.cs.mstowell.wrkr.ui.SettingsFragment;
 
+/**
+ * MainActivity for the entire UI, including all fragments
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks, Globals {
 
     // global UI elements
     private TextView email;
-    private NavigationView navigationView;
-    private View root;
 
     // context
     public static Context mContext;
@@ -90,10 +91,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerLayout = navigationView.getHeaderView(0);
@@ -107,27 +108,28 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences prefs = getSharedPreferences(GLOBAL_PREFS, 0);
         String strEmail = prefs.getString(USER_EMAIL, "");
         if (strEmail.isEmpty()) {
-            try {
-                Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                        new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
-                startActivityForResult(intent, REQUEST_CODE_EMAIL);
-            } catch (ActivityNotFoundException e) {
-                // the user hasn't synced a Google account to their device yet - either
-                // launcher an account adding intent or prompt for a manual email
-                // address entry
-                Intent intent = new Intent(Settings.ACTION_ADD_ACCOUNT);
-                intent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[]{"com.google"});
-                startActivity(intent);
-            }
+            getGoogleAccount();
         } else {
             email.setText(strEmail);
         }
 
-        // get root view (useful for making snackbars)
-        root = (View) findViewById(R.id.main_root_view);
-
         // initialize GoogleApiClient to talk to wear
         initGoogleApiClient();
+    }
+
+    public void getGoogleAccount() {
+        try {
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+            startActivityForResult(intent, REQUEST_CODE_EMAIL);
+        } catch (ActivityNotFoundException e) {
+            // the user hasn't synced a Google account to their device yet - either
+            // launcher an account adding intent or prompt for a manual email
+            // address entry
+            Intent intent = new Intent(Settings.ACTION_ADD_ACCOUNT);
+            intent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[]{"com.google"});
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -225,7 +227,7 @@ public class MainActivity extends AppCompatActivity
                 .addApi( Wearable.API )
                 .build();
 
-        if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
+        if(!(mApiClient.isConnected() || mApiClient.isConnecting()))
             mApiClient.connect();
     }
 

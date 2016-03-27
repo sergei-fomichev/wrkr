@@ -14,21 +14,27 @@ import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
 
 /**
- * Created by Mike on 3/2/2016.
+ * List adapter for the HomeFragment notification list.
  */
 public class MListAdapter extends BaseAdapter {
-    ArrayList<String> data;
+    ArrayList<ArrayList<String>> data;
     Context context;
 
     private static LayoutInflater inflater=null;
-    public MListAdapter(MainActivity mainActivity, String[] mData) {
+    public MListAdapter(MainActivity mainActivity, String[][] mData) {
 
         context = mainActivity;
-        data = new ArrayList<String>();
-        Collections.addAll(data, mData);
+        data = new ArrayList<>();
+
+        for (String[] array : mData) {
+            ArrayList<String> subData = new ArrayList<>();
+            Collections.addAll(subData, array);
+            data.add(subData);
+        }
 
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
     @Override
     public int getCount() {
         return data.size();
@@ -45,27 +51,58 @@ public class MListAdapter extends BaseAdapter {
     }
 
     public class Holder {
-        TextView tv;
+        TextView title;
+        TextView subtitle;
+        TextView detail;
     }
 
-    public String remove(int position) {
+    public ArrayList<String> remove(int position) {
         return data.remove(position);
     }
 
-    public void insertToPosition(String item, int position) {
+    public void insertToPosition(ArrayList<String> item, int position) {
         data.add(position, item);
+    }
+
+    public void insert(String sTitle, String sSubtitle, String sDetail) {
+        ArrayList<String> newRow = new ArrayList<>();
+
+        newRow.add(sTitle);
+        newRow.add(sSubtitle);
+        newRow.add(sDetail);
+
+        data.add(newRow);
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        View rowView;
-        rowView = inflater.inflate(R.layout.list_item, parent, false);
+        if (convertView == null) {
+            LayoutInflater vi = (LayoutInflater)
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = vi.inflate(R.layout.list_item, parent, false);
+        }
+        //View rowView = inflater.inflate(R.layout.list_item, parent, false);
 
         Holder holder = new Holder();
-        holder.tv = (TextView) rowView.findViewById(R.id.list_item_text);
-        holder.tv.setText(data.get(position));
+        ArrayList<String> thisData = data.get(position);
 
-        return rowView;
+        holder.title = (TextView) convertView.findViewById(R.id.list_item_title);
+        holder.title.setText(thisData.get(0));
+
+        holder.subtitle = (TextView) convertView.findViewById(R.id.list_item_subtitle);
+        holder.subtitle.setText(thisData.get(1));
+
+        holder.detail = (TextView) convertView.findViewById(R.id.list_item_detail);
+        holder.detail.setText(thisData.get(2));
+
+        if (holder.detail.getText().length() == 0) {
+            holder.detail.setVisibility(View.GONE);
+            holder.subtitle.setPadding(holder.subtitle.getPaddingLeft(),
+                    holder.subtitle.getPaddingTop(), holder.subtitle.getPaddingRight(),
+                    (int) context.getResources().getDimension(R.dimen.list_item_bottom));
+        }
+
+        return convertView;
     }
 }

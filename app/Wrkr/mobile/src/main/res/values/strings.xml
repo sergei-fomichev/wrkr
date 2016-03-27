@@ -8,6 +8,38 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_profile">Profile</string>
-    <string name="menu_settings">Settings</string>
+    <string name="menu_settings">Debug</string>
     <string name="menu_help">Help</string>
+
+    <string name="help_text"><b>Purpose</b>
+        \n\nThis application is designed to keep your wrists and fingers active to help prevent
+        a variety of health issues such as arthritis.
+
+        \n\n\n<b>Requirements</b>
+        \n\nYou will need, in addition to this application on your device, a smartwatch that
+        can also run this application.  The smartwatch must contain an accelerometer sensor
+        and must be worn on your left wrist.  The smartwatch should be bluetooth-paired with your
+        phone and should remain around your phone when you are at a computer.
+        A Google sign-in is required to synchronize your profile between the device and our web
+        server, where you will be performing monitored wrist exercises.  A Leap Motion device
+        will need to be connected to the device you are using our website on.
+
+        \n\n\n<b>How it works</b>
+        \n\nWhen we detect that you are at a keyboard, the accelerometer on the watch will be
+        triggered in a service to batch collect as much data as needed to figure out how long
+        you have been idle at the computer doing minimal exercise.  These calculations are done
+        using advanced machine learning on your phone as to help preserve some of your watch\'s
+        battery level.  When we notice you have been idle at a keyboard for about 30 minutes,
+        your mobile device will give you a notification to consider an exercise.  When you open
+        the app, a log of these notifications will be presented on the home screen.  You can
+        swipe these away when you do not want to consider that warning to exercise.  When you
+        are prompted for an exercise, simply log onto the wrkr website with your Google account
+        and you will get a training plan that suits your activity levels.  Perform exercises
+        above the Leap Motion device and we will track your progress.
+
+        \n\n\n<b>Additional Information</b>
+        \n\nThis application is a collaboration between Mike Stowell and Sergei Fomichev as
+        part of the COMP.5800 Ubiquitious Computing course at the University of Massachusetts,
+        Lowell.\n\n\n\n
+    </string>
 </resources>

@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="help page will be here soon"
-        android:padding="8dp"
-        android:textColor="#fff"
-        android:background="#bbb"
-        android:textSize="28sp" />
-</LinearLayout>
+    <ScrollView
+        android:layout_margin="10dp"
+        android:paddingBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:id="@+id/fragment_help_help_text"
+            android:text="@string/help_text"
+            android:textSize="16sp"
+            android:scrollbars="vertical"/>
+    </ScrollView>
+</RelativeLayout>

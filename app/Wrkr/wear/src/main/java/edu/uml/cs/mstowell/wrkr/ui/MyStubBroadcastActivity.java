@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 /**
- * Example shell activity which simply broadcasts to our receiver and exits.
+ * Example shell activity which simply broadcasts to the receiver and exits
  */
 public class MyStubBroadcastActivity extends Activity {
     @Override

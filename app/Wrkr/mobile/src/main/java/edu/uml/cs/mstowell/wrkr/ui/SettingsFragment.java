@@ -15,10 +15,10 @@ import android.widget.TextView;
 
 import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkrlib.data.Globals;
+import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
 /**
- * Created by Mike on 3/1/2016.
+ * Debug information available for the user
  */
 public class SettingsFragment extends Fragment implements Globals {
 

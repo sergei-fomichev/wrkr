@@ -10,21 +10,30 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
 
-import edu.uml.cs.mstowell.wrkrlib.data.Globals;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
 /**
- * Created by Mike on 3/14/2016.
+ * Wear accelerometer data collection service
  */
 public class WristTrackingService extends Service implements Globals {
 
     private boolean serviceIsRunning;
     private SensorManager mSensorManager;
+    private Timer resetAccelTimer;
+    private int timerTicks = 0;
 
     private WristTrackingListener mWristListener;
     private WristBroadcastReceiver mReceiver;
-
-    private int secondsRan;
-    private boolean userIsSitting;
+    private GoogleApiClient mApiClient;
 
     // default constructor
     public WristTrackingService() {
@@ -40,31 +49,16 @@ public class WristTrackingService extends Service implements Globals {
         // declare the broadcast receiver to receive user activity updates
         mReceiver = new WristBroadcastReceiver();
 
+        // initialize GoogleAPIClient
+        initGoogleApiClient();
+
         // create a notification to link back to the RunFragment as well
         // as allow the application to record data with the screen off
         if (!serviceIsRunning) {
 
-            // TODO - send a message to the app to display a notification that
-            // TODO - recording has started
-            Log.w("wrkr", "ABCDE ACCELEROMETER STARTING");
-
-//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-//                    NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//            Notification.Builder builder = new Notification.Builder(getApplicationContext());
-//            builder.setContentIntent(pendingIntent)
-//                    .setContentTitle("Running Start")
-//                    .setContentText("Recording run data")
-//                    .setTicker("Started recording run data")
-//                    .setSmallIcon(R.drawable.ic_launcher)
-//                    .setContentIntent(pendingIntent);
-//
-//            Notification notification = builder.build();
-//            NotificationManager mNotificationManger =
-//                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//            mNotificationManger.notify(NOTIFICATION_ID, notification);
+            // send a message to the app to display a notification that
+            // recording has started
+            sendMessage(MSG_START_ACCEL_ACK, "Starting wear accelerometer now");
         }
     }
 
@@ -75,20 +69,53 @@ public class WristTrackingService extends Service implements Globals {
 
             // initialize variables
             serviceIsRunning = true;
-            userIsSitting = false;
-            secondsRan = 0;
 
             // register the wrist tracking receiver
             IntentFilter intentFilter = new IntentFilter(WRIST_BROADCAST_ACTION);
             registerReceiver(mReceiver, intentFilter);
 
-            // register to receive accelerometer updates
-            mSensorManager.registerListener(mWristListener,
-                    mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                    SensorManager.SENSOR_DELAY_FASTEST);
+            /*
+            The Moto 360 device cannot support batched data collection mode in its hardware.
+            int fifoSize = accelerometer.getFifoReservedEventCount();
+            The above code reports a fifoSize of 0.  We would need a fifoSize > 0 to do this.
+            */
+
+            // register accelerometer listener
+            setAccelListener();
+
+            // start a timer to re-register the accelerometer listener
+            ResetAccelTimerTask task = new ResetAccelTimerTask();
+            resetAccelTimer = new Timer();
+            resetAccelTimer.scheduleAtFixedRate(task, 0, 300000); // 5*60*1000 = 5 minutes
         }
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private class ResetAccelTimerTask extends TimerTask {
+        @Override
+        public void run() {
+
+            // if the accelerometer has been running for 10 hours straight,
+            // turn it off (could be due to mistake)
+            if (timerTicks >= 120) { // 120 = 12 5-minute ticks per hour * 10 hours
+                stopSelf();
+            }
+
+            // make sure the accelerometer never turns off by reseting it
+            Log.d("wrkr", "ABCDE reseting the accel");
+            setAccelListener();
+
+            timerTicks++;
+        }
+    }
+
+    private void setAccelListener() {
+        Sensor accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        mSensorManager.unregisterListener(mWristListener);
+        mSensorManager.registerListener(mWristListener, accelerometer,
+                SensorManager.SENSOR_DELAY_FASTEST);//, 10000000);
     }
 
     @Override
@@ -101,12 +128,24 @@ public class WristTrackingService extends Service implements Globals {
             // unregister accelerometer updates
             mSensorManager.unregisterListener(mWristListener);
 
+            // cancel the timer
+            if (resetAccelTimer != null)
+                resetAccelTimer.cancel();
+            resetAccelTimer = null;
+
             // unregister the broadcast receiver
             unregisterReceiver(mReceiver);
+
+            // disconnect the Google API Client
+            if ( mApiClient != null ) {
+                if ( mApiClient.isConnected() ) {
+                    mApiClient.disconnect();
+                }
+            }
         }
 
-        // TODO - send the app a termination message, possibly display another notification
-        Log.w("wrkr", "ABCDE ACCELEROMETER TERMINATING");
+        // send the app a termination message
+        sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
     }
 
     private class WristBroadcastReceiver extends BroadcastReceiver {
@@ -114,22 +153,43 @@ public class WristTrackingService extends Service implements Globals {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            // get the user's newly broadcast activity level
-            int activity = intent.getIntExtra(WRIST_BROADCAST_ACTIVITY_UPDATE, -1);
+            // get the broadcasted 10 seconds worth of data
+            String data = intent.getStringExtra(WRIST_BROADCAST_DATA);
 
-            // TODO - send back some data
-            if (activity != -1) {
-                // data is a change in activity
-                Log.d("wrkr", "ABCDE activity = " + activity);
-            } else {
-                // data is some raw accel readings
-                // TODO - do something with these
-            }
+            // send the data back to the wrkr mobile app
+            sendMessage(MSG_WEAR_DATA, data);
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    // TODO - should be a common method
+    private void initGoogleApiClient() {
+        mApiClient = new GoogleApiClient.Builder( this )
+                .addApi( Wearable.API )
+                .build();
+
+        if(!(mApiClient.isConnected() || mApiClient.isConnecting()))
+            mApiClient.connect();
+    }
+
+    // TODO - should be a common method
+    public void sendMessage( final String path, final String text ) {
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+
+                    Log.d("wrkr", "ABCDE RESULT SEND TO MOBILE = " + result.getStatus().toString());
+                }
+            }
+        }).start();
     }
 }

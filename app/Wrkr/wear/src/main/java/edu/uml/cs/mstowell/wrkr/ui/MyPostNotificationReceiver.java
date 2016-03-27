@@ -9,6 +9,9 @@ import android.content.Intent;
 
 import edu.uml.cs.mstowell.wrkr.R;
 
+/**
+ * Launches the notification to display to the user
+ */
 public class MyPostNotificationReceiver extends BroadcastReceiver {
     public static final String CONTENT_KEY = "contentText";
 
@@ -27,7 +30,7 @@ public class MyPostNotificationReceiver extends BroadcastReceiver {
                         .setDisplayIntent(PendingIntent.getActivity(context, 0, displayIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT)))
                 .setPriority(Notification.PRIORITY_MAX)
-                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                //.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .build();
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, notification);
 

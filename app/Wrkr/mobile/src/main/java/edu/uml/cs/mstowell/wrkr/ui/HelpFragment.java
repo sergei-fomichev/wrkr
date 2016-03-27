@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import edu.uml.cs.mstowell.wrkr.R;
 
 /**
- * Created by Mike on 3/1/2016.
+ * Fragment to provide usage information to the user
  */
 public class HelpFragment extends Fragment {
 

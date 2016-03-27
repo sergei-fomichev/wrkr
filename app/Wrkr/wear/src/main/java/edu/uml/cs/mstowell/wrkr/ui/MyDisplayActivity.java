@@ -17,8 +17,11 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.List;
 
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkrlib.data.Globals;
+import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
+/**
+ * Notification UI
+ */
 public class MyDisplayActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, Globals {
 
     private TextView mTextView;

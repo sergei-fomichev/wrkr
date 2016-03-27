@@ -5,9 +5,25 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="profile page will be here soon"
+        android:text="Currently logged in as:"
         android:padding="8dp"
-        android:textColor="#fff"
-        android:background="#bbb"
-        android:textSize="28sp" />
+        android:layout_marginTop="50dp"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:id="@+id/profile_logged_in_as"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="user"
+        android:padding="8dp"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal"/>
+    <Button
+        android:id="@+id/profile_change_prof"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Change Profile"
+        android:layout_marginTop="40dp"/>
 </LinearLayout>
