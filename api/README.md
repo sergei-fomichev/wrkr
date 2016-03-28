@@ -3,7 +3,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
 ###Methods:
 
-##GET  
+#GET  
 -Check if user exist  
 {  
 "exist":  
@@ -20,7 +20,7 @@ Respond [header - 200]
 
 
 
-##POST  
+#POST  
 -insert a new user as a participant  
 when user installed the app it immidiatelly asks him to sign in with google profile and insert new user in the database  
 {  
