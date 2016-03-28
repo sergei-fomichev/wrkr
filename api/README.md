@@ -3,7 +3,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
 ###Methods:
 
-GET  
+##GET  
 -Check if user exist  
 {  
 "exist":  
@@ -20,22 +20,25 @@ Respond [header - 200]
 
 
 
-POST
--insert a new user as a participant
-when user installed the app it immidiatelly asks him to sign in with google profile and insert new user in the database
-{
-"email": email,  //string
-"name": name  //string
-}
-Respond [header - 200]
-{
-"status": "ok"
-}
-When user needs an exercise
+##POST  
+-insert a new user as a participant  
+when user installed the app it immidiatelly asks him to sign in with google profile and insert new user in the database  
+{  
+"email": email  //string  
+}  
+Respond [header - 200]  
+{  
+"status": "ok"  
+}  
+OR Respond [header -401]  
+{  
+"status": "exist"  
+}  
+When user needs an exercise  
 
 
 
 
-PUT
--update exercises state
+##PUT  
+-update exercises state  
 
