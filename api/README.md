@@ -1,1 +1,1 @@
-Here is gonna be a RESful API with php. 
+Here is gonna be a RESTful API with php. 
