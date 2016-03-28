@@ -1,10 +1,10 @@
 RESTful API with php. 
 http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
-###Methods:
+##Methods:
 
-#GET  
--Check if user exist  
+###GET  
+>Check if user exist  
 {  
 "exist":  
 "email": Email  //string  
@@ -14,13 +14,13 @@ Respond [header - 200]
 "id": id  
 "name": name  
 }  
--Check users exircises requested   
+''Check users exircises requested   
 
 
 
 
 
-#POST  
+###POST  
 -insert a new user as a participant  
 when user installed the app it immidiatelly asks him to sign in with google profile and insert new user in the database  
 {  
@@ -39,6 +39,6 @@ When user needs an exercise
 
 
 
-##PUT  
+###PUT  
 -update exercises state  
 
