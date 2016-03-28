@@ -1,7 +1,7 @@
 RESTful API with php. 
 http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
-Methods:
+###Methods:
 
 GET
 -Check if user exist
