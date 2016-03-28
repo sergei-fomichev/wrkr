@@ -1,13 +1,23 @@
 RESTful API with php. 
+http://weblab.cs.uml.edu/~sfomiche/wrkr/api.php
 
-Methods
+Methods:
 
 GET
-- get info about user
-POST
-— insert new user as a participant
-— 
-PUT - 
-— update exercises state
+-Check if user exist
+{
+"exist":
+"email": Email  //string
+}
+Respond 
+header - 200
+{
+"id": id
+"name": name
+}
 
-http://weblab.cs.uml.edu/~sfomiche/wrkr/api.php
+POST
+-insert new user as a participant
+PUT
+-update exercises state
+
