@@ -9,15 +9,33 @@ GET
 "exist":
 "email": Email  //string
 }
-Respond 
-header - 200
+Respond [header - 200]
 {
 "id": id
 "name": name
 }
+-Check users exircises requested 
+
+
+
+
 
 POST
--insert new user as a participant
+-insert a new user as a participant
+when user installed the app it immidiatelly asks him to sign in with google profile and insert new user in the database
+{
+"email": email,  //string
+"name": name  //string
+}
+Respond [header - 200]
+{
+"status": "ok"
+}
+When user needs an exercise
+
+
+
+
 PUT
 -update exercises state
 
