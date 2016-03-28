@@ -1,5 +1,5 @@
 RESTful API with php. 
-http://weblab.cs.uml.edu/~sfomiche/wrkr/api.php
+http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
 Methods:
 
