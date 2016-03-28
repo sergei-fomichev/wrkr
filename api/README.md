@@ -1,8 +1,10 @@
 RESTful API with php. 
 
 Methods
-GET - get info about user
-POST - 
+
+GET
+- get info about user
+POST
 — insert new user as a participant
 — 
 PUT - 
