@@ -1,5 +1,5 @@
 # wrkr
-A ubicomp project
+Sergei Fomichev and Mike Stowell
 
 ## Progress: March 22 - March 28 2016
 
