@@ -11,6 +11,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >"email": user's Google account email  
 >"name": user's Google account name  
 >"exercises": # of exercises due. This is 0 at first, and incremented on each POST by mobile when an exercise is due.  It is reset to 0 when a user completes an exercise, but if the exercise times out, it is left as-is.  When a user goes to the website and has exercises to do, this becomes a multiplier of how many "reps" of each exercise he/she must do to complete it.  
+>"timestamp": the UNIX timestamp of the last issued exercise.  The user will have 2 hours to complete an exercise, so a "time.now()" (language dependent) - timestamp = how much time remaining the user has to complete the exercise before it expires.  
 >}  
 
 ---
@@ -40,7 +41,8 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >}  
 >Respond [header - 200]  
 >{  
->"exercises": numExercises  
+>"exercises": number of exercises  
+>"timestamp":  last issued UNIX timestamp (to determine time remaining of an exercise)  
 >}  
 >OR Respond [header - 401] if user not exists in database  
 
@@ -55,14 +57,14 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >Respond [header - 200]  
 >{  
 >"status": "ok"  
->"id": userID
+>"id": userID  
 >}  
 >OR Respond [header - 401] if already exists  
   
 *User has a new exercise that is due*  
 >{  
 >"id": userID  
->"timestamp": UNIX timestamp of when the user got notified they have an exercise to do  
+>"timestamp": UNIX timestamp of when the user got notified they have an exercise to do (to determine timeout)  
 >}  
 >Respond [header - 200]  
 >{  
