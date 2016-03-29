@@ -18,3 +18,7 @@ Sergei Fomichev and Mike Stowell
 
 
 ### Web + Leap Motion
+
+ - Added the exercise progress bar, so you can see how many exercises you have left in a nice way. 
+ - Implemented the second hand which goes after the first one.
+ - Made the first API command implemented. 
