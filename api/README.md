@@ -44,31 +44,26 @@ OR Respond [header - 401] if user not exists in database
 ###POST  
 
 >Insert a new user as a participant  
-when user installed the app it immediately asks him to sign in with google profile and insert new user in the database  
-{  
-"email": email  //string  
-}  
-Respond [header - 200]  
-{  
-"status": "ok"  
-"id": userID
-}  
-OR Respond [header - 401] if already exists
+>when user installed the app it immediately asks him to sign in with google profile and insert new user in the database  
+>{  
+>"email": email  //string  
+>}  
+>Respond [header - 200]  
+>{  
+>"status": "ok"  
+>"id": userID
+>}  
+>OR Respond [header - 401] if already exists
 
 
 >User has a new exercise that is due  
-{  
-"id": userID  
-"timestamp": UNIX timestamp of when the user got notified they have an exercise to do  
-}  
-Respond [header - 200]  
-{  
-"status": "ok"  
-"exercises": new exercise count  
-}  
-OR Respond [header - 401] if user does not exist  
-
-
-###PUT  
--update exercises state  
-
+>{  
+>"id": userID  
+>"timestamp": UNIX timestamp of when the user got notified they have an exercise to do  
+>}  
+>Respond [header - 200]  
+>{  
+>"status": "ok"  
+>"exercises": new exercise count  
+>}  
+>OR Respond [header - 401] if user does not exist  
