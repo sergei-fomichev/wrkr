@@ -1,10 +1,13 @@
 package edu.uml.cs.mstowell.wrkrlib.common;
 
+import android.os.StrictMode;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -16,33 +19,20 @@ import java.net.URL;
  */
 public class RestAPI {
 
-    // single instance of the RestAPI class
-    private static RestAPI instance = null;
-
     // URL we connect to
-    private final String baseURL = "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php";
+    private static final String baseURL = "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php";
 
     // request type enum
     private enum RequestType { GET, POST }
 
     // result of a makeRequest call
-    private class Result {
+    private static class Result {
         public int resultCode; public String response;
         public Result(int r, String s) { resultCode = r; response = s; }
     }
 
-    // private constructor
+    // private constructor since all methods are static and this class should not be initialized
     private RestAPI() {}
-
-    // initialize the singleton API instance
-    public static RestAPI getInstance() {
-
-        if (instance == null) {
-            instance = new RestAPI();
-        }
-
-        return instance;
-    }
 
     /* == Check if user exist ==
     Request
@@ -57,7 +47,7 @@ public class RestAPI {
     }
     OR Respond [header - 401] if not exists
     */
-    public User getUser(String email) {
+    public static User getUser(String email) {
 
         User u;
         Result r = makeRequest("exist&email=" + email, RequestType.GET);
@@ -96,7 +86,7 @@ public class RestAPI {
     }
     OR Respond [header - 401] if user not exists in database
     */
-    public User getExercises(int uid) {
+    public static User getExercises(int uid) {
 
         User u;
         Result r = makeRequest("exercises&id=" + uid, RequestType.GET);
@@ -134,7 +124,7 @@ public class RestAPI {
     }
     OR Respond [header - 401] if already exists
     */
-    public User postUser(String email) {
+    public static User postUser(String email) {
 
         User u;
         Result r = makeRequest("email=" + email, RequestType.POST);
@@ -175,7 +165,7 @@ public class RestAPI {
     }
     OR Respond [header - 401] if user does not exist
     */
-    public User postExercise(int uid, long timestamp) {
+    public static User postExercise(int uid, long timestamp) {
 
         User u;
         Result r = makeRequest("id=" + uid + "&timestamp=" + timestamp, RequestType.POST);
@@ -204,9 +194,9 @@ public class RestAPI {
     }
 
     // make the actual API connection request
-    private Result makeRequest(String parameters, RequestType reqType) {
+    private static Result makeRequest(String parameters, RequestType reqType) {
 
-        int responseCode = 0;
+        int responseCode;
 
         try {
             URL url = new URL(baseURL + "?" + parameters);
@@ -222,8 +212,11 @@ public class RestAPI {
             urlConnection.setRequestProperty("Accept", "application/json");
 
             responseCode = urlConnection.getResponseCode();
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             System.out.println("Response from server: " + responseCode);
+            if (responseCode == 401)
+                return new Result(responseCode, "401 error from server");
+
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
             try {
                 ByteArrayOutputStream bo = new ByteArrayOutputStream();
@@ -241,19 +234,24 @@ public class RestAPI {
             }
 
         } catch (ConnectException ce) {
-            System.err.println("Connection failed: ENETUNREACH (network not reachable)");
-            ce.printStackTrace();
+            return new Result(-1, "Connection failed: ENETUNREACH (network not reachable)");
+        } catch (FileNotFoundException fnfe) {
+            return new Result(-1, "File not found exception (could be user does not exist)");
         } catch (Exception e) {
-            e.printStackTrace();
+            return new Result(-1, "General error");
         }
-
-        return new Result(-1, "Error: status " + responseCode);
     }
 
     // _R_equest _T_ype _T_o _S_tring
-    private String rtts(RequestType rt) {
+    private static String rtts(RequestType rt) {
         if (rt == RequestType.GET)
             return "GET";
         else return "POST";
+    }
+
+    // TODO - usually we do networking in an AsyncTask. We'll get to that. For now, call this.
+    public static void dieNetworkOnMainThreadException() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 }
