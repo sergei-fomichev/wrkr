@@ -13,9 +13,6 @@ We will update our progress for each week below.  The most recent week appears a
 
 
 
-### Web + Leap Motion
-
-
 
 ## Progress: March 22 - March 28 2016
 
