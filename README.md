@@ -1,6 +1,22 @@
 # wrkr
 Sergei Fomichev and Mike Stowell
 
+We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
+
+## Progress: March 29 - April 4 2016
+
+### Mobile + Smartwatch App
+
+- Implemented and tested the API for the Java/mobile side
+- Using a partial wakelock + accelerometer re-register combination to keep the watches accelerometer on
+  - only one or the other does not work, but so far using both seems fine. Needs more testing.
+
+
+
+### Web + Leap Motion
+
+
+
 ## Progress: March 22 - March 28 2016
 
 ### Mobile + Smartwatch App
