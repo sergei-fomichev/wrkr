@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import java.util.Timer;
@@ -29,6 +30,8 @@ public class WristTrackingService extends Service implements Globals {
     private WristTrackingListener mWristListener;
     private WristBroadcastReceiver mReceiver;
     private APIClientCommon mApiClient;
+
+    private PowerManager.WakeLock mWakeLock;
 
     // default constructor
     public WristTrackingService() {
@@ -82,6 +85,11 @@ public class WristTrackingService extends Service implements Globals {
             ResetAccelTimerTask task = new ResetAccelTimerTask();
             resetAccelTimer = new Timer();
             resetAccelTimer.scheduleAtFixedRate(task, 0, 300000); // 5*60*1000 = 5 minutes
+
+            // create a partial wakelock to keep accelerometer readings coming
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
+            mWakeLock.acquire();
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -138,6 +146,10 @@ public class WristTrackingService extends Service implements Globals {
                 }
             }
         }
+
+        // always ensure the wakelock is dismissed
+        if (mWakeLock != null && mWakeLock.isHeld())
+            mWakeLock.release();
 
         // send the app a termination message
         mApiClient.sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
