@@ -21,7 +21,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
 ###GET  
 
-*Check if user exist*
+*Check if user exist* `Done`
 >{  
 >"exist":  
 >"email": Email  //string  
@@ -49,10 +49,11 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
 ###POST  
 
-*Insert a new user as a participant*  
+*Insert a new user as a participant*  `done`
 >when user installed the app it immediately asks him to sign in with google profile and insert new user in the database  
 >{  
 >"email": email  //string  
+>"name": name //string (empty if unknown)
 >}  
 >Respond [header - 200]  
 >{  
