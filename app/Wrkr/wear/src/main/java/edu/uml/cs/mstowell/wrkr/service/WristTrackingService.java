@@ -124,7 +124,8 @@ public class WristTrackingService extends Service implements Globals {
     @Override
     public void onDestroy() {
 
-        super.onDestroy();
+        // send the app a termination message
+        mApiClient.sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
 
         if (serviceIsRunning) {
 
@@ -151,8 +152,7 @@ public class WristTrackingService extends Service implements Globals {
         if (mWakeLock != null && mWakeLock.isHeld())
             mWakeLock.release();
 
-        // send the app a termination message
-        mApiClient.sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
+        super.onDestroy();
     }
 
     private class WristBroadcastReceiver extends BroadcastReceiver {
