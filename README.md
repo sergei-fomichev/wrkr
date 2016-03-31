@@ -10,7 +10,9 @@ We will update our progress for each week below.  The most recent week appears a
 - Implemented and tested the API for the Java/mobile side
 - Using a partial wakelock + accelerometer re-register combination to keep the watches accelerometer on
   - only one or the other does not work, but so far using both seems fine. Needs more testing.
-
+- Wrote csv files containing accelerometer, magnitude, and weighted-moving-average from watch.
+  - contains data of me sitting, typing slow, typing fast, standing, walking, jogging, and scratching my head, 10 seconds each
+  - next step: analyzing it and seeing how I will apply machine learning
 
 
 
