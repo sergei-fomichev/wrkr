@@ -4,6 +4,7 @@ Sergei Fomichev and Mike Stowell
 We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
 
 ## Progress: March 29 - April 4 2016
+#### [[CURRENT WEEK - PROGRESS FOR THIS WEEK IS THUS NOT FINALIZED]]
 
 ### Mobile + Smartwatch App
 
