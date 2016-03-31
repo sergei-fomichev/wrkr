@@ -4,7 +4,6 @@ Sergei Fomichev and Mike Stowell
 We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
 
 ## Progress: March 29 - April 4 2016
-#### [[CURRENT WEEK - PROGRESS FOR THIS WEEK IS THUS NOT FINALIZED]]
 
 ### Mobile + Smartwatch App
 
@@ -30,9 +29,15 @@ We will update our progress for each week below.  The most recent week appears a
 - Did a battery test: confirmed that large battery drain was due to debug over bluetooth, not due to the accelerometer being on and magnitude/WMA being calculated frequently
 
 
-
 ### Web + Leap Motion
 
  - Added the exercise progress bar, so you can see how many exercises you have left in a nice way. 
  - Implemented the second hand which goes after the first one.
  - Made the first API command implemented. 
+
+## Progress: Pre- March 22 2016
+
+ - Came up with the idea for the app and website
+ - Implemented a shell application and just started accelerometer recording, figured out debugging over bluetooth
+ - Started playing with the Leap Motion device
+ - Figured out where we will host the web server
