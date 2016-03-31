@@ -34,7 +34,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >OR Respond [header - 401] if not exists  
 
 
-*Check a user's outstanding exercise count*  
+*Check a user's outstanding exercise count* `Done` 
 >{  
 >"exercises":  
 >"id": userID  
@@ -49,7 +49,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 
 ###POST  
 
-*Insert a new user as a participant*  `done`
+*Insert a new user as a participant* `Done`
 >when user installed the app it immediately asks him to sign in with google profile and insert new user in the database  
 >{  
 >"email": email  //string  
@@ -62,7 +62,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >}  
 >OR Respond [header - 401] if already exists  
   
-*User has a new exercise that is due*  
+*User has a new exercise that is due*  `Done`
 >{  
 >"id": userID  
 >"timestamp": UNIX timestamp of when the user got notified they have an exercise to do (to determine timeout)  
