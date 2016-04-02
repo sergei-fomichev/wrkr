@@ -34,6 +34,8 @@ import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;
 import edu.uml.cs.mstowell.wrkr.ui.SettingsFragment;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
+import edu.uml.cs.mstowell.wrkrlib.common.RestAPI;
+import edu.uml.cs.mstowell.wrkrlib.common.User;
 
 /**
  * MainActivity for the entire UI, including all fragments
@@ -112,6 +114,18 @@ public class MainActivity extends AppCompatActivity
 
         // initialize GoogleApiClient to talk to wear
         mApiClient = new APIClientCommon(this);
+
+        // TODO - remove API tests
+        RestAPI.dieNetworkOnMainThreadException();
+        String email = "test" + System.currentTimeMillis() + "@fake.user";
+        User u = RestAPI.postUser(email);
+        Log.d("wrkr", "API postUser: " + u.id + ", " + u.email);
+        u = RestAPI.postExercise(u.id, System.currentTimeMillis());
+        Log.d("wrkr", "API postExercise: " + u.id + ", " + u.timestamp + ", " + u.exercises);
+        u = RestAPI.getUser(email);
+        Log.d("wrkr", "API getUser: " + u.id + ", " + u.email + ", " + u.name);
+        u = RestAPI.getExercises(u.id);
+        Log.d("wrkr", "API getExercises: " + u.id + ", " + u.exercises + ", " + u.timestamp);
     }
 
     public void getGoogleAccount() {

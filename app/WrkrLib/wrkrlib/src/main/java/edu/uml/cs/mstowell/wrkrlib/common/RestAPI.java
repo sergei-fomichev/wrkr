@@ -10,9 +10,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * API to comm with the wrkr web server
@@ -22,8 +27,8 @@ public class RestAPI {
     // URL we connect to
     private static final String baseURL = "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php";
 
-    // request type enum
-    private enum RequestType { GET, POST }
+    // standard char set
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     // result of a makeRequest call
     private static class Result {
@@ -50,10 +55,10 @@ public class RestAPI {
     public static User getUser(String email) {
 
         User u;
-        Result r = makeRequest("exist&email=" + email, RequestType.GET);
+        Result r = makeGetRequest("exist&email=" + email);
 
         if (r.resultCode == -1) {
-            System.err.println("RestAPI getUser: response -1 (makeRequst malformed)");
+            System.err.println("RestAPI getUser: response -1 (makeRequest malformed)");
             return null;
         } else if (r.resultCode == 401) {
             System.err.println("RestAPI getUser: response 401 (user does not exist)");
@@ -65,6 +70,7 @@ public class RestAPI {
             u = new User();
             u.id = json.getInt("id");
             u.name = json.getString("name");
+            u.email = email;
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -89,10 +95,10 @@ public class RestAPI {
     public static User getExercises(int uid) {
 
         User u;
-        Result r = makeRequest("exercises&id=" + uid, RequestType.GET);
+        Result r = makeGetRequest("exercises&id=" + uid);
 
         if (r.resultCode == -1) {
-            System.err.println("RestAPI getExercises: response -1 (makeRequst malformed)");
+            System.err.println("RestAPI getExercises: response -1 (makeRequest malformed)");
             return null;
         } else if (r.resultCode == 401) {
             System.err.println("RestAPI getExercises: response 401 (user does not exist)");
@@ -102,6 +108,7 @@ public class RestAPI {
         try {
             JSONObject json = new JSONObject(r.response);
             u = new User();
+            u.id = uid;
             u.exercises = json.getInt("exercises");
             u.timestamp = json.getLong("timestamp");
         } catch (JSONException e) {
@@ -127,24 +134,34 @@ public class RestAPI {
     public static User postUser(String email) {
 
         User u;
-        Result r = makeRequest("email=" + email, RequestType.POST);
-
-        if (r.resultCode == -1) {
-            System.err.println("RestAPI getExercises: response -1 (makeRequst malformed)");
-            return null;
-        } else if (r.resultCode == 401) {
-            System.err.println("RestAPI getExercises: response 401 (user already exists)");
-            return null;
-        }
-
         try {
+            String parameter = String.format("email=%s&name=%s",
+                    URLEncoder.encode(email, UTF_8.name()),
+                    URLEncoder.encode("Test User", UTF_8.name()));
+
+            Result r = makePostRequest(parameter.getBytes(UTF_8));
+
+            if (r.resultCode == -1) {
+                System.err.println("RestAPI postUser: response -1 (makeRequest malformed)");
+                return null;
+            } else if (r.resultCode == 401) {
+                System.err.println("RestAPI postUser: response 401 (user already exists)");
+                return null;
+            }
+
             JSONObject json = new JSONObject(r.response);
             if (!json.getString("status").equalsIgnoreCase("ok")) {
                 return null;
             }
+
             u = new User();
             u.id = json.getInt("id");
+            u.email = email;
+
         } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -168,24 +185,36 @@ public class RestAPI {
     public static User postExercise(int uid, long timestamp) {
 
         User u;
-        Result r = makeRequest("id=" + uid + "&timestamp=" + timestamp, RequestType.POST);
-
-        if (r.resultCode == -1) {
-            System.err.println("RestAPI getExercises: response -1 (makeRequst malformed)");
-            return null;
-        } else if (r.resultCode == 401) {
-            System.err.println("RestAPI getExercises: response 401 (user does not exist)");
-            return null;
-        }
 
         try {
+            String parameter = String.format("id=%s&timestamp=%s",
+                    URLEncoder.encode(""+uid, StandardCharsets.UTF_8.name()),
+                    URLEncoder.encode(""+timestamp, StandardCharsets.UTF_8.name()));
+
+            Result r = makePostRequest(parameter.getBytes(StandardCharsets.UTF_8));
+
+            if (r.resultCode == -1) {
+                System.err.println("RestAPI postExercise: response -1 (makeRequest malformed)");
+                return null;
+            } else if (r.resultCode == 401) {
+                System.err.println("RestAPI postExercise: response 401 (user does not exist)");
+                return null;
+            }
+
             JSONObject json = new JSONObject(r.response);
             if (!json.getString("status").equalsIgnoreCase("ok")) {
                 return null;
             }
+
             u = new User();
+            u.id = uid;
             u.exercises = json.getInt("exercises");
+            u.timestamp = timestamp;
+
         } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -193,44 +222,39 @@ public class RestAPI {
         return u;
     }
 
-    // make the actual API connection request
-    private static Result makeRequest(String parameters, RequestType reqType) {
+    private static Result makePostRequest(byte[] mPostData) {
 
         int responseCode;
 
         try {
-            URL url = new URL(baseURL + "?" + parameters);
-            System.out.println("Connect to: " + url);
+            URL url = new URL(baseURL);
+            System.out.println("Connect to: " + url + " with " + new String(mPostData));
 
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            URLConnection urlConnection =  url.openConnection();
+            urlConnection.setDoOutput(true); // automatically sets request method to POST
 
-            if (reqType != RequestType.GET) {
-                urlConnection.setDoOutput(true);
+            urlConnection.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
+            urlConnection.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded;charset=" + StandardCharsets.UTF_8.name());
+
+            try (OutputStream out = urlConnection.getOutputStream()) {
+                out.write(mPostData);
             }
 
-            urlConnection.setRequestMethod(rtts(reqType));
-            urlConnection.setRequestProperty("Accept", "application/json");
-
-            responseCode = urlConnection.getResponseCode();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            responseCode = httpURLConnection.getResponseCode();
             System.out.println("Response from server: " + responseCode);
-            if (responseCode == 401)
-                return new Result(responseCode, "401 error from server");
 
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-
-            try {
+            try (BufferedInputStream in = (BufferedInputStream) urlConnection.getInputStream()) {
                 ByteArrayOutputStream bo = new ByteArrayOutputStream();
                 int i = in.read();
                 while (i != -1) {
                     bo.write(i);
                     i = in.read();
                 }
-
                 return new Result(responseCode, bo.toString());
             } catch (IOException e) {
                 return new Result(-1, "Error: IOException reading bytes");
-            } finally {
-                in.close();
             }
 
         } catch (ConnectException ce) {
@@ -242,11 +266,44 @@ public class RestAPI {
         }
     }
 
-    // _R_equest _T_ype _T_o _S_tring
-    private static String rtts(RequestType rt) {
-        if (rt == RequestType.GET)
-            return "GET";
-        else return "POST";
+    private static Result makeGetRequest(String parameters) {
+
+        int responseCode;
+
+        try {
+            URL url = new URL(baseURL + "?" + parameters);
+            System.out.println("Connect to: " + url);
+
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Accept", "application/json");
+
+            responseCode = urlConnection.getResponseCode();
+            System.out.println("Response from server: " + responseCode);
+            if (responseCode == 401)
+                return new Result(responseCode, "401 error from server");
+
+            try (InputStream in = new BufferedInputStream(urlConnection.getInputStream())) {
+                ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                int i = in.read();
+                while (i != -1) {
+                    bo.write(i);
+                    i = in.read();
+                }
+
+                return new Result(responseCode, bo.toString());
+            } catch (IOException e) {
+                return new Result(-1, "Error: IOException reading bytes");
+            }
+
+        } catch (ConnectException ce) {
+            return new Result(-1, "Connection failed: ENETUNREACH (network not reachable)");
+        } catch (FileNotFoundException fnfe) {
+            return new Result(-1, "File not found exception (could be user does not exist)");
+        } catch (Exception e) {
+            return new Result(-1, "General error");
+        }
     }
 
     // TODO - usually we do networking in an AsyncTask. We'll get to that. For now, call this.
