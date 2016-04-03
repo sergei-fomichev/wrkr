@@ -11,8 +11,10 @@ We will update our progress for each week below.  The most recent week appears a
 - Using a partial wakelock + accelerometer re-register combination to keep the watches accelerometer on
   - only one or the other does not work, but so far using both seems fine. Needs more testing.
 - Wrote csv files containing accelerometer, magnitude, and weighted-moving-average from watch.
-  - contains data of me sitting, typing slow, typing fast, standing, walking, jogging, and scratching my head, 10 seconds each
-  - next step: analyzing it and seeing how I will apply machine learning
+  - contains data of me sitting, typing slow, typing fast, standing, walking, jogging, and scratching my head, 10 seconds each, repeat all trials x3
+  - analyzed data on iSENSE
+    - Found that X vs Z, WMA vs Z, and WMA vs Y provided the strongest distinguishing clusters, so in the future I will probably use an Expectation Maximization clustering algorithm trained on this data to classify user data
+    - Links: http://isenseproject.org/visualizations/1133, http://isenseproject.org/visualizations/1131, http://isenseproject.org/visualizations/1129 (expand "Groups" in the left hand side to see color codes)
 
 
 
