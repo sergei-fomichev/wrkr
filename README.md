@@ -16,6 +16,7 @@ We will update our progress for each week below.  The most recent week appears a
     - Found that X vs Z, WMA vs Z, and WMA vs Y provided the strongest distinguishing clusters, so in the future I will probably use an Expectation Maximization clustering algorithm trained on this data to classify user data
     - Links: http://isenseproject.org/visualizations/1133, http://isenseproject.org/visualizations/1131, http://isenseproject.org/visualizations/1129 (expand "Groups" in the left hand side to see color codes).  Base project: http://isenseproject.org/projects/2145
 
+(Mike also created the data directory + the Wiki page for this project)
 
 
 ## Progress: March 22 - March 28 2016
