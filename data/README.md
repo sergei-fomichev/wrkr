@@ -7,3 +7,5 @@ Color scheme:
  - blue = jogging
  - yellow = walking
  - green = standing still
+
+By combining X, Z, and WMA data, we will be able to use a supervised expectation maximization machine learning algorithm to classify groups of data based on some probability of certainty that data falls within the "user-at-keyboard" cluster.
