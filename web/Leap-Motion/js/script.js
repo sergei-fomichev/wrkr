@@ -17,9 +17,10 @@ var twistsV = new Image();
 twistsV.src = "img/twistsV.jpg";
 
 
-var hand, finger;
-var handType =  [["Right", "left", 1], ["Left", "right", 1], ["Both", "", 2]];
+var hand, finger, len;
+var handType =  [["Right", "left", 1], ["Left", "right", 1],["Both", "", 2]];
 var handStatus;
+var hs;
 var extendedFingers = 0;
 var wristNormal;
 var repDone = 1;
@@ -28,7 +29,6 @@ var exerciseRepeats = 0;
 var exercise;
 var currWrkrDOM;
 
-var hs = handType.values();
 var ctx = canvas.getContext('2d');
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
@@ -92,20 +92,10 @@ function next_wrkr(){
 	if(exercise === undefined){ // exercise ended
 		$(".action").removeClass("list-group-item-success");
 		
-		
-		////need to go thrue the array of hands and pick the next hand
 		 
 		handStatus = hs.next();
-		//console.log(handStatus);
-		//if(handStatus == handType[0][0]){
-		//	++handStatus[0][1];
-		//	handStatus = handType[1][0];
-		//}else if(handStatus == handType){
-		//	++handStatus[1][1];
-		//	handStatus = handType[0][0];
-		//}
 
-		$(".hand").html("<p>"+ handStatus.value[0] +" hand</p>");
+		$(".hand").html("<p>"+ handType[handStatus.value][0] +" hand(s)</p>");
 		exercise = Object.keys(exercises)[0];
 		
 		$(".exDescription").html("<h3>"+ exercises[exercise].name +"</h3><p>"+ exercises[exercise].text() +"</p>");
@@ -117,6 +107,7 @@ function next_wrkr(){
 	
 		exerciseRepeats = exercises[exercise].numRepeats;
 		$("#exerciseRepeats").text(exerciseRepeats);
+		//repDone = 0;
 		
 		return false;
 	}
@@ -145,20 +136,22 @@ $("#start-wrkr").click(function begin_workout(){
 	//console.log(exercises[Object.keys(exercises)[0]].name); //get value
 	//console.log(exercises.hand_type[1]); // same value
 	
-	//<button id="twistsH" type="button" class="action list-group-item"></button>	
 	
-	for(var keys in exercises){
-		        $(".exList").append("<button id='"+ keys +"' class='action list-group-item'>" + exercises[keys].name + "</button>");
-	}
+	for(var keys in exercises)
+		$(".exList").append("<button id='"+ keys +"' class='action list-group-item'>" + exercises[keys].name + "</button>");
 	
-
+	hs = handType.keys();
+	//console.table(hs);
 	handStatus = hs.next();
 
+	$(".hand").html("<p>"+ handType[handStatus.value][0] +" hand</p>");
 	
-	//handStatus = entry.value[0];
-	$(".hand").html("<p>"+ handStatus.value[0] +" hand</p>");
+	//var iter = Object.keys(exercises);
+	//var ex = iter.next();
 	
+	//console.table(iter);
 	exercise = Object.keys(exercises)[0];
+	
 	$(".exDescription").html("<h3>"+ exercises[exercise].name +"</h3><p>"+ exercises[exercise].text() +"</p>");
 	$(".exDescription").append(exercises[exercise].picture);
 	$(".progressArea").show();
@@ -188,7 +181,7 @@ $("#start-wrkr").click(function begin_workout(){
 		
 		if(frame.hands.length > 0){
 			hand = frame.hands[0];
-			
+			len = handType[handStatus.value][2];
 		//	var handss = hand.type ;
 		//	console.log(handss);
 			//wristNormal = Math.round(hand.palmNormal[1]);
@@ -200,12 +193,12 @@ $("#start-wrkr").click(function begin_workout(){
 			//console.log(len + "," + handStatus.value[1]);
 			//console.log(hand.type);
 			//console.log(frame.hands[0].palmNormal[1]);
-			if(hand.type !== handStatus.value[1] && frame.hands.length == handStatus.value[2]){
-				$(".hand").removeClass("bg-danger").addClass("bg-success");
+			if(hand.type !== handType[handStatus.value][1] && frame.hands.length == len){
+				$(".hand").removeClass("bg-info").removeClass("bg-danger").addClass("bg-success");
 				
 				exercises[exercise].exercise(frame); ////Here is a magic
 			}else{
-				$(".hand").removeClass("bg-success").addClass("bg-danger");
+				$(".hand").removeClass("bg-success").removeClass("bg-danger").addClass("bg-danger");
 			}
 
 			
