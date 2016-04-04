@@ -18,6 +18,9 @@ We will update our progress for each week below.  The most recent week appears a
 
 ### Web + Leap Motion
 
+- Implemented the exercising cycle for both hands together. 
+- Fixed bugs
+- Write the server API for sync with database.  
 ### Etc
 
  - Mike created the data directory & the Wiki page for this project
