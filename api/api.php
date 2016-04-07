@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 include 'respond.php';
 
 class userAPI {
@@ -54,18 +55,21 @@ class userAPI {
 				return false;
 			}
 			else{
-				$stsm = $this->db->prepare('SELECT ts FROM exercises WHERE user_id=?');
+				$stsm = $this->db->prepare('SELECT ts FROM exercises WHERE user_id=? && complete=0');
 				$stsm->bind_param('i', $user_id);
 				$stsm->execute();
 				$stsm->bind_result($ts);
 				$stsm->store_result();
-				$stsm->fetch();
+				while($stsm->fetch()){
+					$tsArray[] = $ts; 
+				}
+				
 			
 			
 				$result = array(
 					"status" => "ok",
 					"exercises" => $stsm->num_rows,
-					"timestamp" => $ts
+					"timestamp" => $tsArray
 				);
 				$stsm->close();
 				sendResponse(200, json_encode($result));
