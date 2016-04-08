@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
@@ -57,6 +58,9 @@ public class WristTrackingService extends Service implements Globals {
             // send a message to the app to display a notification that
             // recording has started
             mApiClient.sendMessage(MSG_START_ACCEL_ACK, "Starting wear accelerometer now");
+
+            // create a partial wakelock to keep accelerometer readings coming
+            setWakelock();
         }
     }
 
@@ -83,13 +87,8 @@ public class WristTrackingService extends Service implements Globals {
 
             // start a timer to re-register the accelerometer listener
             ResetAccelTimerTask task = new ResetAccelTimerTask();
-            resetAccelTimer = new Timer();
-            resetAccelTimer.scheduleAtFixedRate(task, 0, 300000); // 5*60*1000 = 5 minutes
-
-            // create a partial wakelock to keep accelerometer readings coming
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
-            mWakeLock.acquire();
+            resetAccelTimer = new Timer(); // TODO - below is 10 seconds, set back after test
+            resetAccelTimer.scheduleAtFixedRate(task, 0, 10000);//300000); // 5*60*1000 = 5 minutes
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -107,7 +106,14 @@ public class WristTrackingService extends Service implements Globals {
 
             // make sure the accelerometer never turns off by reseting it
             Log.d("wrkr", "ABCDE reseting the accel");
-            setAccelListener();
+            AsyncTask.execute(new Runnable() { // TODO no idea if doing this in AsyncTask helps
+                @Override
+                public void run() {
+                    setAccelListener();
+                    destroyWakelock(); // TODO does this work?
+                    setWakelock();
+                }
+            });
 
             timerTicks++;
         }
@@ -119,6 +125,17 @@ public class WristTrackingService extends Service implements Globals {
         mSensorManager.unregisterListener(mWristListener);
         mSensorManager.registerListener(mWristListener, accelerometer,
                 SensorManager.SENSOR_DELAY_FASTEST);//, 10000000);
+    }
+
+    private void setWakelock() {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
+        mWakeLock.acquire();
+    }
+
+    private void destroyWakelock() {
+        if (mWakeLock != null && mWakeLock.isHeld())
+            mWakeLock.release();
     }
 
     @Override
@@ -149,8 +166,7 @@ public class WristTrackingService extends Service implements Globals {
         }
 
         // always ensure the wakelock is dismissed
-        if (mWakeLock != null && mWakeLock.isHeld())
-            mWakeLock.release();
+        destroyWakelock();
 
         super.onDestroy();
     }
@@ -158,13 +174,22 @@ public class WristTrackingService extends Service implements Globals {
     private class WristBroadcastReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
 
-            // get the broadcasted 10 seconds worth of data
-            String data = intent.getStringExtra(WRIST_BROADCAST_DATA);
+            // perform in background to allow the broadcastreceiver to return quickly
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("wrkr", "ABCDE ######### >>>>> READY <<<<<<<< ########");
 
-            // send the data back to the wrkr mobile app
-            mApiClient.sendMessage(MSG_WEAR_DATA, data);
+                    // get the broadcasted 10 seconds worth of data
+                    String data = intent.getStringExtra(WRIST_BROADCAST_DATA);
+
+                    // send the data back to the wrkr mobile app
+                    mApiClient.sendMessage(MSG_WEAR_DATA, data);
+                    Log.d("wrkr", "ABCDE ######### >>>>>  SENT  <<<<<<<< ########");
+                }
+            });
         }
     }
 

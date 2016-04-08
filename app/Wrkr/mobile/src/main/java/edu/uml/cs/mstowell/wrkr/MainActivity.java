@@ -1,11 +1,13 @@
 package edu.uml.cs.mstowell.wrkr;
 
 import android.accounts.AccountManager;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -27,6 +29,8 @@ import android.widget.TextView;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.util.List;
 
 import edu.uml.cs.mstowell.wrkr.ui.HelpFragment;
 import edu.uml.cs.mstowell.wrkr.ui.HomeFragment;
@@ -75,14 +79,15 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(view, "Launching website", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                // wait 2 seconds before launching a browser
+                // wait 1.5 seconds before launching a browser
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(WEBSITE_URL));
                         startActivity(browserIntent);
                     }
-                }, 2000);
+                }, 1500);
             }
         });
 
@@ -116,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         mApiClient = new APIClientCommon(this);
 
         // TODO - remove API tests
-        RestAPI.dieNetworkOnMainThreadException();
+/*        RestAPI.dieNetworkOnMainThreadException();
         String email = "test" + System.currentTimeMillis() + "@fake.user";
         User u = RestAPI.postUser(email);
         Log.d("wrkr", "API postUser: " + u.id + ", " + u.email);
@@ -125,7 +130,7 @@ public class MainActivity extends AppCompatActivity
         u = RestAPI.getUser(email);
         Log.d("wrkr", "API getUser: " + u.id + ", " + u.email + ", " + u.name);
         u = RestAPI.getExercises(u.id);
-        Log.d("wrkr", "API getExercises: " + u.id + ", " + u.exercises + ", " + u.timestamp);
+        Log.d("wrkr", "API getExercises: " + u.id + ", " + u.exercises + ", " + u.timestamp);*/
     }
 
     public void getGoogleAccount() {
@@ -146,12 +151,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_EMAIL && resultCode == RESULT_OK) {
+
             // got back the user's email address - save to preferences
             String strEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             SharedPreferences prefs = getSharedPreferences(GLOBAL_PREFS, 0);
             SharedPreferences.Editor edit = prefs.edit();
             edit.putString(USER_EMAIL, strEmail).apply();
             email.setText(strEmail);
+
+            // set the ProfileFragment's account text
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            if (fragments != null) {
+                for (Fragment fragment : fragments) {
+                    if(fragment instanceof ProfileFragment) {
+                        fragment.onActivityResult(requestCode, resultCode, data);
+                        ((ProfileFragment) fragment).setAccountText(strEmail.split("@")[0]);
+                    }
+                }
+            }
+
+            // then publish this user to the DB - save the uid to preferences
+            new PublishUserToDBTask().execute(strEmail);
         }
     }
 
@@ -231,6 +251,40 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
+    private class PublishUserToDBTask extends AsyncTask<String, Void, Void> {
+
+        ProgressDialog load;
+        User u;
+
+        @Override
+        protected void onPreExecute() {
+            load = new ProgressDialog(mContext);
+            load.setMessage("Saving user ...");
+            load.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            u = RestAPI.postUser(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (load != null) load.dismiss();
+            SharedPreferences prefs = getSharedPreferences(GLOBAL_PREFS, 0);
+            SharedPreferences.Editor edit = prefs.edit();
+
+            if (u == null) {
+                // TODO - handle case
+            } else {
+                edit.putInt(USER_ID, u.id).apply();
+            }
+            super.onPostExecute(aVoid);
+        }
+    }
+
     /* BEGIN ANDROID WEAR COMMUNICATION */
 
     public void sendMessage(final String path, final String text) {
@@ -263,7 +317,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         if (mApiClient != null) {
-            //Wearable.MessageApi.removeListener( mApiClient, this ); //TODO enable once listening
             if (mApiClient.isConnected()) {
                 mApiClient.disconnect();
             }

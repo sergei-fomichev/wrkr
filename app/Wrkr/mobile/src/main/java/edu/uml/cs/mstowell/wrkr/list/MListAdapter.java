@@ -1,5 +1,6 @@
 package edu.uml.cs.mstowell.wrkr.list;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,10 @@ public class MListAdapter extends BaseAdapter {
         TextView detail;
     }
 
+    public ArrayList<ArrayList<String>> getData() {
+        return data;
+    }
+
     public ArrayList<String> remove(int position) {
         return data.remove(position);
     }
@@ -74,15 +79,15 @@ public class MListAdapter extends BaseAdapter {
         data.add(newRow);
     }
 
+    @SuppressLint("ViewHolder")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        if (convertView == null) {
-            LayoutInflater vi = (LayoutInflater)
-                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = vi.inflate(R.layout.list_item, parent, false);
-        }
-        //View rowView = inflater.inflate(R.layout.list_item, parent, false);
+        //if (convertView == null) {
+        LayoutInflater vi = (LayoutInflater)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = vi.inflate(R.layout.list_item, parent, false);
+        //}
 
         Holder holder = new Holder();
         ArrayList<String> thisData = data.get(position);
@@ -101,6 +106,11 @@ public class MListAdapter extends BaseAdapter {
             holder.subtitle.setPadding(holder.subtitle.getPaddingLeft(),
                     holder.subtitle.getPaddingTop(), holder.subtitle.getPaddingRight(),
                     (int) context.getResources().getDimension(R.dimen.list_item_bottom));
+        } else {
+            holder.detail.setVisibility(View.VISIBLE);
+            holder.subtitle.setPadding(holder.subtitle.getPaddingLeft(),
+                    holder.subtitle.getPaddingTop(), holder.subtitle.getPaddingRight(),
+                    (int) context.getResources().getDimension(R.dimen.list_item_middle));
         }
 
         return convertView;

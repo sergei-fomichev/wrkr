@@ -58,7 +58,7 @@ public class RestAPI {
         Result r = makeGetRequest("exist&email=" + email);
 
         if (r.resultCode == -1) {
-            System.err.println("RestAPI getUser: response -1 (makeRequest malformed)");
+            System.err.println("RestAPI postUser: response -1 (" + r.response + ")");
             return null;
         } else if (r.resultCode == 401) {
             System.err.println("RestAPI getUser: response 401 (user does not exist)");
@@ -98,7 +98,7 @@ public class RestAPI {
         Result r = makeGetRequest("exercises&id=" + uid);
 
         if (r.resultCode == -1) {
-            System.err.println("RestAPI getExercises: response -1 (makeRequest malformed)");
+            System.err.println("RestAPI postUser: response -1 (" + r.response + ")");
             return null;
         } else if (r.resultCode == 401) {
             System.err.println("RestAPI getExercises: response 401 (user does not exist)");
@@ -142,7 +142,7 @@ public class RestAPI {
             Result r = makePostRequest(parameter.getBytes(UTF_8));
 
             if (r.resultCode == -1) {
-                System.err.println("RestAPI postUser: response -1 (makeRequest malformed)");
+                System.err.println("RestAPI postUser: response -1 (" + r.response + ")");
                 return null;
             } else if (r.resultCode == 401) {
                 System.err.println("RestAPI postUser: response 401 (user already exists)");
@@ -194,7 +194,7 @@ public class RestAPI {
             Result r = makePostRequest(parameter.getBytes(StandardCharsets.UTF_8));
 
             if (r.resultCode == -1) {
-                System.err.println("RestAPI postExercise: response -1 (makeRequest malformed)");
+                System.err.println("RestAPI postUser: response -1 (" + r.response + ")");
                 return null;
             } else if (r.resultCode == 401) {
                 System.err.println("RestAPI postExercise: response 401 (user does not exist)");
@@ -245,7 +245,7 @@ public class RestAPI {
             responseCode = httpURLConnection.getResponseCode();
             System.out.println("Response from server: " + responseCode);
 
-            try (BufferedInputStream in = (BufferedInputStream) urlConnection.getInputStream()) {
+            try (BufferedInputStream in = new BufferedInputStream(urlConnection.getInputStream())) {
                 ByteArrayOutputStream bo = new ByteArrayOutputStream();
                 int i = in.read();
                 while (i != -1) {
@@ -254,6 +254,7 @@ public class RestAPI {
                 }
                 return new Result(responseCode, bo.toString());
             } catch (IOException e) {
+                e.printStackTrace();
                 return new Result(-1, "Error: IOException reading bytes");
             }
 
@@ -262,6 +263,7 @@ public class RestAPI {
         } catch (FileNotFoundException fnfe) {
             return new Result(-1, "File not found exception (could be user does not exist)");
         } catch (Exception e) {
+            e.printStackTrace();
             return new Result(-1, "General error");
         }
     }
@@ -291,7 +293,6 @@ public class RestAPI {
                     bo.write(i);
                     i = in.read();
                 }
-
                 return new Result(responseCode, bo.toString());
             } catch (IOException e) {
                 return new Result(-1, "Error: IOException reading bytes");

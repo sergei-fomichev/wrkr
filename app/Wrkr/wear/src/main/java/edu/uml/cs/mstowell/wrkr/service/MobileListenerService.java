@@ -22,6 +22,7 @@ public class MobileListenerService extends WearableListenerService implements Gl
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         long[] vibrateStart = {0, 400, 30, 200};
         long[] vibrateStop = {0, 200, 25, 200, 25, 200};
+        long[] vibrateExercise = {0, 300, 50, 600};
         final int indexInPatternToRepeat = -1;
 
         switch (messageEvent.getPath()) {
@@ -29,6 +30,7 @@ public class MobileListenerService extends WearableListenerService implements Gl
             case MSG_WRIST_EXER_TIME:
                 Intent intent = new Intent( this, MyStubBroadcastActivity.class );
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                vibrator.vibrate(vibrateExercise, indexInPatternToRepeat);
                 startActivity(intent);
                 break;
 

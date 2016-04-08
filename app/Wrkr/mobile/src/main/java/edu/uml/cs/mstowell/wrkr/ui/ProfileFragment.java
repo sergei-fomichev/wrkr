@@ -1,7 +1,5 @@
 package edu.uml.cs.mstowell.wrkr.ui;
 
-import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -53,26 +51,18 @@ public class ProfileFragment extends Fragment implements Globals {
         try {
             Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
-            startActivityForResult(intent, REQUEST_CODE_EMAIL);
+            getActivity().startActivityForResult(intent, REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
             // the user hasn't synced a Google account to their device yet - either
             // launcher an account adding intent or prompt for a manual email
             // address entry
             Intent intent = new Intent(Settings.ACTION_ADD_ACCOUNT);
             intent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[]{"com.google"});
-            startActivity(intent);
+            getActivity().startActivity(intent);
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_EMAIL && resultCode == Activity.RESULT_OK) {
-            // got back the user's email address - save to preferences
-            String strEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            SharedPreferences prefs = getActivity().getSharedPreferences(GLOBAL_PREFS, 0);
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putString(USER_EMAIL, strEmail).apply();
-            user.setText(strEmail);
-        }
+    public void setAccountText(String strEmail) {
+        user.setText(strEmail);
     }
 }

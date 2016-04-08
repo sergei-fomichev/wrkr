@@ -148,7 +148,7 @@ public class WristTrackingListener implements SensorEventListener, Globals {
                 dataIndex++;
 
                 // after we collect 50 points (10 seconds of data), send back to device
-                if (dataIndex > 49) {
+                if (dataIndex > (DATA_SIZE - 1)) {
 
                     // set up data JSONObject
                     try {

@@ -5,14 +5,24 @@ package edu.uml.cs.mstowell.wrkrlib.common;
  */
 public interface Globals {
 
+    String WEBSITE_URL = "http://www.cs.uml.edu/~sfomiche/wrkr/";
+
     int FRAGMENT_INDEX_HOME = 0;
     int FRAGMENT_INDEX_PROFILE = 1;
     int FRAGMENT_INDEX_SETTINGS = 2;
     int FRAGMENT_INDEX_HELP = 3;
 
+    // ML constants
+    double LIKELIHOOD_PERCENTAGE = 0.85;
+    int EXERCISE_TRIGGER_TIME = 1800; // 1800 seconds = 30 minutes
+    int DATA_SIZE = 50;
+    int DATA_HERTZ = 5;
+
     // account
     String GLOBAL_PREFS = "wrkr_global_prefs";
     String USER_EMAIL = "wrkr_user_email";
+    String USER_ID = "wrkr_user_id";
+    String USER_TIME_AT_KEYBOARD = "wrkr_user_time_at_keyboard";
     int REQUEST_CODE_EMAIL = 1;
 
     // wear comm
