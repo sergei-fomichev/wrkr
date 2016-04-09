@@ -34,6 +34,7 @@ public interface Globals {
     String MSG_STOP_ACCEL = "/stop_accel";
     String MSG_STOP_ACCEL_ACK = "/stop_accel_ack";
     String MSG_WEAR_DATA = "/msg_wear_data";
+    String MSG_USER_NEEDS_EXERCISE = "/msg_user_needs_exercise";
 
     // listener service and broadcast receiver comm
     String WEAR_DATA_KEY = "wear_data_key";

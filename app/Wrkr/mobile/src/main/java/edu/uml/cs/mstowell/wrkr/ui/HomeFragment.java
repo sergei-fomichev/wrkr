@@ -26,7 +26,7 @@ import edu.uml.cs.mstowell.wrkr.R;
 import edu.uml.cs.mstowell.wrkr.list.MListAdapter;
 import edu.uml.cs.mstowell.wrkr.list.SwipeDismissListViewTouchListener;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
-import edu.uml.cs.mstowell.wrkrlib.common.RestAPI;
+import edu.uml.cs.mstowell.wrkr.RestAPI;
 import edu.uml.cs.mstowell.wrkrlib.common.User;
 
 /**

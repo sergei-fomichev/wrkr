@@ -38,7 +38,6 @@ import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;
 import edu.uml.cs.mstowell.wrkr.ui.SettingsFragment;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
-import edu.uml.cs.mstowell.wrkrlib.common.RestAPI;
 import edu.uml.cs.mstowell.wrkrlib.common.User;
 
 /**

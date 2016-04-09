@@ -5,12 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,6 +32,7 @@ public class WristTrackingService extends Service implements Globals {
     private SensorManager mSensorManager;
     private Timer resetAccelTimer;
     private int timerTicks = 0;
+    private Context mContext;
 
     private WristTrackingListener mWristListener;
     private WristBroadcastReceiver mReceiver;
@@ -44,6 +50,7 @@ public class WristTrackingService extends Service implements Globals {
 
         mWristListener = new WristTrackingListener(this);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mContext = getApplicationContext();
 
         // declare the broadcast receiver to receive user activity updates
         mReceiver = new WristBroadcastReceiver();
@@ -185,7 +192,13 @@ public class WristTrackingService extends Service implements Globals {
                     // get the broadcasted 10 seconds worth of data
                     String data = intent.getStringExtra(WRIST_BROADCAST_DATA);
 
-                    // send the data back to the wrkr mobile app
+                    // determine if the user is at the keyboard
+                    boolean atKeyboard = classify(data);
+                    Log.d("wrkr", "ABCDE - at keyboard? *******" + atKeyboard + "*******");
+                    if (atKeyboard)
+                        incrementUserKeyboardTime(mContext);
+
+                    // send the data back to the wrkr mobile app- TODO just for debugging, can remove later
                     mApiClient.sendMessage(MSG_WEAR_DATA, data);
                     Log.d("wrkr", "ABCDE ######### >>>>>  SENT  <<<<<<<< ########");
                 }
@@ -196,5 +209,72 @@ public class WristTrackingService extends Service implements Globals {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    // determine if the user is at a keyboard
+    private static boolean classify(String data) {
+
+        try {
+            JSONObject dataJO = new JSONObject(data);
+
+            JSONArray x = dataJO.getJSONArray("x");
+            //JSONArray y = dataJO.getJSONArray("y");
+            JSONArray z = dataJO.getJSONArray("z");
+            //JSONArray mag = dataJO.getJSONArray("mag");
+            JSONArray wma = dataJO.getJSONArray("wma");
+
+            int p = 0;
+
+            /*
+             * For now, we will use a bounded-box classifier based on our current training data.
+             * This assumes that X, Z, and WMA will all fall within the bound below.
+             * In the future, we should use a proper estimation maximization ML algorithm.
+             */
+            for (int i = 0; i < x.length(); i++) {
+                if (x.getDouble(i) > -1 && x.getDouble(i) < 4 &&
+                        z.getDouble(i) > 5.5 && z.getDouble(i) < 11.5 &&
+                        wma.getDouble(i) > 0 && wma.getDouble(i) < 0.4) {
+                    p++;
+                }
+            }
+
+            // get the likelihood the user is at the keyboard
+            double likelihood = ((double) p) / (double)x.length();
+            Log.d("wrkr", "ABCDE - likelihood = " + likelihood);
+            if (likelihood > LIKELIHOOD_PERCENTAGE) {
+                return true;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // user is at a keyboard - increment their time count
+    private void incrementUserKeyboardTime(Context c) {
+
+        SharedPreferences prefs = c.getSharedPreferences(GLOBAL_PREFS, 0);
+        SharedPreferences.Editor edit = prefs.edit();
+
+        int timeAtKeyboard = prefs.getInt(USER_TIME_AT_KEYBOARD, 0);
+        timeAtKeyboard += (DATA_SIZE / DATA_HERTZ);
+
+        if (timeAtKeyboard >= 20) {// TODO EXERCISE_TRIGGER_TIME) {
+            Log.d("wrkr", "ABCDE Time for an exercise!");
+            sendUserNeedsExercise();
+
+            // set the time at keyboard back to 0
+            edit.putInt(USER_TIME_AT_KEYBOARD, 0).apply();
+        } else {
+            // update the time at keyboard
+            edit.putInt(USER_TIME_AT_KEYBOARD, timeAtKeyboard).apply();
+        }
+    }
+
+    private void sendUserNeedsExercise() {
+
+        mApiClient.sendMessage(MSG_USER_NEEDS_EXERCISE, "");
     }
 }

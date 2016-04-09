@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkrlib.common;
+package edu.uml.cs.mstowell.wrkr;
 
 import android.os.StrictMode;
 
@@ -18,6 +18,8 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+
+import edu.uml.cs.mstowell.wrkrlib.common.User;
 
 /**
  * API to comm with the wrkr web server
