@@ -32,11 +32,13 @@ public class APIClientCommon {
             mApiClient.connect();
     }
 
-    public void sendMessage(final String path, final String text) {
+    public boolean sendMessage(final String path, final String text) {
+        final NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi
+                .getConnectedNodes(mApiClient).await();
+
         new Thread( new Runnable() {
             @Override
             public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
                 Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
                 for(Node node : nodes.getNodes()) {
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
@@ -46,6 +48,10 @@ public class APIClientCommon {
                 }
             }
         }).start();
+
+        if (nodes.getNodes().size() == 0)
+            return false; // no messages could have been sent
+        return true;
     }
 
     public boolean isConnected() {
