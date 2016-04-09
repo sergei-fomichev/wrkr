@@ -1,6 +1,6 @@
 var exercises = {
 	twistsH : {
-		name: "Horizontal palm twists",
+		name: "Palm twists",
 		numRepeats: 3,
 		text: function(){
 			return "Rotate your forearm " + this.numRepeats + " times, so that your palm faces up and then down.";
@@ -33,8 +33,8 @@ var exercises = {
 		}
 	},
 	twistsV: {
-		name: "Vertical palm twists",
-		numRepeats: 2,
+		name: "Wrist Bend",
+		numRepeats: 4,
 		text: function(){
 			return "Wrists flexion and extension.";
 		},
@@ -79,6 +79,9 @@ var exercises = {
 			var clawStateR = 0, fingerR;
 			if(len == 2){
 				for(j = 0; j < hand.fingers.length; j++){
+					
+					
+					
 					fingerL = frames.hands[0].fingers[j];
 					fingerR = frames.hands[1].fingers[j];
 					if(fingerL.type >= 1 && fingerL.type <=4 && fingerL.extended == true){
@@ -115,7 +118,7 @@ var exercises = {
 	},
 	thumb_bend: {
 		name: "Thumb bend",
-		numRepeats: 3,
+		numRepeats: 5,
 		text: function(){
 			return "Move the thumb "+ this.numRepeats +" times across the palm and back to the starting position.";
 		},
@@ -143,7 +146,7 @@ var exercises = {
 			}
 		}
 	}/*,
-	circle: {
+	Spread Fingers {
 		name: "Draw a circle",
 		numRepeats: 1,
 		text: function(){
