@@ -12,6 +12,7 @@ We will update our progress for each week below.  The most recent week appears a
  - polished up additional API error handling
  - added AsyncTasks to perform all networking tasks in the background
  - used API to display proper notifications in the home screen (though the API spec here will change, so will redo this piece next week as well)
+   - includes timestamp math to inform users when exercises were posted and recommend how long the user has to complete them
  - floating action button in app links to the wrkr website
 
 ### Web + Leap Motion
