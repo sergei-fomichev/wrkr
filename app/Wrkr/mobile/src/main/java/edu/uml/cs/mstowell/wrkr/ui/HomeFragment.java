@@ -7,12 +7,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -88,15 +93,29 @@ public class HomeFragment extends Fragment implements Globals {
             } else if (u.exercises > 0) {
 
                 int exercises = u.exercises;
-                long timestamp = u.timestamp;
-                String timeRemaining = getTimeLeft(new Date(timestamp));
+                JSONArray timestamps = u.timestamps;
 
-                String[] row = {
-                        "Wrist exercise was due " + timeRemaining,
-                        "Outstanding exercise count: " + exercises,
-                        "Each exercise should be completed within an hour"
-                };
-                a.add(row);
+                for (int i = 0; i < timestamps.length(); i++) {
+
+                    try {
+                        long timestamp = timestamps.getLong(i);
+
+                        Date date = new java.util.Date(timestamp);
+                        String timeStr = new SimpleDateFormat("hh:mm, yyyy-MM-dd").format(date);
+
+                        String timeRemaining = getTimeLeft(new Date(timestamp));
+
+                        String[] row = {
+                                "Wrist exercise needed " + timeRemaining,
+                                "This exercise was recorded at " + timeStr,
+                                exercises + " total exercises due"
+                        };
+                        a.add(row);
+                    } catch (JSONException e) {
+                        Log.e("wrkr", "Error while parsing timestamps for exercises");
+                        e.printStackTrace();
+                    }
+                }
             }
         } else {
             promptUserSetupProfile();

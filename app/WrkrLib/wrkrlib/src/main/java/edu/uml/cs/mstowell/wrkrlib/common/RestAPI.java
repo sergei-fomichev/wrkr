@@ -110,7 +110,7 @@ public class RestAPI {
             u = new User();
             u.id = uid;
             u.exercises = json.getInt("exercises");
-            u.timestamp = json.getLong("timestamp");
+            u.timestamps = json.getJSONArray("timestamp");
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -209,7 +209,6 @@ public class RestAPI {
             u = new User();
             u.id = uid;
             u.exercises = json.getInt("exercises");
-            u.timestamp = timestamp;
 
         } catch (JSONException e) {
             e.printStackTrace();

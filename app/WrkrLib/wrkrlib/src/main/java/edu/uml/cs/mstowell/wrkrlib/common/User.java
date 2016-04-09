@@ -1,5 +1,7 @@
 package edu.uml.cs.mstowell.wrkrlib.common;
 
+import org.json.JSONArray;
+
 /**
  * Web server User object
  */
@@ -9,7 +11,7 @@ public class User {
     public String email;
     public String name;
     public int exercises;
-    public long timestamp;
+    public JSONArray timestamps;
 
     public User() { }
 }
