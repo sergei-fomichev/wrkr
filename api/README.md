@@ -44,7 +44,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >Respond [header - 200]  
 >{  
 >"exercises": number of exercises  
->"timestamp":  a JSONArray of timestamps of all incomplete exercises
+>"timestamp":  a JSONArray of timestamps of all incomplete exercises  
 >}  
 >OR Respond [header - 401] if user not exists in database  
 
