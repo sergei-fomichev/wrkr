@@ -14,6 +14,7 @@ We will update our progress for each week below.  The most recent week appears a
  - used API to display proper notifications in the home screen (though the API spec here will change, so will redo this piece next week as well)
    - includes timestamp math to inform users when exercises were posted and recommend how long the user has to complete them
  - floating action button in app links to the wrkr website
+ - created Issue [#3](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/3), [#4](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/4), [#5](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/5), and [#6](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/6)
 
 ### Web + Leap Motion
 
