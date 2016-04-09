@@ -10,7 +10,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >int "id": userID  
 >String "email": user's Google account email  
 >String "name": user's Google account name  
->int "karma": user's score. default value is 80 
+>int "karma": user's score. default value is 80  
 >int "exercises": # of exercises due. This is 0 at first, and incremented on each POST by mobile when an exercise is due.  It is reset to 0 when a user completes an exercise, but if the exercise times out, it is left as-is.  When a user goes to the website and has exercises to do, this becomes a multiplier of how many "reps" of each exercise he/she must do to complete it.  
 >long "timestamp": the UNIX timestamp of the last issued exercise.  The user will have 2 hours to complete an exercise, so a "time.now()" (language dependent) - timestamp = how much time remaining the user has to complete the exercise before it expires.  
 >}  
@@ -30,7 +30,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >Respond [header - 200]  
 >{  
 >"id": userID  
->"name": name
+>"name": name  
 >"karma": karma score 
 >}  
 >OR Respond [header - 401] if not exists  
