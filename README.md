@@ -3,6 +3,21 @@ Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project
 
 We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
 
+## Progress: March 30 - April 10 2016
+
+### Mobile + Smartwatch App
+
+ - implemented a basic classifier for now based on last week's research.  Will continue to use it until time permits by the end of the project to use a true machine learning classifier
+ - fixed API bug that caused InputStream exceptions
+ - polished up additional API error handling
+ - added AsyncTasks to perform all networking tasks in the background
+ - used API to display proper notifications in the home screen (though the API spec here will change, so will redo this piece next week as well)
+ - floating action button in app links to the wrkr website
+
+### Web + Leap Motion
+
+ - 
+
 ## Progress: March 29 - April 4 2016
 
 ### Mobile + Smartwatch App
@@ -21,6 +36,7 @@ We will update our progress for each week below.  The most recent week appears a
 - Implemented the exercising cycle for both hands together. 
 - Fixed bugs
 - Write the server API for sync with database.  
+
 ### Etc
 
  - Mike created the data directory & the Wiki page for this project
