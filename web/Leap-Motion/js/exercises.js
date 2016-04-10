@@ -101,7 +101,7 @@ var exercises = {
 				}
 			}else{
 				for(j = 0; j < hand.fingers.length; j++){
-					finger = hand.fingers[j];
+					var finger = hand.fingers[j];
 					if(finger.type >= 1 && finger.type <=4 && finger.extended == true){
 						clawState++;
 					}
@@ -145,26 +145,72 @@ var exercises = {
 				}
 			}
 		}
-	}/*,
-	Spread Fingers {
-		name: "Draw a circle",
-		numRepeats: 1,
+	},
+	spreadFingers : {
+		name: "Spread Fingers",
+		numRepeats: 5,
 		text: function(){
-			return "Draw a circle with your picky finger for "+ this.numRepeats +" seconds.";
+			return "Slowly and gently spread your fingers (and thumb) as far apart as you can. Return to the starting position";
 		},
-		picture: circleImg,
+		picture: spreadImg,
 		exercise: function(frame){
-			var duration;
-			frame.gestures.forEach(function(gesture){
-				if(frame.valid && frame.gestures.length > 0){
-					duration = gesture.duration;
-					//counter.innerHTML = duration;
+			if(len == 2){
+				var spreadCount = 0;
+				for(j = 1, k = 2 ; k < frame.hands[0].fingers.length; j++, k++){
+					var finger = frame.hands[0].fingers[j];
+					var nextFinger = frame.hands[0].fingers[k]
+					var d1 = finger.proximal.direction();
+					var d2 = nextFinger.proximal.direction();
 					
-					duration /= 1000000;
-					exerciseCounter = Math.round(duration);	
+					var angle = Math.acos(Leap.vec3.dot(d1, d2));
+					if(angle > 0.18)
+						spreadCount++;
+
 				}
-			});
+				for(j = 1, k = 2 ; k < frame.hands[1].fingers.length; j++, k++){
+					var finger = frame.hands[0].fingers[j];
+					var nextFinger = frame.hands[0].fingers[k]
+					var d1 = finger.proximal.direction();
+					var d2 = nextFinger.proximal.direction();
+					
+					var angle = Math.acos(Leap.vec3.dot(d1, d2));
+					if(angle > 0.175)
+						spreadCount++;
+
+				}
+				//console.log(spreadCount);
+				if(frame.hands[0].thumb.extended && frame.hands[1].thumb.extended && spreadCount == 6 && repDone == 0){
+					exerciseCounter++;
+					repDone = 1;
+				}
+				if(spreadCount <= 2 && repDone ==1){
+					repDone = 0;
+				}
+				
+			}
+			else{
+				var spreadCount = 0;
+				for(j = 1, k = 2 ; k < hand.fingers.length; j++, k++){
+					var finger = hand.fingers[j];
+					var nextFinger = hand.fingers[k]
+					var d1 = finger.proximal.direction();
+					var d2 = nextFinger.proximal.direction();
+					
+					var angle = Math.acos(Leap.vec3.dot(d1, d2));
+					if(angle > 0.175)
+						spreadCount++;
+
+				}
+				//console.log(spreadCount +" thumb "+ hand.thumb.extended);
+				if(hand.thumb.extended && spreadCount == 3 && repDone == 0){
+					exerciseCounter++;
+					repDone = 1;
+				}
+				if(spreadCount <= 1 && repDone == 1){
+					repDone = 0;
+				}
+				
+			}
 		}
-	}
-	*/
+	}	
 }

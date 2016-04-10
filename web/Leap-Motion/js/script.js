@@ -1,8 +1,9 @@
 var counter = document.getElementById("exerciseProgress");
 var canvas = document.getElementById("circle");
 var output = document.getElementById("output");
-var circleImg = new Image();
-circleImg.src = "img/CircleGesture.png";
+
+var spreadImg = new Image();
+spreadImg.src = "img/spread.png";
 
 var knuckleImg = new Image();
 knuckleImg.src = "img/knuckle.jpg";
@@ -17,13 +18,13 @@ var twistsV = new Image();
 twistsV.src = "img/twistsV.jpg";
 
 
-var hand, finger;
-var handType =  [["Right", "left", 1],["Left", "right", 1],["Both", "", 2]];
+var hand;
+var handType =  [["Right", "left", 1],["Left", "right", 1], ["Both", "", 2]];
 var handStatus;
 var hs;
 var extendedFingers = 0;
 var wristNormal;
-var repDone = 1;
+var repDone = 0;
 var exerciseCounter = 0;
 var exerciseRepeats = 0;
 var exercise;
@@ -32,8 +33,9 @@ var currWrkrDOM;
 var ctx = canvas.getContext('2d');
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
-var radius = 20;
-
+var radius = 10;
+var color = '#6520c7';
+var normalizedPosition = [];
 
 
 var controller = new Leap.Controller({
@@ -61,19 +63,29 @@ function draw_circle(){
 
 }
 function interactive(frame){	
-
-	var pointable = frame.pointables[0];
-	var interactionBox = frame.interactionBox;	
-	var normalizedPosition = interactionBox.normalizePoint(pointable.tipPosition, true);
-	var canvasX = canvas.width * normalizedPosition[0];
-	var canvasY = canvas.height * (1 - normalizedPosition[1]);
-
 	draw_circle();
-	ctx.beginPath(); 
-	ctx.fillStyle = '#6520c7';
-	ctx.arc(canvasX, canvasY, radius, 0, 2 * Math.PI, true); 
-	ctx.fill();
+	
+	//console.log(frame.interactionBox.width.toString());
+	for(i = 0; i < frame.hands.length; i++){
+		for(j = 0; j < frame.hands[i].fingers.length; j++){
+			var finger = frame.hands[i].fingers[j];
 		
+			var position = finger.dipPosition;
+			//console.log(position[1]);
+			normalizedPosition[0] = (position[0] + 200)/400;
+			normalizedPosition[1] = (position[1] - 25)/400;
+			var canvasX = canvas.width * normalizedPosition[0];
+			var canvasY = canvas.height * (1 - normalizedPosition[1]);
+			ctx.beginPath(); 
+			ctx.fillStyle = color;
+			ctx.arc(canvasX, canvasY, radius, 0, 2 * Math.PI, true); 
+				ctx.fill();
+	}
+		
+	}
+	
+
+
 
 }
 
@@ -140,8 +152,6 @@ $("#start-wrkr").click(function begin_workout(){
 
 		$(".hand").html("<p>"+ handType[handStatus.value][0] +" hand</p>");
 	
-		//var iter = Object.keys(exercises);
-		//var ex = iter.next();
 	
 		//console.table(iter);
 		exercise = Object.keys(exercises)[0];
@@ -163,7 +173,8 @@ $("#start-wrkr").click(function begin_workout(){
 		  
 			hand = frame.hands[0];
 			len = frame.hands.length;
-			
+
+		
 			interactive(frame);	//ibox
 		
 			var percentDone = Math.round((exerciseCounter/exerciseRepeats)*100);
