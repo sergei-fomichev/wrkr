@@ -18,7 +18,10 @@ We will update our progress for each week below.  The most recent week appears a
 
 ### Web + Leap Motion
 
- - 
+ - Improved hand exerciser by making the interactive hand area.
+ - Implemented a new exercise called fingers spread.
+ - Worked on the users dashboard on a website.
+ - Fixed an API bug.
 
 ## Progress: March 29 - April 4 2016
 
