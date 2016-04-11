@@ -20,6 +20,7 @@ We will update our progress for each week below.  The most recent week appears a
 
  - Improved hand exerciser by making the interactive hand area.
  - Implemented a new exercise called fingers spread.
+ - Put the icon to show when hand is found.
  - Worked on the users dashboard on a website.
  - Fixed an API bug.
 
