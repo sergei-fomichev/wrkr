@@ -1,7 +1,25 @@
 ## Mobile
 - [Manifest](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/app/Wrkr/mobile/src/main/AndroidManifest.xml)
+  - AndroidManifest.xml
 - [Java sources](https://github.com/uml-ubicomp-2016-spring/wrkr/tree/master/app/Wrkr/mobile/src/main/java/edu/uml/cs/mstowell/wrkr)
+  - MListAdapter.java
+  - SwipeDismissListViewTouchListener.java - **from Google, not written by me**
+  - WearListenerService.java
+  - HelpFragment.java
+  - HomeFragment.java
+  - ProfileFragment.java
+  - SettingsFragment.java
+  - MainActivity.java
 - [Layouts](https://github.com/uml-ubicomp-2016-spring/wrkr/tree/master/app/Wrkr/mobile/src/main/res/layout)
+  - activity_main.xml
+  - app_bar_main.xml
+  - content_main.xml
+  - fragment_help.xml
+  - fragment_home.xml
+  - fragment_profile.xml
+  - fragment_settings.xml
+  - list_item.xml
+  - nav_header_main.xml
 
 ## Wear
 - [Manifest](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/app/Wrkr/wear/src/main/AndroidManifest.xml)
