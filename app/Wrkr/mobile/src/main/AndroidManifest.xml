@@ -30,12 +30,15 @@
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
-        <receiver android:name=".ui.SettingsFragment$WearListenerReceiver">
+        <service android:name=".service.RecordDataService"/>
+        <!--
+        <receiver android:name=".service.RecordDataService$WatchToPhoneBroadcastReceiver">
             <intent-filter>
                 <action android:name="edu.uml.cs.mstowell.WEAR_MSG_RCV_BROADCAST">
                 </action>
             </intent-filter>
         </receiver>
+        -->
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 

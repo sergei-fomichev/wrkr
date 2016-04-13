@@ -1,5 +1,8 @@
 package edu.uml.cs.mstowell.wrkr.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,6 +14,7 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,6 +24,7 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.uml.cs.mstowell.wrkr.R;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
@@ -39,6 +44,11 @@ public class WristTrackingService extends Service implements Globals {
     private APIClientCommon mApiClient;
 
     private PowerManager.WakeLock mWakeLock;
+    private int NOTIFICATION_ID = 55;
+
+    private Vibrator vibrator;
+    private long[] pattern = {0, 300, 50, 600};
+    private SharedPreferences prefs;
 
     // default constructor
     public WristTrackingService() {
@@ -58,9 +68,12 @@ public class WristTrackingService extends Service implements Globals {
         // initialize GoogleAPIClient
         mApiClient = new APIClientCommon(this);
 
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        prefs = mContext.getSharedPreferences(GLOBAL_PREFS, 0);
+
         // create a notification to link back to the RunFragment as well
         // as allow the application to record data with the screen off
-        if (!serviceIsRunning) {
+        //if (!serviceIsRunning) {
 
             // send a message to the app to display a notification that
             // recording has started
@@ -68,13 +81,36 @@ public class WristTrackingService extends Service implements Globals {
 
             // create a partial wakelock to keep accelerometer readings coming
             setWakelock();
-        }
+
+            // create a notification to keep the accelerometer on
+            final Intent emptyIntent = new Intent();
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                    NOTIFICATION_ID, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Notification.Builder builder = new Notification.Builder(getApplicationContext());
+            builder.setContentIntent(pendingIntent)
+                    .setContentTitle("wrkr")
+                    .setContentText("Currently recording data")
+                    .setTicker("Keep this notification to keep the accelerometer on")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true);
+
+            Notification notification = builder.build();
+            builder.setOngoing(true); // TODO
+            NotificationManager mNotificationManger =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManger.notify(NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_ID, notification);
+        //}
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (!serviceIsRunning) {
+        //super.onStartCommand(intent, flags, startId);
+
+        //if (!serviceIsRunning) {
 
             // initialize variables
             serviceIsRunning = true;
@@ -96,9 +132,10 @@ public class WristTrackingService extends Service implements Globals {
             ResetAccelTimerTask task = new ResetAccelTimerTask();
             resetAccelTimer = new Timer(); // TODO - below is 10 seconds, set back after test
             resetAccelTimer.scheduleAtFixedRate(task, 0, 10000);//300000); // 5*60*1000 = 5 minutes
-        }
+        //}
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
+        //return super.onStartCommand(intent, flags, startId);
     }
 
     private class ResetAccelTimerTask extends TimerTask {
@@ -112,15 +149,15 @@ public class WristTrackingService extends Service implements Globals {
             }
 
             // make sure the accelerometer never turns off by reseting it
-            Log.d("wrkr", "ABCDE reseting the accel");
-            AsyncTask.execute(new Runnable() { // TODO no idea if doing this in AsyncTask helps
-                @Override
-                public void run() {
-                    setAccelListener();
-                    destroyWakelock(); // TODO does this work?
-                    setWakelock();
-                }
-            });
+//            Log.d("wrkr", "ABCDE reseting the accel");
+//            AsyncTask.execute(new Runnable() { // TODO no idea if doing this in AsyncTask helps
+//                @Override
+//                public void run() {
+//                    //setAccelListener();
+//                    //destroyWakelock(); // TODO does this work?
+//                    //setWakelock();
+//                }
+//            });
 
             timerTicks++;
         }
@@ -131,7 +168,8 @@ public class WristTrackingService extends Service implements Globals {
 
         mSensorManager.unregisterListener(mWristListener);
         mSensorManager.registerListener(mWristListener, accelerometer,
-                SensorManager.SENSOR_DELAY_FASTEST);//, 10000000);
+                SensorManager.SENSOR_DELAY_NORMAL);//, 10000000);
+        // TODO - also try 200000 above for sensor delay
     }
 
     private void setWakelock() {
@@ -151,7 +189,7 @@ public class WristTrackingService extends Service implements Globals {
         // send the app a termination message
         mApiClient.sendMessage(MSG_STOP_ACCEL_ACK, "stopping wear accelerometer");
 
-        if (serviceIsRunning) {
+        //if (serviceIsRunning) {
 
             // unregister accelerometer updates
             mSensorManager.unregisterListener(mWristListener);
@@ -170,7 +208,12 @@ public class WristTrackingService extends Service implements Globals {
                     mApiClient.disconnect();
                 }
             }
-        }
+        //}
+
+        // cancel the notification
+        NotificationManager mNotificationManger =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManger.cancel(NOTIFICATION_ID);
 
         // always ensure the wakelock is dismissed
         destroyWakelock();
@@ -178,7 +221,7 @@ public class WristTrackingService extends Service implements Globals {
         super.onDestroy();
     }
 
-    private class WristBroadcastReceiver extends BroadcastReceiver {
+    private final class WristBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, final Intent intent) {
@@ -192,11 +235,17 @@ public class WristTrackingService extends Service implements Globals {
                     // get the broadcasted 10 seconds worth of data
                     String data = intent.getStringExtra(WRIST_BROADCAST_DATA);
 
+                    // TODO testing
+//                    Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+//                    long[] pattern = {0, 300, 50, 600};
+                    vibrator.vibrate(pattern, -1); // TODO - this replaced MobileListenerService vibrate
+                    ///////////////////////
+
                     // determine if the user is at the keyboard
                     boolean atKeyboard = classify(data);
                     Log.d("wrkr", "ABCDE - at keyboard? *******" + atKeyboard + "*******");
                     if (atKeyboard)
-                        incrementUserKeyboardTime(mContext);
+                        incrementUserKeyboardTime();
 
                     // send the data back to the wrkr mobile app- TODO just for debugging, can remove later
                     mApiClient.sendMessage(MSG_WEAR_DATA, data);
@@ -212,16 +261,20 @@ public class WristTrackingService extends Service implements Globals {
     }
 
     // determine if the user is at a keyboard
-    private static boolean classify(String data) {
+    private JSONObject dataJO;
+    private JSONArray x;
+    private JSONArray z;
+    private JSONArray wma;
+    private boolean classify(String data) {
 
         try {
-            JSONObject dataJO = new JSONObject(data);
+            dataJO = new JSONObject(data);
 
-            JSONArray x = dataJO.getJSONArray("x");
+            x = dataJO.getJSONArray("x");
             //JSONArray y = dataJO.getJSONArray("y");
-            JSONArray z = dataJO.getJSONArray("z");
+            z = dataJO.getJSONArray("z");
             //JSONArray mag = dataJO.getJSONArray("mag");
-            JSONArray wma = dataJO.getJSONArray("wma");
+            wma = dataJO.getJSONArray("wma");
 
             int p = 0;
 
@@ -253,15 +306,13 @@ public class WristTrackingService extends Service implements Globals {
     }
 
     // user is at a keyboard - increment their time count
-    private void incrementUserKeyboardTime(Context c) {
+    private void incrementUserKeyboardTime() {
 
-        SharedPreferences prefs = c.getSharedPreferences(GLOBAL_PREFS, 0);
         SharedPreferences.Editor edit = prefs.edit();
-
         int timeAtKeyboard = prefs.getInt(USER_TIME_AT_KEYBOARD, 0);
         timeAtKeyboard += (DATA_SIZE / DATA_HERTZ);
 
-        if (timeAtKeyboard >= 20) {// TODO EXERCISE_TRIGGER_TIME) {
+        if (timeAtKeyboard >= 20) { //>= EXERCISE_TRIGGER_TIME) { // TODO - set to 20 for testing
             Log.d("wrkr", "ABCDE Time for an exercise!");
             sendUserNeedsExercise();
 
@@ -275,6 +326,28 @@ public class WristTrackingService extends Service implements Globals {
 
     private void sendUserNeedsExercise() {
 
-        mApiClient.sendMessage(MSG_USER_NEEDS_EXERCISE, "");
+        final long timestamp = System.currentTimeMillis();
+
+//        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+//        long[] pattern = {0, 300, 50, 600};
+//        vibrator.vibrate(pattern, -1); // TODO - this replaced MobileListenerService vibrate
+
+        if (mApiClient.areWatchAndPhonePaired())
+            mApiClient.sendMessage(MSG_USER_NEEDS_EXERCISE, "" + timestamp);
+        else {
+            // phone and watch are not paired currently - start a retry timer
+            final Timer timer = new Timer();
+            final TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    if (mApiClient.areWatchAndPhonePaired()) {
+                        mApiClient.sendMessage(MSG_USER_NEEDS_EXERCISE, "" + timestamp);
+                        timer.cancel();
+                        timer.purge();
+                    }
+                }
+            };
+            timer.schedule(task, 300000); // 5 minutes
+        }
     }
 }

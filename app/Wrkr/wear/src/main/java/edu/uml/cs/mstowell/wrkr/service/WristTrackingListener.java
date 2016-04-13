@@ -52,11 +52,13 @@ public class WristTrackingListener implements SensorEventListener, Globals {
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
+            Log.i("wrkr", "event");
+
             // get event's timestamp
             thisAccelUpdate = event.timestamp;
 
             // only consider user activity updates every 1/5 second (1000^3 = 1 second)
-            if (mLastAccelUpdate != 0 && thisAccelUpdate - mLastAccelUpdate < 200000000) {
+            if (mLastAccelUpdate != 0 && thisAccelUpdate - mLastAccelUpdate < 175000000) {//200000000) {
                 return;
             }
 
@@ -65,7 +67,7 @@ public class WristTrackingListener implements SensorEventListener, Globals {
 
             // calculate user's activity level
 
-            // retrieve accelemeter event values
+            // retrieve accelerometer event values
             x = event.values[0];
             y = event.values[1];
             z = event.values[2];

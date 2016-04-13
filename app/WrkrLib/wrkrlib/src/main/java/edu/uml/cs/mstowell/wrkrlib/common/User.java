@@ -12,6 +12,7 @@ public class User {
     public String name;
     public int exercises;
     public JSONArray timestamps;
+    public int karma;
 
     public User() { }
 }

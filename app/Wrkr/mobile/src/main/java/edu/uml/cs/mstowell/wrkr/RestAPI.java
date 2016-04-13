@@ -73,6 +73,7 @@ public class RestAPI {
             u.id = json.getInt("id");
             u.name = json.getString("name");
             u.email = email;
+            u.karma = json.getInt("karma");
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

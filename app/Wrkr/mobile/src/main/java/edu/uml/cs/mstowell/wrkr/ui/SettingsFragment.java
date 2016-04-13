@@ -1,10 +1,10 @@
 package edu.uml.cs.mstowell.wrkr.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
@@ -14,11 +14,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkr.SingletonMessenger;
+import edu.uml.cs.mstowell.wrkr.service.RecordDataService;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
-import edu.uml.cs.mstowell.wrkr.RestAPI;
-import edu.uml.cs.mstowell.wrkrlib.common.User;
 
 /**
  * Debug information available for the user
@@ -26,14 +28,42 @@ import edu.uml.cs.mstowell.wrkrlib.common.User;
 public class SettingsFragment extends Fragment implements Globals {
 
     private static TextView wearDebug;
-    private static Context mContext;
+    private static Handler watch2phoneHandler;
+
+    // TODO - probably better off as a broadcast...
+    private static class Watch2PhoneHandler extends Handler {
+        private final WeakReference<SettingsFragment> mSettingsFrag;
+
+        public Watch2PhoneHandler(SettingsFragment frag) {
+            mSettingsFrag = new WeakReference<>(frag);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            SettingsFragment frag = mSettingsFrag.get();
+            if (frag != null && wearDebug != null) {
+                Bundle bundleData = msg.getData();
+                String event = bundleData.getString(WEAR_DATA_KEY, "");
+                String data = bundleData.getString(WEAR_DATA_VALUES, "");
+
+                if (event == null) event = "ERROR";
+                wearDebug.setText(Html.fromHtml("From wear:<br/>Event: "
+                        + event + "<br/>Data: " + data));
+
+                /*if (event.equals(MSG_WEAR_DATA)) {
+                    writeDataCSV(data);
+                }*/
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        mContext = MainActivity.mContext;
+        //mContext = MainActivity.mContext;
         wearDebug = (TextView) v.findViewById(R.id.setting_debug_info);
+        watch2phoneHandler = new Watch2PhoneHandler(this);
 
         Button pingWear = (Button) v.findViewById(R.id.settings_send_notif);
         pingWear.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +78,13 @@ public class SettingsFragment extends Fragment implements Globals {
         startAccel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
+                        RecordDataService.class);
+                Messenger messenger = SingletonMessenger.getInstance(watch2phoneHandler);
+                serviceIntent.putExtra(RECORD_SERVICE_MESSENGER, messenger);
+                getActivity().startService(serviceIntent);
+
                 ((MainActivity) getActivity()).sendMessage(MSG_START_ACCEL, "");
                 Log.d("wrkr", "ABCDE accel start sent to wear device");
             }
@@ -57,6 +94,11 @@ public class SettingsFragment extends Fragment implements Globals {
         stopAccel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
+                        RecordDataService.class);
+                getActivity().stopService(serviceIntent);
+
                 ((MainActivity) getActivity()).sendMessage(MSG_STOP_ACCEL, "");
                 Log.d("wrkr", "ABCDE accel stop sent to wear device");
             }
@@ -65,62 +107,19 @@ public class SettingsFragment extends Fragment implements Globals {
         return v;
     }
 
-    public static class WearListenerReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (wearDebug != null) {
+    /*
+    @Override
+    public void onDestroy() {
+        // TODO - probably don't want...
+        // stop service - this will stop the service and remove the persistent
+        // notification if either the user force quits the app or switches to another
+        // fragment within the application
+        Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
+                RecordDataService.class);
+        getActivity().stopService(serviceIntent);
 
-                String event = intent.getStringExtra(WEAR_DATA_KEY);
-                byte[] rawData = intent.getByteArrayExtra(WEAR_DATA_VALUES);
-                String data = new String(rawData);
-
-                if (event == null) event = "ERROR";
-                wearDebug.setText(Html.fromHtml("From wear:<br/>Event: "
-                        + event + "<br/>Data: " + data));
-
-                if (event.equals(MSG_USER_NEEDS_EXERCISE)) {
-                    sendUserNeedsExercise(context);
-                } else if (event.equals(MSG_WEAR_DATA)) {
-                    //writeDataCSV(data);
-                }
-            }
-        }
-    }
-
-    private static void sendUserNeedsExercise(Context c) {
-
-        SharedPreferences prefs = c.getSharedPreferences(GLOBAL_PREFS, 0);
-        SharedPreferences.Editor edit = prefs.edit();
-
-        int uid = prefs.getInt(USER_ID, -1);
-        String strEmail = prefs.getString(USER_EMAIL, "");
-
-        RestAPI.dieNetworkOnMainThreadException();
-
-        if (uid == -1) {
-            // need to obtain the uid from the API
-            User u = RestAPI.getUser(strEmail);
-            if (u == null) {
-                // TODO - handle case where user isn't set up in the DB yet
-                Log.e("wrkr", "USER IS NULL!");
-            } else {
-                uid = u.id;
-                edit.putInt(USER_ID, uid).apply();
-            }
-        }
-
-        // send the server that the user has an exercise due
-        User u = RestAPI.postExercise(uid, System.currentTimeMillis());
-        if (u == null) {
-            // TODO - handle this case
-            Log.e("wrkr", "USER IS NULL AFTER POST EXERCISE!");
-        } else {
-            Log.d("wrkr", "ABCDE user " + uid + " has " + u.exercises + " exercise(s) due");
-        }
-
-        // send the watch a notification (acts as an ACK)
-        ((MainActivity)mContext).sendMessage(MSG_WRIST_EXER_TIME, "");
-    }
+        super.onDestroy();
+    }*/
 
     /*private void writeDataCSV(String data) {
 

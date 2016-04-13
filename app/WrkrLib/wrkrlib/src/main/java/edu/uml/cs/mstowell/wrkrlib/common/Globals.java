@@ -43,4 +43,9 @@ public interface Globals {
     // activity detection
     String WRIST_BROADCAST_ACTION = "edu.uml.cs.mstowell.wrkr.ACTIVITY_UPDATE";
     String WRIST_BROADCAST_DATA = "data";
+
+    // watch to phone comm for API
+    String WATCH_TO_PHONE_BROADCAST_ACTION = "edu.uml.cs.mstowell.wrkr.WTP_BROADCAST";
+    String WTP_BROADCAST_DATA = "data";
+    String RECORD_SERVICE_MESSENGER = "record_service_messenger";
 }

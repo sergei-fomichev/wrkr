@@ -20,7 +20,8 @@ public class WearListenerService extends WearableListenerService implements Glob
         Log.d("wrkr", "ABCDE WearListenerService got data from wear");
 
         Intent intent = new Intent();
-        intent.setAction("edu.uml.cs.mstowell.WEAR_MSG_RCV_BROADCAST");
+        intent.setAction(WATCH_TO_PHONE_BROADCAST_ACTION);
+        //intent.setAction("edu.uml.cs.mstowell.WEAR_MSG_RCV_BROADCAST");
         intent.putExtra(WEAR_DATA_KEY, messageEvent.getPath());
         intent.putExtra(WEAR_DATA_VALUES, messageEvent.getData());
 

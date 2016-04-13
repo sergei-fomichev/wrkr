@@ -30,7 +30,7 @@ public class MobileListenerService extends WearableListenerService implements Gl
             case MSG_WRIST_EXER_TIME:
                 Intent intent = new Intent( this, MyStubBroadcastActivity.class );
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                vibrator.vibrate(vibrateExercise, indexInPatternToRepeat);
+                //vibrator.vibrate(vibrateExercise, indexInPatternToRepeat); // TODO put back
                 startActivity(intent);
                 break;
 

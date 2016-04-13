@@ -15,24 +15,24 @@ import com.google.android.gms.wearable.Wearable;
  */
 public class APIClientCommon {
 
-    private GoogleApiClient mApiClient;
+    private GoogleApiClient mApiClient = null;
     private Context mContext;
 
     public APIClientCommon(Context c) {
         mContext = c;
-        initGoogleApiClient();
+        if (mApiClient == null)
+            initGoogleApiClient();
     }
 
     private void initGoogleApiClient() {
         mApiClient = new GoogleApiClient.Builder(mContext)
-                .addApi( Wearable.API )
+                .addApi(Wearable.API)
                 .build();
 
         if(!(mApiClient.isConnected() || mApiClient.isConnecting()))
             mApiClient.connect();
     }
 
-    // TODO - eventually we need this to return boolean or have other classes override a node count
     public void sendMessage(final String path, final String text) {
         new Thread( new Runnable() {
             @Override
@@ -67,5 +67,11 @@ public class APIClientCommon {
 
     public void connect() {
         mApiClient.connect();
+    }
+
+    public boolean areWatchAndPhonePaired() {
+
+        // TODO implement
+        return true;
     }
 }

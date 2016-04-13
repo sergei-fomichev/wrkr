@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +26,10 @@ import java.util.Date;
 
 import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkr.RestAPI;
 import edu.uml.cs.mstowell.wrkr.list.MListAdapter;
 import edu.uml.cs.mstowell.wrkr.list.SwipeDismissListViewTouchListener;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
-import edu.uml.cs.mstowell.wrkr.RestAPI;
 import edu.uml.cs.mstowell.wrkrlib.common.User;
 
 /**
@@ -37,7 +40,7 @@ public class HomeFragment extends Fragment implements Globals {
     View root, v;
     ListView lv;
     MListAdapter adapter;
-    TextView noNotif;
+    TextView noNotif, karmaTxt;
     Context mContext;
 
     public static String[][] dataList={
@@ -53,6 +56,7 @@ public class HomeFragment extends Fragment implements Globals {
         mContext = MainActivity.mContext;
         root = v.findViewById(R.id.home_fragment_root);
         noNotif = (TextView) v.findViewById(R.id.home_no_notif);
+        karmaTxt = (TextView) v.findViewById(R.id.home_karma);
 
         noNotif.setVisibility(View.GONE);
         new GetNotificationListTask().execute();
@@ -83,6 +87,27 @@ public class HomeFragment extends Fragment implements Globals {
         ArrayList<String[]> a = new ArrayList<>();
         SharedPreferences prefs = mContext.getSharedPreferences(GLOBAL_PREFS, 0);
         int uid = prefs.getInt(USER_ID, -1);
+        String uname = prefs.getString(USER_EMAIL, "");
+
+        // first get the user's karma score
+        if (uname.equals("")) {
+            setKarmaText("Karma Score: <not available>");
+        } else {
+            User u = RestAPI.getUser(uname);
+            if (u == null) {
+                setKarmaText("Karma Score: <not available>");
+            } else {
+                String karmaStr;
+                if (u.karma < 60) { // 59 and under = bad karma
+                    karmaStr = "<font color='#FF2929'>" + u.karma + "</font>";
+                } else if (u.karma < 100) { // 60 - 100 = okay karma
+                    karmaStr = "<font color='#D6D145'>" + u.karma + "</font>";
+                } else { // 100+ = great karma
+                    karmaStr = "<font color='#4ADB25'>" + u.karma + "</font>";
+                }
+                setKarmaText("Karma Score: " + karmaStr);
+            }
+        }
 
         // get outstanding user exercises
         if (uid != -1) {
@@ -129,6 +154,15 @@ public class HomeFragment extends Fragment implements Globals {
         }
     }
 
+    private void setKarmaText(final String text) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                karmaTxt.setText(Html.fromHtml(text));
+            }
+        });
+    }
+
     private void promptUserSetupProfile() {
         // TODO - implement
     }
@@ -156,7 +190,7 @@ public class HomeFragment extends Fragment implements Globals {
         } else if (diffWeeks < 1) {
             return diffDays + " days ago";
         } else {
-            return diffWeeks + " weeks ago";
+            return diffWeeks + (diffWeeks == 1 ? " week ago" : " weeks ago");
         }
     }
 
