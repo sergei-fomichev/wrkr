@@ -47,7 +47,7 @@ public class WristTrackingService extends Service implements Globals {
     private int NOTIFICATION_ID = 55;
 
     private Vibrator vibrator;
-    private long[] pattern = {0, 300, 50, 600};
+    private long[] pattern = {0, 300, 50, 200};
     private SharedPreferences prefs;
 
     // default constructor
@@ -73,66 +73,88 @@ public class WristTrackingService extends Service implements Globals {
 
         // create a notification to link back to the RunFragment as well
         // as allow the application to record data with the screen off
-        //if (!serviceIsRunning) {
+        if (!serviceIsRunning) {
 
-            // send a message to the app to display a notification that
-            // recording has started
-            mApiClient.sendMessage(MSG_START_ACCEL_ACK, "Starting wear accelerometer now");
-
-            // create a partial wakelock to keep accelerometer readings coming
-            setWakelock();
-
-            // create a notification to keep the accelerometer on
-            final Intent emptyIntent = new Intent();
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                    NOTIFICATION_ID, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Notification.Builder builder = new Notification.Builder(getApplicationContext());
-            builder.setContentIntent(pendingIntent)
-                    .setContentTitle("wrkr")
-                    .setContentText("Currently recording data")
-                    .setTicker("Keep this notification to keep the accelerometer on")
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(true);
-
-            Notification notification = builder.build();
-            builder.setOngoing(true); // TODO
-            NotificationManager mNotificationManger =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManger.notify(NOTIFICATION_ID, notification);
-            startForeground(NOTIFICATION_ID, notification);
-        //}
+//            // create a notification to keep the accelerometer on
+//            final Intent emptyIntent = new Intent();
+//            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+//                    NOTIFICATION_ID, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//            Notification.Builder builder = new Notification.Builder(getApplicationContext());
+//            builder.setContentIntent(pendingIntent)
+//                    .setContentTitle("wrkr")
+//                    .setContentText("Currently recording data")
+//                    .setTicker("Keep this notification to keep the accelerometer on")
+//                    .setSmallIcon(R.mipmap.ic_launcher)
+//                    .setContentIntent(pendingIntent)
+//                    .setOngoing(true);
+//
+//            Notification notification = builder.build();
+//            builder.setOngoing(true); // TODO
+//            NotificationManager mNotificationManger =
+//                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//            mNotificationManger.notify(NOTIFICATION_ID, notification);
+//            startForeground(NOTIFICATION_ID, notification);
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         //super.onStartCommand(intent, flags, startId);
+        Log.w("wrkr", "ON START COMMAND - " + serviceIsRunning);
 
-        //if (!serviceIsRunning) {
+        if (serviceIsRunning)
+            return START_STICKY; // do not re-run below code is service is already started
 
-            // initialize variables
-            serviceIsRunning = true;
+        // initialize running state
+        serviceIsRunning = true;
 
-            // register the wrist tracking receiver
-            IntentFilter intentFilter = new IntentFilter(WRIST_BROADCAST_ACTION);
-            registerReceiver(mReceiver, intentFilter);
+        // send a message to the app to display a notification that
+        // recording has started
+        mApiClient.sendMessage(MSG_START_ACCEL_ACK, "Starting wear accelerometer now");
 
-            /*
+        // create a partial wakelock to keep accelerometer readings coming
+        setWakelock();
+
+        // register the wrist tracking receiver
+        IntentFilter intentFilter = new IntentFilter(WRIST_BROADCAST_ACTION);
+        registerReceiver(mReceiver, intentFilter);
+
+        /*
             The Moto 360 device cannot support batched data collection mode in its hardware.
             int fifoSize = accelerometer.getFifoReservedEventCount();
             The above code reports a fifoSize of 0.  We would need a fifoSize > 0 to do this.
-            */
+        */
 
-            // register accelerometer listener
-            setAccelListener();
+        // register accelerometer listener
+        setAccelListener();
 
-            // start a timer to re-register the accelerometer listener
-            ResetAccelTimerTask task = new ResetAccelTimerTask();
-            resetAccelTimer = new Timer(); // TODO - below is 10 seconds, set back after test
-            resetAccelTimer.scheduleAtFixedRate(task, 0, 10000);//300000); // 5*60*1000 = 5 minutes
-        //}
+        // start a timer to re-register the accelerometer listener
+        ResetAccelTimerTask task = new ResetAccelTimerTask();
+        resetAccelTimer = new Timer(); // TODO - below is 10 seconds, set back after test
+        resetAccelTimer.scheduleAtFixedRate(task, 0, 30000);//300000); // 5*60*1000 = 5 minutes
+
+        // create a notification to keep the accelerometer on
+        final Intent emptyIntent = new Intent();
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                NOTIFICATION_ID, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        builder.setContentIntent(pendingIntent)
+                .setContentTitle("wrkr")
+                .setContentText("Currently recording data")
+                .setTicker("Keep this notification to keep the accelerometer on")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
+
+        Notification notification = builder.build();
+        builder.setOngoing(true); // TODO
+        NotificationManager mNotificationManger =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManger.notify(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification);
 
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
@@ -149,15 +171,15 @@ public class WristTrackingService extends Service implements Globals {
             }
 
             // make sure the accelerometer never turns off by reseting it
-//            Log.d("wrkr", "ABCDE reseting the accel");
-//            AsyncTask.execute(new Runnable() { // TODO no idea if doing this in AsyncTask helps
-//                @Override
-//                public void run() {
-//                    //setAccelListener();
-//                    //destroyWakelock(); // TODO does this work?
-//                    //setWakelock();
-//                }
-//            });
+            Log.d("wrkr", "ABCDE reseting the accel");
+            AsyncTask.execute(new Runnable() { // TODO no idea if doing this in AsyncTask helps
+                @Override
+                public void run() {
+                    setAccelListener();
+                    //destroyWakelock(); // TODO does this work?
+                    //setWakelock();
+                }
+            });
 
             timerTicks++;
         }
@@ -261,14 +283,13 @@ public class WristTrackingService extends Service implements Globals {
     }
 
     // determine if the user is at a keyboard
-    private JSONObject dataJO;
     private JSONArray x;
     private JSONArray z;
     private JSONArray wma;
     private boolean classify(String data) {
 
         try {
-            dataJO = new JSONObject(data);
+            JSONObject dataJO = new JSONObject(data);
 
             x = dataJO.getJSONArray("x");
             //JSONArray y = dataJO.getJSONArray("y");
