@@ -3,6 +3,26 @@ Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project
 
 We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
 
+## Progress: April 11 - April 17 2016
+
+### Mobile + Smartwatch App
+
+ - moved API to mobile-only since wear doesn't have on-board wifi
+ - moved data classification logic to wear
+ - added retry timer to WristTrackingService if watch and phone are disconnected: will retry every 5 minutes to send notification
+ - added karma score to user profile
+ - fixed the wear accelerometer data collecting service from being killed
+   - the system was killing my service after 18-20 minutes of being alive, so a combination of the following fixed this:
+      - mobile and wear service return START_STICKY in onStartCommand to request being rescheduled
+      - mobile and wear service both use persistent notifications - mobile side needs to keep the API communication ready for when the wear sends a message that the user needs an exercise, and wear needs to keep recording data and classifying
+      - wear service reregisters the accelerometer listener every 30 seconds
+      - wear service holds a partial wakelock
+      - receiver that starts the wear service also starts an AlarmManager that reschedules the service every 60 seconds.  Service has logic to avoid re-initializing components if it was already up.  That way if the system kills my service, it'll be back up and running again in < 60 seconds.
+
+### Web + Leap Motion
+
+ - 
+
 ## Progress: March 30 - April 10 2016
 
 ### Mobile + Smartwatch App
