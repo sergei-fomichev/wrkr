@@ -1,7 +1,5 @@
 package edu.uml.cs.mstowell.wrkr;
 
-import android.os.StrictMode;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -307,11 +305,5 @@ public class RestAPI {
         } catch (Exception e) {
             return new Result(-1, "General error");
         }
-    }
-
-    // TODO - usually we do networking in an AsyncTask. We'll get to that. For now, call this.
-    public static void dieNetworkOnMainThreadException() {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
     }
 }

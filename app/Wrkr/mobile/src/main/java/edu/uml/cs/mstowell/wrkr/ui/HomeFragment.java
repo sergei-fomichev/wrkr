@@ -23,6 +23,7 @@ import org.json.JSONException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
@@ -126,7 +127,8 @@ public class HomeFragment extends Fragment implements Globals {
                         long timestamp = timestamps.getLong(i);
 
                         Date date = new java.util.Date(timestamp);
-                        String timeStr = new SimpleDateFormat("hh:mm, yyyy-MM-dd").format(date);
+                        String timeStr = new SimpleDateFormat("hh:mm, yyyy-MM-dd",
+                                Locale.US).format(date);
 
                         String timeRemaining = getTimeLeft(new Date(timestamp));
 

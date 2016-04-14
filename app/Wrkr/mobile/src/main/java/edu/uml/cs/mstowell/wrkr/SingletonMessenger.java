@@ -6,7 +6,7 @@ import android.os.Messenger;
 /**
  * Singleton messenger class
  */
-public class SingletonMessenger { // TODO - this class may be useless
+public class SingletonMessenger {
 
     private static Messenger instance;
 

@@ -30,7 +30,7 @@ public class SettingsFragment extends Fragment implements Globals {
     private static TextView wearDebug;
     private static Handler watch2phoneHandler;
 
-    // TODO - probably better off as a broadcast...
+    // TODO - probably better off as a broadcast instead of messenger ...
     private static class Watch2PhoneHandler extends Handler {
         private final WeakReference<SettingsFragment> mSettingsFrag;
 
@@ -61,7 +61,6 @@ public class SettingsFragment extends Fragment implements Globals {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        //mContext = MainActivity.mContext;
         wearDebug = (TextView) v.findViewById(R.id.setting_debug_info);
         watch2phoneHandler = new Watch2PhoneHandler(this);
 
@@ -106,20 +105,6 @@ public class SettingsFragment extends Fragment implements Globals {
 
         return v;
     }
-
-    /*
-    @Override
-    public void onDestroy() {
-        // TODO - probably don't want...
-        // stop service - this will stop the service and remove the persistent
-        // notification if either the user force quits the app or switches to another
-        // fragment within the application
-        Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
-                RecordDataService.class);
-        getActivity().stopService(serviceIntent);
-
-        super.onDestroy();
-    }*/
 
     /*private void writeDataCSV(String data) {
 

@@ -44,58 +44,55 @@ public class RecordDataService extends Service implements Globals {
     public void onCreate() {
         super.onCreate();
 
+        // register GoogleApiClient
         mApiClient = new APIClientCommon(getApplicationContext());
 
         // declare the broadcast receiver to receive user activity updates
         mReceiver = new WatchToPhoneBroadcastReceiver();
         Log.d("wrkr", " ** service created ** ");
-
-        //if (!serviceIsRunning) {
-
-            // create a notification to link back to the SettingsFragment as well
-            // as allow the application to record data with the screen off
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                    NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Notification.Builder builder = new Notification.Builder(getApplicationContext());
-            builder.setContentIntent(pendingIntent)
-                    .setContentTitle("wrkr")
-                    .setContentText("Recording data from your smartwatch")
-                    .setTicker("Started recording smartwatch data")
-                    .setSmallIcon(R.mipmap.ic_notifcation_2)
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(true);
-
-            Notification notification = builder.build();
-            NotificationManager mNotificationManger =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManger.notify(NOTIFICATION_ID, notification);
-            startForeground(NOTIFICATION_ID, notification);
-            Log.d("wrkr", "** notification should be created **");
-        //}
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        //if (!serviceIsRunning) {
+        if (serviceIsRunning)
+            return START_STICKY; // do not re-run below code is service is already started
 
-            // initialize variables
-            serviceIsRunning = true;
+        // initialize running state
+        serviceIsRunning = true;
 
-            Bundle extras = intent.getExtras();
-            if (extras != null)
-                messenger = (Messenger) extras.get(RECORD_SERVICE_MESSENGER);
+        Bundle extras = intent.getExtras();
+        if (extras != null)
+            messenger = (Messenger) extras.get(RECORD_SERVICE_MESSENGER);
 
-            // register the watch2phone receiver
-            IntentFilter intentFilter = new IntentFilter(WATCH_TO_PHONE_BROADCAST_ACTION);
-            registerReceiver(mReceiver, intentFilter);
-        //}
+        // register the watch2phone receiver
+        IntentFilter intentFilter = new IntentFilter(WATCH_TO_PHONE_BROADCAST_ACTION);
+        registerReceiver(mReceiver, intentFilter);
 
-        //return super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
+        // create a notification to link back to the application as well
+        // as keep the application alive to receive comm from the wear side
+        Intent notifIntent = new Intent(getApplicationContext(), MainActivity.class);
+        notifIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                NOTIFICATION_ID, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        builder.setContentIntent(pendingIntent)
+                .setContentTitle("wrkr")
+                .setContentText("Recording data from your smartwatch")
+                .setTicker("Started recording smartwatch data")
+                .setSmallIcon(R.mipmap.ic_notifcation_2)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
+
+        Notification notification = builder.build();
+        NotificationManager mNotificationManger =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManger.notify(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification);
+        Log.d("wrkr", "** notification should be created **");
+
+        return START_STICKY; // reschedule the service if killed by the system
     }
 
     @Override
@@ -103,23 +100,20 @@ public class RecordDataService extends Service implements Globals {
 
         super.onDestroy();
 
-        //if (serviceIsRunning) {
+        // unregister the watch2phone receiver
+        unregisterReceiver(mReceiver);
 
-            // unregister the watch2phone receiver
-            unregisterReceiver(mReceiver);
+        // cancel the notification
+        NotificationManager mNotificationManger =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManger.cancel(NOTIFICATION_ID);
 
-            // cancel the notification
-            NotificationManager mNotificationManger =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManger.cancel(NOTIFICATION_ID);
-
-            // kill the API client
-            if ( mApiClient != null ) {
-                if ( mApiClient.isConnected() ) {
-                    mApiClient.disconnect();
-                }
+        // kill the API client
+        if (mApiClient != null) {
+            if (mApiClient.isConnected()) {
+                mApiClient.disconnect();
             }
-        //}
+        }
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
