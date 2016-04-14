@@ -35,13 +35,6 @@ public class WristTrackingListener implements SensorEventListener, Globals {
     float x, y, z, xP, yP, zP;
     double magnitude, magnitudeP, alpha, d, wma;
 
-    // declare an agreement constant, which enforces that the user's activity
-    // level will not be broadcast until the user has been consistently showing
-    // a particular activity level for 5 (agreement >= 5) consecutive occurrences
-    private int agreement;
-
-    // TODO - we need some sort of wakelock (but try batching first) to keep the accelerometer
-    // TODO - running for a long period of time
     public WristTrackingListener(Context c) {
 
         mContext = c;
@@ -57,8 +50,9 @@ public class WristTrackingListener implements SensorEventListener, Globals {
             // get event's timestamp
             thisAccelUpdate = event.timestamp;
 
-            // only consider user activity updates every 1/5 second (1000^3 = 1 second)
-            if (mLastAccelUpdate != 0 && thisAccelUpdate - mLastAccelUpdate < 175000000) {//200000000) {
+            // only consider user activity updates roughly every 1/5 second (1000^3 = 1 second)
+            // 200000000 = 1/5 second but 175000000 allows some flexibility
+            if (mLastAccelUpdate != 0 && thisAccelUpdate - mLastAccelUpdate < 175000000) {
                 return;
             }
 
@@ -72,8 +66,7 @@ public class WristTrackingListener implements SensorEventListener, Globals {
             y = event.values[1];
             z = event.values[2];
 
-            // if we don't have a previous accelerometer reading, we will store one
-            // and return
+            // if we don't have a previous accelerometer reading, we will store one and return
             if (mPreviousAccelReading == null) {
 
                 mPreviousAccelReading = new float[3];
@@ -149,7 +142,7 @@ public class WristTrackingListener implements SensorEventListener, Globals {
                 jaWMA.put(""+wma);
                 dataIndex++;
 
-                // after we collect 50 points (10 seconds of data), send back to device
+                // after we collect 50 points (~10 seconds of data), send back to device
                 if (dataIndex > (DATA_SIZE - 1)) {
 
                     // set up data JSONObject

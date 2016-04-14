@@ -19,13 +19,13 @@ import edu.uml.cs.mstowell.wrkrlib.common.Globals;
  */
 public class MobileListenerService extends WearableListenerService implements Globals {
 
-    private AlarmManager alarmManager;
-    private PendingIntent wristServiceIntent;
+    private int INTENT_REQUEST_CODE = 17313;
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-        Log.d("wrkr", "ABCDE GOT A MESSAGE FROM THE MOBILE WOOOOOOOO");
+        Log.d("wrkr", "ABCDE GOT A MESSAGE FROM THE MOBILE WOO");
+
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         long[] vibrateStart = {0, 400, 30, 200};
         long[] vibrateStop = {0, 200, 25, 200, 25, 200};
@@ -35,21 +35,19 @@ public class MobileListenerService extends WearableListenerService implements Gl
         switch (messageEvent.getPath()) {
             case MSG_INIT_FROM_DEVICE:
             case MSG_WRIST_EXER_TIME:
-                Intent intent = new Intent( this, MyStubBroadcastActivity.class );
+                Intent intent = new Intent(this, MyStubBroadcastActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //vibrator.vibrate(vibrateExercise, indexInPatternToRepeat); // TODO put back
+                vibrator.vibrate(vibrateExercise, indexInPatternToRepeat);
                 startActivity(intent);
                 break;
 
             case MSG_START_ACCEL:
                 vibrator.vibrate(vibrateStart, indexInPatternToRepeat);
                 startRecordingData();
-                //startService(new Intent(MobileListenerService.this, WristTrackingService.class));
                 break;
 
             case MSG_STOP_ACCEL:
                 stopRecordingData();
-                //stopService(new Intent(MobileListenerService.this, WristTrackingService.class));
                 vibrator.vibrate(vibrateStop, indexInPatternToRepeat);
                 break;
 
@@ -65,20 +63,26 @@ public class MobileListenerService extends WearableListenerService implements Gl
     public void startRecordingData() {
 
         Intent intent = new Intent(this, WristTrackingService.class);
-        wristServiceIntent = PendingIntent.getService(this, 0, intent, 0);
-        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent wristServiceIntent = PendingIntent.getService(
+                this, INTENT_REQUEST_CODE, intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         Date now = new Date();
 
-        // restart service every 60 seconds
+        // restart service every 60 seconds in case it gets killed by the system
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now.getTime(),
                 60 * 1000, wristServiceIntent);
     }
 
     public void stopRecordingData() {
 
-        if (alarmManager != null && wristServiceIntent != null) {
-            alarmManager.cancel(wristServiceIntent);
-        }
-        stopService(new Intent(this, WristTrackingService.class)); // TODO should be redundant
+        // cancel the alarm manager
+        Intent intent = new Intent(this, WristTrackingService.class);
+        PendingIntent wristServiceIntent = PendingIntent.getService(
+                this, INTENT_REQUEST_CODE, intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(wristServiceIntent);
+
+        // stop the service
+        stopService(new Intent(this, WristTrackingService.class));
     }
 }
