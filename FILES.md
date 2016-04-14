@@ -10,6 +10,8 @@
   - ProfileFragment.java
   - SettingsFragment.java
   - MainActivity.java
+  - RestAPI.java
+  - SingletonMessenger.java
 - [Layouts](https://github.com/uml-ubicomp-2016-spring/wrkr/tree/master/app/Wrkr/mobile/src/main/res/layout)
   - activity_main.xml
   - app_bar_main.xml
@@ -38,7 +40,6 @@
 - [Global Java classes](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/app/WrkrLib/wrkrlib/src/main/java/edu/uml/cs/mstowell/wrkrlib/common/)
   - APIClientCommon.java
   - Globals.java
-  - RestAPI.java
   - User.java
 
 ## Web API
