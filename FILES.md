@@ -36,7 +36,7 @@
 - [Layout](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/app/Wrkr/wear/src/main/res/layout/activity_display.xml)
   - activity_display.xml
 
-## Mobile+Wear Global Code (including API)
+## Mobile+Wear Global Code
 - [Global Java classes](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/app/WrkrLib/wrkrlib/src/main/java/edu/uml/cs/mstowell/wrkrlib/common/)
   - APIClientCommon.java
   - Globals.java
