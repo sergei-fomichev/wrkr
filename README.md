@@ -18,6 +18,7 @@ We will update our progress for each week below.  The most recent week appears a
       - wear service reregisters the accelerometer listener every 30 seconds
       - wear service holds a partial wakelock
       - receiver that starts the wear service also starts an AlarmManager that reschedules the service every 60 seconds.  Service has logic to avoid re-initializing components if it was already up.  That way if the system kills my service, it'll be back up and running again in < 60 seconds.
+ - closed issue #4, #5, #7, #8 ... opened issue #9
 
 ### Web + Leap Motion
 
