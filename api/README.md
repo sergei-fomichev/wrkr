@@ -36,14 +36,14 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >OR Respond [header - 401] if not exists  
 
 
-*Check a user's outstanding exercise count* `Done` 
+*Check a user's exercises* `Done` 
 >{  
 >"exercises":  
 >"id": userID  
 >}  
 >Respond [header - 200]  
 >{  
->"exercises": number of exercises  
+>"exercises": number of exercises undone
 >"timestamp":  a JSONArray of timestamps and states(1 - complete, 0 - incomplete ) e.g. [1459878297362, 0]  
 >}  
 >OR Respond [header - 401] if user not exists in database  
