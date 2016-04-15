@@ -22,10 +22,10 @@ class userAPI {
 	function userData() {
 		if (isset($_GET["exist"]) && isset($_GET["email"])){
 			$email = $_GET["email"];	
-			$stmt = $this->db->prepare('SELECT id, name FROM users WHERE email=?');
+			$stmt = $this->db->prepare('SELECT id, name, karma FROM users WHERE email=?');
 			$stmt->bind_param('s', $email);
 			$stmt->execute();
-			$stmt->bind_result($id, $name);
+			$stmt->bind_result($id, $name, $karma);
 			$stmt->fetch();
 			$stmt->close();
 			
@@ -35,7 +35,8 @@ class userAPI {
 			}
 			$result = array(
 				"id" => $id,
-				"name" => $name
+				"name" => $name,
+				"karma" => $karma
 			);
 			sendResponse(200, json_encode($result));
 			return true;
@@ -55,23 +56,27 @@ class userAPI {
 				return false;
 			}
 			else{
-				$stsm = $this->db->prepare('SELECT ts FROM exercises WHERE user_id=? && complete=0');
+				$stsm = $this->db->prepare('SELECT ts, complete FROM exercises WHERE user_id=? ORDER BY ts DESC');
 				$stsm->bind_param('i', $user_id);
 				$stsm->execute();
-				$stsm->bind_result($ts);
+				$stsm->bind_result($ts, $complete);
 				$stsm->store_result();
 				while($stsm->fetch()){
-					$tsArray[] = $ts; 
+					$tsArray[] = array($ts, $complete); 
 				}
+				$stsm = $this->db->prepare('SELECT COUNT(id) FROM exercises WHERE user_id=? && complete=0');
+				$stsm->bind_param('i', $user_id);
+				$stsm->execute();
+				$stsm->bind_result($count);
+				$stsm->fetch();
+				$stsm->close();
 				
-			
-			
 				$result = array(
 					"status" => "ok",
-					"exercises" => $stsm->num_rows,
+					"exercises" => $count,
 					"timestamp" => $tsArray
 				);
-				$stsm->close();
+				
 				sendResponse(200, json_encode($result));
 				return true;
 			}
