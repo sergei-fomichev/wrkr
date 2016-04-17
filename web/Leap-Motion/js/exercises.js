@@ -7,7 +7,6 @@ var exercises = {
 		},
 		picture: twistsImg,
 		exercise: function(frames){
-			
 			if(len == 2){
 				if(Math.round(frames.hands[0].palmNormal[1]) == Math.round(frames.hands[1].palmNormal[1]))
 					wristNormal = Math.round(frames.hands[0].palmNormal[1]);
@@ -34,7 +33,7 @@ var exercises = {
 	},
 	twistsV: {
 		name: "Wrist Bend",
-		numRepeats: 4,
+		numRepeats: 2,
 		text: function(){
 			return "Wrists flexion and extension.";
 		},
@@ -49,7 +48,7 @@ var exercises = {
 				if(wristNormal == 0)
 					repDone = 0;
 				
-				if(repDone == 0 && wristNormal == -1 && grabStrength !== 1){
+				if(repDone == 0 && wristNormal == 1 && grabStrength !== 1){
 					exerciseCounter += 1;
 					repDone = 1;
 				}
@@ -59,7 +58,7 @@ var exercises = {
 				if(wristNormal == 0)
 					repDone = 0;
 				
-				if(repDone == 0 && wristNormal == -1 && grabStrength !== 1){
+				if(repDone == 0 && wristNormal == 1 && grabStrength !== 1){
 					exerciseCounter += 1;
 					repDone = 1;
 				}
@@ -68,7 +67,7 @@ var exercises = {
 	},
 	knuckle_bend: {
 		name: "Knuckle bend",
-		numRepeats: 3,
+		numRepeats: 1,
 		text: function(){
 			return "Bend your fingers using the middle and end joints, but keep the knuckles straight.";
 		},
@@ -118,7 +117,7 @@ var exercises = {
 	},
 	thumb_bend: {
 		name: "Thumb bend",
-		numRepeats: 5,
+		numRepeats: 3,
 		text: function(){
 			return "Move the thumb "+ this.numRepeats +" times across the palm and back to the starting position.";
 		},
@@ -148,7 +147,7 @@ var exercises = {
 	},
 	spreadFingers : {
 		name: "Spread Fingers",
-		numRepeats: 5,
+		numRepeats: 2,
 		text: function(){
 			return "Slowly and gently spread your fingers (and thumb) as far apart as you can. Return to the starting position";
 		},
