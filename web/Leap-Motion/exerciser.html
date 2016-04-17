@@ -1,87 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Leap</title>
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-    <style>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-signin-client_id" content="1008213894257-b98bdee3g0bklck0dm0q1t6umdvkegft.apps.googleusercontent.com">
+<title>Leap</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<style>
 	
-      body {
-        line-height: 2em;
-        font-size: 12pt;
-        font-family: Helvetica;
-      }
-	  #output{
-		  font-size: 18pt;
-	  }
-	  .jumbotron{
-		  padding: 20px 0;
-		  margin-bottom: 20px;
-	  } 
-	  .progress{
-		  margin-bottom: 0px;
-	  }
-	  .hand{
-		  border-radius: 6px;
-		  margin: 0 15px 10px;
-	  }
-	  .hand>p{
-	  	padding: 10px 0;
-		margin: 0;
-	  }	  
-	  .progressArea{
-		  display: none;
-	  }
-    </style>
+body {
+	line-height: 2em;
+	font-size: 12pt;
+	font-family: Helvetica;
+}
+#output{
+	font-size: 18pt;
+}
+.action{
+	color: black !important;
+}
+.jumbotron{
+	padding: 20px 0;
+	margin-bottom: 20px;
+} 
+.progress{
+	margin-bottom: 0px;
+}
+.hand{
+	border-radius: 6px;
+	margin: 0 15px 10px;
+}
+.hand>p{
+	padding: 10px 0;
+	margin: 0;
+}	  
+.circle{
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	background-color: transparent;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 300px;
+	height: 200px;
+}
+.ibox{
+	background-color: rgb(191, 191, 191);
+	width: 300px;
+	height: 225px;
+	display: none;
+}
+#start-wrkr{
+	background-color: #6520c7;
+	border: none;
+}
+.connect-device{
+	width: 180px;
+	position: absolute;
+	top: auto;
+	left: auto;
+	padding: 0px;
+	opacity: 0.8;
+	display: none;
+	z-index: 10;
+	cursor: pointer;
+	right: 0px;
+	bottom: 13px;
+}
+.hover-hand{
+	max-width: 100%;
+}
+.btn-default{
+	padding: 10px 16px;
+}
+</style>
 
-  </head>
+</head>
 
-  <body>
-	  <div class="container">
-	  	  <div class="jumbotron">
-			  <h2>WRKR</h2>
-	  		  <p>Welcome to wrist-fingers exerciser. You need a Leap Motion device to proceed. To start the daily exercise hit the button below.</p>
-	          <p>
-	            <a class="btn btn-lg btn-primary" href="#" role="button" id="start-wrkr">Start exercising</a>
-	          </p>
-	      </div>
-		<div class="row">
-			<div class="col-md-12 hand">
-			</div>
-		</div>  
-	  	<div class="row">
-	  		<div class="col-md-4 exList">
-	  		</div>
-			<div class="col-md-5 exDescription">
+<body>
+<div class="container">
+	<div class="jumbotron">
+		<h2>WRKR</h2>
+		<p>You have <span class="incomplete"></span> exercises to do. To start working out hit the button below and follow the instructions.</p>
+		<p>
+			<button class="btn btn-lg btn-primary" id="start-wrkr">Start exercising</button> <a href="dashboard.html" class="btn btn-default" role="button">Back to the website</a>
+		</p>
+	
+	</div>
+	<div class="row">
+		<div class="col-md-12 hand bg-info">
+		</div>
+	</div>  
+	<div class="row">
+		<div class="col-md-4 exList">
+		</div>
+		<div class="col-md-5 exDescription">
 				
+		</div>
+		<div class="col-md-3">
+			<div class="ibox">
+				<canvas id="circle" width="300" height="225"></canvas>
+				<p>For the best signal do not leave the area</p>
 			</div>
-			<div class="col-md-3">
-				<div class="progressArea">
-					You have done: <span id="exerciseProgress"></span>/<span id="exerciseRepeats"></span>
-				</div>
-				<canvas id="circle" width="200" height="200"></canvas>
-			</div>
-	  	</div>
-	  </div>
-	  <div class="container-fluid">
-		<div id="output"></div>
-	  </div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div id="output"></div>
+</div>
 	  
 
 <footer>
-	<div class="progress navbar-fixed-bottom">
-	  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-	    <span class="sr-only"></span>
-	  </div>
-	</div>
+	<div id="my-signin2" style="display: none;"></div>
 </footer>
+<div class="connect-device">
+	<img class="hover-hand" src="img/hands-over.gif">
+</div>
+
 
 <script src="http://code.jquery.com/jquery-2.2.2.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="http://js.leapmotion.com/leap-0.6.3.js"></script>
+<script src="http://js.leapmotion.com/leap-plugins-0.1.11.min.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 <script src="js/script.js"></script>
 
-  </body>
+</body>
 
 </html>
