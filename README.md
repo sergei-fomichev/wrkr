@@ -22,7 +22,10 @@ We will update our progress for each week below.  The most recent week appears a
 
 ### Web + Leap Motion
 
- - 
+ - Created the User Stat page
+ - Transfered the hand exerciser to the web site
+ - Made the exercises change status after user done it, both on the server and the website
+ - Debugged certan exercises from the false exercise count
 
 ## Progress: March 30 - April 10 2016
 
