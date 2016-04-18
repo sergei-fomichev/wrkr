@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
@@ -31,6 +31,14 @@
             </intent-filter>
         </service>
         <service android:name=".service.RecordDataService"/>
+        <receiver android:name=".receiver.SetWristAlarmReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="edu.uml.cs.mstowell.wrkr.SET_WRIST_ABA"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.StartWristTrackingReceiver"/>
+        <receiver android:name=".receiver.StopWristTrackingReceiver"/>
         <!--
         <receiver android:name=".service.RecordDataService$WatchToPhoneBroadcastReceiver">
             <intent-filter>

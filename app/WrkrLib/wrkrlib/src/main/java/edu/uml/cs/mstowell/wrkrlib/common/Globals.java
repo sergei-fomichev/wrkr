@@ -48,4 +48,11 @@ public interface Globals {
     String WATCH_TO_PHONE_BROADCAST_ACTION = "edu.uml.cs.mstowell.wrkr.WTP_BROADCAST";
     String WTP_BROADCAST_DATA = "data";
     String RECORD_SERVICE_MESSENGER = "record_service_messenger";
+
+    // when to fire the services to record data
+    String SET_WRIST_ALARM_BROADCAST_ACTION = "edu.uml.cs.mstowell.wrkr.SET_WRIST_ABA";
+    int START_TRACKING_HOUR = 8;   // 8:00am
+    int START_TRACKING_MINUTE = 0; //
+    int STOP_TRACKING_HOUR = 16;   // 4:00pm
+    int STOP_TRACKING_MINUTE = 0;  //
 }

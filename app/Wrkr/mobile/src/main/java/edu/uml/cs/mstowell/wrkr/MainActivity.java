@@ -118,6 +118,11 @@ public class MainActivity extends AppCompatActivity
 
         // initialize GoogleApiClient to talk to wear
         mApiClient = new APIClientCommon(this);
+
+        // make sure the SetWristAlarmReceiver is fired at least once
+        Intent intent = new Intent();
+        intent.setAction(SET_WRIST_ALARM_BROADCAST_ACTION);
+        mContext.sendBroadcast(intent);
     }
 
     public void getGoogleAccount() {
