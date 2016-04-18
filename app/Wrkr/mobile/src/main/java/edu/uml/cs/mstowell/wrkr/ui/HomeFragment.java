@@ -124,7 +124,8 @@ public class HomeFragment extends Fragment implements Globals {
                 for (int i = 0; i < timestamps.length(); i++) {
 
                     try {
-                        long timestamp = timestamps.getLong(i);
+                        JSONArray subArray = timestamps.getJSONArray(i);
+                        long timestamp = subArray.getLong(0);
 
                         Date date = new java.util.Date(timestamp);
                         String timeStr = new SimpleDateFormat("hh:mm, yyyy-MM-dd",
