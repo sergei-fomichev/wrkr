@@ -25,16 +25,29 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
 
     private void setStartTimer(Context context) {
         Calendar calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.DAY_OF_WEEK);
+        int thisHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int thisMinute = calendar.get(Calendar.MINUTE);
+
+        // if it is Friday after the stop trigger period, skip and set the alarm
+        // for next Monday (we do not want weekends).  If we are between the start
+        // and stop period, note the AlarmManager will trigger immediately
+        long triggerAt = (today == Calendar.FRIDAY &&
+                            thisHour > STOP_TRACKING_HOUR &&
+                            thisMinute > STOP_TRACKING_MINUTE
+                ? calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY * 3)
+                : calendar.getTimeInMillis());
 
         calendar.set(Calendar.HOUR_OF_DAY, START_TRACKING_HOUR);
         calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
         calendar.set(Calendar.SECOND, 0);
+
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StartWristTrackingReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
+
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pi);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, triggerAt, AlarmManager.INTERVAL_DAY, pi);
     }
 
     private void setStopTimer(Context context) {
@@ -44,9 +57,11 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
         calendar.set(Calendar.HOUR_OF_DAY, STOP_TRACKING_HOUR);
         calendar.set(Calendar.MINUTE, STOP_TRACKING_MINUTE);
         calendar.set(Calendar.SECOND, 0);
+
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StopWristTrackingReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
+
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pi);
