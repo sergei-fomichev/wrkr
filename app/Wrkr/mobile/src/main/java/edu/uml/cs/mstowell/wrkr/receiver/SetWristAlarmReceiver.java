@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -32,22 +33,29 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
         // if it is Friday after the stop trigger period, skip and set the alarm
         // for next Monday (we do not want weekends).  If we are between the start
         // and stop period, note the AlarmManager will trigger immediately
-        long triggerAt = (today == Calendar.FRIDAY &&
-                            thisHour > STOP_TRACKING_HOUR &&
-                            thisMinute > STOP_TRACKING_MINUTE
-                ? calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY * 3)
-                : calendar.getTimeInMillis());
+        long triggerAt = calendar.getTimeInMillis();
+        if (today == Calendar.FRIDAY) {
+            Log.d("wrkr", "Calendar -- today is friday, skipping 3 days");
+            triggerAt += (AlarmManager.INTERVAL_DAY * 3);
+        } else if (thisHour > STOP_TRACKING_HOUR && thisMinute > STOP_TRACKING_MINUTE) {
+            Log.d("wrkr", "Calendar -- passed the stop hour .. skipping 1 day");
+            triggerAt += (AlarmManager.INTERVAL_DAY);
+        }
 
         calendar.set(Calendar.HOUR_OF_DAY, START_TRACKING_HOUR);
         calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
         calendar.set(Calendar.SECOND, 0);
+
+        Log.d("wrkr", "Calendar -- trigger at day " + calendar.get(Calendar.DAY_OF_WEEK) +
+                ", " + calendar.get(Calendar.HOUR_OF_DAY) + ":" +
+                calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
 
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StartWristTrackingReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, triggerAt, AlarmManager.INTERVAL_DAY, pi);
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAt, AlarmManager.INTERVAL_DAY, pi);
     }
 
     private void setStopTimer(Context context) {
@@ -63,7 +71,7 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pi);
     }
 }

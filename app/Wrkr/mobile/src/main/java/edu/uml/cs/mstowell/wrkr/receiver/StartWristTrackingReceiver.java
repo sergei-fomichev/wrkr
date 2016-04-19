@@ -3,6 +3,7 @@ package edu.uml.cs.mstowell.wrkr.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import edu.uml.cs.mstowell.wrkr.service.RecordDataService;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
@@ -15,6 +16,8 @@ public class StartWristTrackingReceiver extends BroadcastReceiver implements Glo
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        Log.d("wrkr", "StartWristTrackingReceiver called");
 
         // start the data recording service.  NOTE: debugging will not be enabled
         Intent serviceIntent = new Intent(context, RecordDataService.class);

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -20,6 +21,8 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        Log.d("wrkr", "StopWristTrackingReceiver called");
 
         // stop the data recording service
         Intent serviceIntent = new Intent(context, RecordDataService.class);
@@ -50,11 +53,15 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
         calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
         calendar.set(Calendar.SECOND, 0);
 
+        Log.d("wrkr", "Calendar -- trigger at day " + calendar.get(Calendar.DAY_OF_WEEK) +
+                ", " + calendar.get(Calendar.HOUR_OF_DAY) + ":" +
+                calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
+
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StartWristTrackingReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, triggerAt, AlarmManager.INTERVAL_DAY, pi);
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAt, AlarmManager.INTERVAL_DAY, pi);
     }
 }
