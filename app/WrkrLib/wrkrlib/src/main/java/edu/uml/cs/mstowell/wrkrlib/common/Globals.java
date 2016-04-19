@@ -57,6 +57,7 @@ public interface Globals {
     int STOP_TRACKING_MINUTE = 0;  //
 
     // logistic regression training and weights
+    int NUM_FEATURES = 5;
     String LOGISTIC_MODEL_TRAINED = "logistic_model_trained";
     String LOGISTIC_WEIGHTS = "logistic_weights";
 }

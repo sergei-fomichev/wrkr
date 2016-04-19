@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkrlib.common;
 
 import android.content.Context;
 import android.util.Log;
@@ -22,7 +22,7 @@ import edu.uml.cs.mstowell.wrkrlib.R;
  *
  * Modified by Mike Stowell for use with wrkr app
  */
-public class Logistic {
+public class Logistic implements Globals {
 
     /** the learning rate */
     private double rate;
@@ -36,8 +36,6 @@ public class Logistic {
 
     // need a context to find resources
     Context mContext;
-
-    private static final int NUM_FEATURES = 5;
 
     public Logistic(Context c) {
         this.rate = 0.0001;
@@ -66,7 +64,11 @@ public class Logistic {
         }
     }
 
-    private double classify(double[] x) {
+    public void setWeights(double[] w) {
+        weights = w;
+    }
+
+    public double classify(double[] x) {
         double logit = .0;
         for (int i = 0; i < weights.length; i++)  {
             logit += weights[i] * x[i];
@@ -113,10 +115,6 @@ public class Logistic {
         return dataset;
     }
 
-    public int getNumFeatures() {
-        return NUM_FEATURES;
-    }
-
     public double[] runLogisticRegression() throws FileNotFoundException {
 
         Log.d("wrkr", "about to run logistic regression");
@@ -126,6 +124,13 @@ public class Logistic {
         train(instances);
 
         return weights;
+    }
+
+    public double mean(List<Double> prob) {
+        double sum = 0;
+        for (Double val : prob)
+            sum += val;
+        return sum / prob.size();
     }
 
     @SuppressWarnings("unused")
@@ -233,12 +238,4 @@ public class Logistic {
         //Log.w("wrkr", "standing_3 - prob(1|x) = " + classify(instance.x));
         Log.w("wrkr", "standing_3 overall prob(1|x) = " + mean(probabilities));
     }
-
-    private double mean(List<Double> prob) {
-        double sum = 0;
-        for (Double val : prob)
-            sum += val;
-        return sum / prob.size();
-    }
-
 }
