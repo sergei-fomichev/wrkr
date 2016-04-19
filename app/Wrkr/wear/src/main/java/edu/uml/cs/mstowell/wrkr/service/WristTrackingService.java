@@ -29,7 +29,7 @@ import java.util.TimerTask;
 import edu.uml.cs.mstowell.wrkr.R;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
-import edu.uml.cs.mstowell.wrkrlib.common.Logistic;
+import edu.uml.cs.mstowell.wrkr.ml.Logistic;
 
 /**
  * Wear accelerometer data collection service
@@ -150,7 +150,7 @@ public class WristTrackingService extends Service implements Globals {
             try {
                 weights = logistic.runLogisticRegression();
                 for (int i = 0; i < NUM_FEATURES; i++)
-                    edit.putFloat(LOGISTIC_WEIGHTS + i, (float) weights[i]);
+                    edit.putString(LOGISTIC_WEIGHTS + i, "" + weights[i]);
                 edit.putBoolean(LOGISTIC_MODEL_TRAINED, true);
                 edit.apply();
                 Log.d("wrkr", "weights: " + Arrays.toString(weights));
@@ -164,7 +164,7 @@ public class WristTrackingService extends Service implements Globals {
 
         weights = new double[NUM_FEATURES];
         for (int i = 0; i < NUM_FEATURES; i++) {
-            weights[i] = prefs.getFloat(LOGISTIC_WEIGHTS + i, 0);
+            weights[i] = Double.parseDouble(prefs.getString(LOGISTIC_WEIGHTS + i, "0.0"));
         }
     }
 
@@ -305,7 +305,8 @@ public class WristTrackingService extends Service implements Globals {
                 dataPoint[1] = y.getDouble(i);
                 dataPoint[2] = z.getDouble(i);
                 dataPoint[3] = mag.getDouble(i);
-                dataPoint[4] = mag.getDouble(i);
+                dataPoint[4] = wma.getDouble(i);
+
                 prob.add(logistic.classify(dataPoint));
             }
 
@@ -314,28 +315,6 @@ public class WristTrackingService extends Service implements Globals {
             if (likelihood > LIKELIHOOD_PERCENTAGE) {
                 return true;
             }
-
-//            int p = 0;
-//
-//            /*
-//             * For now, we will use a bounded-box classifier based on our current training data.
-//             * This assumes that X, Z, and WMA will all fall within the bound below.
-//             * In the future, we should use a proper estimation maximization ML algorithm.
-//             */
-//            for (int i = 0; i < x.length(); i++) {
-//                if (x.getDouble(i) > -1 && x.getDouble(i) < 4 &&
-//                        z.getDouble(i) > 5.5 && z.getDouble(i) < 11.5 &&
-//                        wma.getDouble(i) > 0 && wma.getDouble(i) < 0.4) {
-//                    p++;
-//                }
-//            }
-//
-//            // get the likelihood the user is at the keyboard
-//            double likelihood = ((double) p) / (double)x.length();
-//            Log.d("wrkr", "ABCDE - likelihood = " + likelihood);
-//            if (likelihood > LIKELIHOOD_PERCENTAGE) {
-//                return true;
-//            }
 
         } catch (JSONException e) {
             e.printStackTrace();

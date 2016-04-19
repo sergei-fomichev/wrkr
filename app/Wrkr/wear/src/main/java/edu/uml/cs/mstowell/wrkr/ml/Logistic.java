@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkrlib.common;
+package edu.uml.cs.mstowell.wrkr.ml;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import edu.uml.cs.mstowell.wrkrlib.R;
+import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
 /**
  * Performs simple logistic regression.
@@ -68,7 +69,12 @@ public class Logistic implements Globals {
         weights = w;
     }
 
+    public double[] getWeights() {
+        return weights;
+    }
+
     public double classify(double[] x) {
+
         double logit = .0;
         for (int i = 0; i < weights.length; i++)  {
             logit += weights[i] * x[i];

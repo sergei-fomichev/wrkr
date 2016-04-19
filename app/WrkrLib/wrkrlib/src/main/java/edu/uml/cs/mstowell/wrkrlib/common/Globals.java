@@ -13,10 +13,13 @@ public interface Globals {
     int FRAGMENT_INDEX_HELP = 3;
 
     // ML constants
-    double LIKELIHOOD_PERCENTAGE = 0.85;
+    double LIKELIHOOD_PERCENTAGE = 0.75;
     int EXERCISE_TRIGGER_TIME = 1800; // 1800 seconds = 30 minutes
     int DATA_SIZE = 50;
     int DATA_HERTZ = 5;
+    int NUM_FEATURES = 5;
+    String LOGISTIC_MODEL_TRAINED = "logistic_model_trained";
+    String LOGISTIC_WEIGHTS = "logistic_weights";
 
     // account
     String GLOBAL_PREFS = "wrkr_global_prefs";
@@ -55,9 +58,4 @@ public interface Globals {
     int START_TRACKING_MINUTE = 0; //
     int STOP_TRACKING_HOUR = 16;   // 4:00pm
     int STOP_TRACKING_MINUTE = 0;  //
-
-    // logistic regression training and weights
-    int NUM_FEATURES = 5;
-    String LOGISTIC_MODEL_TRAINED = "logistic_model_trained";
-    String LOGISTIC_WEIGHTS = "logistic_weights";
 }
