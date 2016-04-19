@@ -16,9 +16,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
-import edu.uml.cs.mstowell.wrkr.MainActivity;
+import edu.uml.cs.mstowell.wrkr.ui.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkr.RestAPI;
+import edu.uml.cs.mstowell.wrkr.object.RestAPI;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 import edu.uml.cs.mstowell.wrkrlib.common.User;

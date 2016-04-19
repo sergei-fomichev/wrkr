@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.object;
 
 import org.json.JSONException;
 import org.json.JSONObject;

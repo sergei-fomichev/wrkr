@@ -25,9 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import edu.uml.cs.mstowell.wrkr.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkr.RestAPI;
+import edu.uml.cs.mstowell.wrkr.object.RestAPI;
 import edu.uml.cs.mstowell.wrkr.list.MListAdapter;
 import edu.uml.cs.mstowell.wrkr.list.SwipeDismissListViewTouchListener;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;

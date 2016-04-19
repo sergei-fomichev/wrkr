@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
@@ -30,12 +30,12 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.Arrays;
 import java.util.List;
 
-import edu.uml.cs.mstowell.wrkr.ui.HelpFragment;
-import edu.uml.cs.mstowell.wrkr.ui.HomeFragment;
-import edu.uml.cs.mstowell.wrkr.ui.ProfileFragment;
-import edu.uml.cs.mstowell.wrkr.ui.SettingsFragment;
+import edu.uml.cs.mstowell.wrkr.Logistic;
+import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkr.object.RestAPI;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 import edu.uml.cs.mstowell.wrkrlib.common.User;
@@ -119,10 +119,35 @@ public class MainActivity extends AppCompatActivity
         // initialize GoogleApiClient to talk to wear
         mApiClient = new APIClientCommon(this);
 
+        // train the logistic regression model, if needed
+        trainLogisticModel();
+
         // make sure the SetWristAlarmReceiver is fired at least once
         Intent intent = new Intent();
         intent.setAction(SET_WRIST_ALARM_BROADCAST_ACTION);
         mContext.sendBroadcast(intent);
+    }
+
+    // TODO - needs to be on wear side
+    private void trainLogisticModel() {
+
+        final SharedPreferences prefs = getSharedPreferences(GLOBAL_PREFS, 0);
+        final SharedPreferences.Editor edit = prefs.edit();
+
+        boolean isTrained = prefs.getBoolean(LOGISTIC_MODEL_TRAINED, false);
+        if (!isTrained) {
+            try {
+                Logistic logistic = new Logistic(mContext);
+                double weights[] = logistic.runLogisticRegression();
+                for (int i = 0; i < logistic.getNumFeatures(); i++)
+                    edit.putFloat(LOGISTIC_WEIGHTS + i, (float) weights[i]);
+                edit.putBoolean(LOGISTIC_MODEL_TRAINED, true);
+                edit.apply();
+                Log.d("wrkr", "weights: " + Arrays.toString(weights));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void getGoogleAccount() {

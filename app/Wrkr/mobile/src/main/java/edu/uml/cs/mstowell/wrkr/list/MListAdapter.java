@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import edu.uml.cs.mstowell.wrkr.MainActivity;
+import edu.uml.cs.mstowell.wrkr.ui.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
 
 /**

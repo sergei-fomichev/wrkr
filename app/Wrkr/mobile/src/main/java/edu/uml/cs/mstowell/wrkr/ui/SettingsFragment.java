@@ -2,6 +2,7 @@ package edu.uml.cs.mstowell.wrkr.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -14,11 +15,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import edu.uml.cs.mstowell.wrkr.MainActivity;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkr.SingletonMessenger;
+import edu.uml.cs.mstowell.wrkr.object.SingletonMessenger;
 import edu.uml.cs.mstowell.wrkr.service.RecordDataService;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
@@ -106,7 +115,8 @@ public class SettingsFragment extends Fragment implements Globals {
         return v;
     }
 
-    /*private void writeDataCSV(String data) {
+    @SuppressWarnings("unused, all")
+    private void writeDataCSV(String data) {
 
         try {
             JSONObject dataJO = new JSONObject(data);
@@ -122,7 +132,7 @@ public class SettingsFragment extends Fragment implements Globals {
             Log.d("wrkr", "ABCDE about to write a csv");
 
             fileName = "data_" +
-                    new SimpleDateFormat("yyMMdd_HH_mm_ss")
+                    new SimpleDateFormat("yyMMdd_HH_mm_ss", Locale.US)
                             .format(Calendar.getInstance().getTime()) + ".csv";
             f = new File(folder, fileName);
 
@@ -150,5 +160,5 @@ public class SettingsFragment extends Fragment implements Globals {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }

@@ -55,4 +55,8 @@ public interface Globals {
     int START_TRACKING_MINUTE = 0; //
     int STOP_TRACKING_HOUR = 16;   // 4:00pm
     int STOP_TRACKING_MINUTE = 0;  //
+
+    // logistic regression training and weights
+    String LOGISTIC_MODEL_TRAINED = "logistic_model_trained";
+    String LOGISTIC_WEIGHTS = "logistic_weights";
 }

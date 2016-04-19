@@ -1,4 +1,4 @@
-package edu.uml.cs.mstowell.wrkr;
+package edu.uml.cs.mstowell.wrkr.object;
 
 import android.os.Handler;
 import android.os.Messenger;
