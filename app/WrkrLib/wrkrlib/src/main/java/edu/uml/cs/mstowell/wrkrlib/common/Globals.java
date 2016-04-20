@@ -13,7 +13,7 @@ public interface Globals {
     int FRAGMENT_INDEX_HELP = 3;
 
     // ML constants
-    double LIKELIHOOD_PERCENTAGE = 0.75;
+    double LIKELIHOOD_PERCENTAGE = 0.8;
     int EXERCISE_TRIGGER_TIME = 1800; // 1800 seconds = 30 minutes
     int DATA_SIZE = 50;
     int DATA_HERTZ = 5;
