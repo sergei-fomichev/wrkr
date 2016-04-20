@@ -59,9 +59,14 @@ public class HomeFragment extends Fragment implements Globals {
         karmaTxt = (TextView) v.findViewById(R.id.home_karma);
 
         noNotif.setVisibility(View.GONE);
-        new GetNotificationListTask().execute();
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new GetNotificationListTask().execute();
     }
 
     private void setNotificationTextVisibility() {

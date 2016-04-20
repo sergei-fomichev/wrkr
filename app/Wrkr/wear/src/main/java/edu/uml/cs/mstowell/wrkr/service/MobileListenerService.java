@@ -48,7 +48,9 @@ public class MobileListenerService extends WearableListenerService implements Gl
 
             case MSG_STOP_ACCEL:
                 stopRecordingData();
-                vibrator.vibrate(vibrateStop, indexInPatternToRepeat);
+                String vibrateStr = new String(messageEvent.getData());
+                if (!vibrateStr.equals(DO_NOT_VIBRATE))
+                    vibrator.vibrate(vibrateStop, indexInPatternToRepeat);
                 break;
 
             default:

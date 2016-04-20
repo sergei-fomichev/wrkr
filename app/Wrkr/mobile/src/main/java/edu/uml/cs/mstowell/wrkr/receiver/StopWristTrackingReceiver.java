@@ -28,9 +28,10 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
         Intent serviceIntent = new Intent(context, RecordDataService.class);
         context.stopService(serviceIntent);
 
-        // tell wear to stop recording data
+        // tell wear to stop recording data, do not vibrate because we call this also when
+        // user loads app and don't want to always vibrate the watch in this instance
         APIClientCommon mApiClient = new APIClientCommon(context);
-        mApiClient.sendMessage(MSG_STOP_ACCEL, "");
+        mApiClient.sendMessage(MSG_STOP_ACCEL, DO_NOT_VIBRATE);
 
         // set the next starting alarm
         setStartTimer(context);
