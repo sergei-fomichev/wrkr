@@ -76,10 +76,21 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >}  
 >OR Respond [header - 401] if user does not exist  
 
+###PUT
 *User has an updated karma score*  
 >{  
 >"id": userID  
 >"karma": user's new karma score  
+>}  
+>Respond [header - 200]  
+>{  
+>"status": "ok"  
+>}  
+>OR Responder [header - 401] if user does not exist  
+*Set exercise as done*  
+>{  
+>"decrement": 
+>"id": userID  
 >}  
 >Respond [header - 200]  
 >{  
