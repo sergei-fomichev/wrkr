@@ -30,25 +30,21 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
         int thisHour = calendar.get(Calendar.HOUR_OF_DAY);
         int thisMinute = calendar.get(Calendar.MINUTE);
 
+        calendar.set(Calendar.HOUR_OF_DAY, START_TRACKING_HOUR);
+        calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
+        calendar.set(Calendar.SECOND, 0);
+
         // if it is Friday after the stop trigger period, skip and set the alarm
         // for next Monday (we do not want weekends).  If we are between the start
         // and stop period, note the AlarmManager will trigger immediately
         long triggerAt = calendar.getTimeInMillis();
         if (today == Calendar.FRIDAY) {
-            Log.d("wrkr", "Calendar -- today is friday, skipping 3 days");
+            Log.d("wrkr", "Calendar -- today is Friday, skipping 3 days");
             triggerAt += (AlarmManager.INTERVAL_DAY * 3);
-        } else if (thisHour > STOP_TRACKING_HOUR && thisMinute > STOP_TRACKING_MINUTE) {
+        } else if (thisHour >= STOP_TRACKING_HOUR && thisMinute > STOP_TRACKING_MINUTE) {
             Log.d("wrkr", "Calendar -- passed the stop hour .. skipping 1 day");
             triggerAt += (AlarmManager.INTERVAL_DAY);
         }
-
-        calendar.set(Calendar.HOUR_OF_DAY, START_TRACKING_HOUR);
-        calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
-        calendar.set(Calendar.SECOND, 0);
-
-        Log.d("wrkr", "Calendar -- trigger at day " + calendar.get(Calendar.DAY_OF_WEEK) +
-                ", " + calendar.get(Calendar.HOUR_OF_DAY) + ":" +
-                calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
 
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StartWristTrackingReceiver.class),

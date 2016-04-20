@@ -40,22 +40,20 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-        // bring back calendar to the start time
-        calendar.add(Calendar.HOUR_OF_DAY, -(STOP_TRACKING_HOUR - START_TRACKING_HOUR));
-        calendar.add(Calendar.HOUR_OF_DAY, -(STOP_TRACKING_MINUTE - START_TRACKING_MINUTE));
-
-        // if it is Friday, skip 3 days (to Monday)
-        long triggerAt = (today == Calendar.FRIDAY
-                ? calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY * 3)
-                : calendar.getTimeInMillis());
+        // bring back calendar to the start time TODO - probably unnecessary
+        //calendar.add(Calendar.HOUR_OF_DAY, -(STOP_TRACKING_HOUR - START_TRACKING_HOUR));
+        //calendar.add(Calendar.HOUR_OF_DAY, -(STOP_TRACKING_MINUTE - START_TRACKING_MINUTE));
 
         calendar.set(Calendar.HOUR_OF_DAY, START_TRACKING_HOUR);
         calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
         calendar.set(Calendar.SECOND, 0);
 
-        Log.d("wrkr", "Calendar -- trigger at day " + calendar.get(Calendar.DAY_OF_WEEK) +
-                ", " + calendar.get(Calendar.HOUR_OF_DAY) + ":" +
-                calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
+        // if it is Friday, skip 3 days (to Monday), otherwise skip one day
+        long triggerAt = (today == Calendar.FRIDAY
+                ? calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY * 3)
+                : calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY));
+
+        Log.d("wrkr", "Scheduling next time to start wrist service");
 
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StartWristTrackingReceiver.class),
