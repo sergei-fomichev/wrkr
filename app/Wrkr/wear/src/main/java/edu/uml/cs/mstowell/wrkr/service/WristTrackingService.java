@@ -143,10 +143,10 @@ public class WristTrackingService extends Service implements Globals {
         logistic = new Logistic(mContext);
 
         boolean isTrained = prefs.getBoolean(LOGISTIC_MODEL_TRAINED, false);
-//        if (isTrained) { TODO put back
-//            getWeightsFromPrefs();
-//            logistic.setWeights(weights);
-//        } else {
+        if (isTrained) {
+            getWeightsFromPrefs();
+            logistic.setWeights(weights);
+        } else {
             try {
                 weights = logistic.runLogisticRegression();
                 for (int i = 0; i < NUM_FEATURES; i++)
@@ -157,7 +157,7 @@ public class WristTrackingService extends Service implements Globals {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//        }
+        }
     }
 
     private void getWeightsFromPrefs() {
