@@ -79,7 +79,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 ###PUT
 *User has an updated karma score*  
 >{  
->"setkarma": "" 
+>"setkarma": ""   
 >"id": userID  
 >"karma": user's new karma score  
 >}  
@@ -90,7 +90,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >OR Responder [header - 401] if user does not exist  
 *Set exercise as done*  
 >{  
->"decrement": 
+>"decrement":""      
 >"id": userID  
 >}  
 >Respond [header - 200]  
