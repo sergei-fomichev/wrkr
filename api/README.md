@@ -79,6 +79,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 ###PUT
 *User has an updated karma score*  
 >{  
+>"setkarma": "" 
 >"id": userID  
 >"karma": user's new karma score  
 >}  
