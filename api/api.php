@@ -1,5 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS');
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 include 'respond.php';
 
 class userAPI {
@@ -131,9 +133,54 @@ class userAPI {
 			return true;
 			
 		}
+		elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
+			$putData = array();
+			parse_str(file_get_contents("php://input"), $putData);
+			$stmt = $this->db->prepare('SELECT * FROM users WHERE id=?');
+			$stmt->bind_param('s', $putData['id']);
+			$stmt->execute();
+			$stmt->store_result();
+			//$stmt->fetch();
+
+			if ($stmt->num_rows == 0) {
+				sendResponse(401, 'User doesnt exist');
+				$stmt->close();
+				return false;
+			}
+			if(isset($putData['decrement'])){
+				$stsm = $this->db->prepare('UPDATE exercises SET complete = 1 WHERE user_id = ? && complete = 0 LIMIT 1');
+				$stsm->bind_param('i', $putData['id']);
+				$stsm->execute();
+				$stsm->close();
+		
+				$result = array(
+					"status" => "exercise has done"
+				);
+			}
+			elseif(isset($putData['setkarma'])){
+				$stsm = $this->db->prepare('UPDATE users SET karma = ? WHERE id = ?');
+				$stsm->bind_param('ii', $putData['karma'], $putData['id']);
+				$stsm->execute();
+				$stsm->close();
+				
+				$result = array(
+					"status" => "karma changed"
+				);
+			}
+			sendResponse(200, json_encode($result));
+			return true;
+		}
+		elseif($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
+			$result = array(
+				"status" => "Thanks jquery! Now you can chill...."
+			);
+			sendResponse(200, json_encode($result));
+			return true;
+		}
+		
+		
 		sendResponse(400, 'Invalid request');
 		return false;
-		
 	}
 		
 }
