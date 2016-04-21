@@ -7,6 +7,7 @@ public interface Globals {
 
     String WEBSITE_URL = "http://www.cs.uml.edu/~sfomiche/wrkr/";
 
+    // fragment indexes for navigation menu
     int FRAGMENT_INDEX_HOME = 0;
     int FRAGMENT_INDEX_PROFILE = 1;
     int FRAGMENT_INDEX_SETTINGS = 2;
@@ -43,6 +44,8 @@ public interface Globals {
     // listener service and broadcast receiver comm
     String WEAR_DATA_KEY = "wear_data_key";
     String WEAR_DATA_VALUES = "wear_data_values";
+    String SETTINGS_FRAG_BUNDLE = "settings_frag_bundle";
+    String SETTINGS_RCV_ACTION = "settings_rcv_action";
 
     // activity detection
     String WRIST_BROADCAST_ACTION = "edu.uml.cs.mstowell.wrkr.ACTIVITY_UPDATE";

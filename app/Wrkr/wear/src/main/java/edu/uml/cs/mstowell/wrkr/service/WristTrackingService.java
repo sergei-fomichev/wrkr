@@ -143,10 +143,10 @@ public class WristTrackingService extends Service implements Globals {
         logistic = new Logistic(mContext);
 
         boolean isTrained = prefs.getBoolean(LOGISTIC_MODEL_TRAINED, false);
-        if (isTrained) {
-            getWeightsFromPrefs();
-            logistic.setWeights(weights);
-        } else {
+//        if (isTrained) { TODO put back
+//            getWeightsFromPrefs();
+//            logistic.setWeights(weights);
+//        } else {
             try {
                 weights = logistic.runLogisticRegression();
                 for (int i = 0; i < NUM_FEATURES; i++)
@@ -157,7 +157,7 @@ public class WristTrackingService extends Service implements Globals {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+//        }
     }
 
     private void getWeightsFromPrefs() {
@@ -266,7 +266,7 @@ public class WristTrackingService extends Service implements Globals {
                     if (atKeyboard)
                         incrementUserKeyboardTime();
 
-                    // send the data back to the wrkr mobile app- TODO just for debugging, can remove later
+                    // send the data back to the wrkr mobile app for debugging
                     mApiClient.sendMessage(MSG_WEAR_DATA, data);
                 }
             });
@@ -330,7 +330,7 @@ public class WristTrackingService extends Service implements Globals {
         int timeAtKeyboard = prefs.getInt(USER_TIME_AT_KEYBOARD, 0);
         timeAtKeyboard += (DATA_SIZE / DATA_HERTZ);
 
-        if (timeAtKeyboard >= 20) { //>= EXERCISE_TRIGGER_TIME) { // TODO - set to 20 for testing
+        if (timeAtKeyboard >= 20) { // TODO - for real, use EXERCISE_TRIGGER_TIME
             Log.d("wrkr", "ABCDE Time for an exercise!");
             sendUserNeedsExercise();
 

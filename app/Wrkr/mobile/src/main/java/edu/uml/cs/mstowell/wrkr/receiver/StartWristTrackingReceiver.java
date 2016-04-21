@@ -25,6 +25,6 @@ public class StartWristTrackingReceiver extends BroadcastReceiver implements Glo
 
         // tell wear to start recording data
         APIClientCommon mApiClient = new APIClientCommon(context);
-        mApiClient.sendMessage(MSG_START_ACCEL, "");
+        mApiClient.sendMessage(MSG_START_ACCEL, DO_NOT_VIBRATE);
     }
 }

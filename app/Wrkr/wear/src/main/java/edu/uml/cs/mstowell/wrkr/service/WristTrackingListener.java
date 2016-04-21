@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,8 +43,6 @@ public class WristTrackingListener implements SensorEventListener, Globals {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-
-            Log.i("wrkr", "event");
 
             // get event's timestamp
             thisAccelUpdate = event.timestamp;
@@ -127,9 +124,6 @@ public class WristTrackingListener implements SensorEventListener, Globals {
             mPreviousAccelReading[0] = x;
             mPreviousAccelReading[1] = y;
             mPreviousAccelReading[2] = z;
-
-            Log.d("wrkr", "ABCDE :::: x = " + x + ", y = " + y + ", z =" + z
-                    + ", m = " + magnitude + ", w = " + wma);
 
             // broadcast the data when we have a valid wma
             if (!Double.isNaN(wma)) {

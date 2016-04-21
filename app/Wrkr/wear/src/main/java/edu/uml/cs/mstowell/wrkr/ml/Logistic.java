@@ -33,13 +33,13 @@ public class Logistic implements Globals {
 
     /** the number of iterations */
     @SuppressWarnings("all")
-    private int ITERATIONS = 3000;
+    private int ITERATIONS = 500;//3000; TODO changed
 
     // need a context to find resources
     Context mContext;
 
     public Logistic(Context c) {
-        this.rate = 0.0001;
+        this.rate = 0.001; //0.0001; TODO changed
         weights = new double[NUM_FEATURES];
         this.mContext = c;
     }
@@ -69,6 +69,7 @@ public class Logistic implements Globals {
         weights = w;
     }
 
+    @SuppressWarnings("unused")
     public double[] getWeights() {
         return weights;
     }

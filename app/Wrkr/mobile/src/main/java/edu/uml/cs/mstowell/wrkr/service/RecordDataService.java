@@ -12,13 +12,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
-import edu.uml.cs.mstowell.wrkr.ui.MainActivity;
 import edu.uml.cs.mstowell.wrkr.R;
 import edu.uml.cs.mstowell.wrkr.object.RestAPI;
+import edu.uml.cs.mstowell.wrkr.ui.MainActivity;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 import edu.uml.cs.mstowell.wrkrlib.common.User;
@@ -35,6 +34,7 @@ public class RecordDataService extends Service implements Globals {
     private WatchToPhoneBroadcastReceiver mReceiver;
     private static Messenger messenger;
     private static APIClientCommon mApiClient;
+    private static Context mContext;
 
     // default constructor
     public RecordDataService() {
@@ -43,6 +43,8 @@ public class RecordDataService extends Service implements Globals {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mContext = this;
 
         // register GoogleApiClient
         mApiClient = new APIClientCommon(getApplicationContext());
@@ -190,20 +192,17 @@ public class RecordDataService extends Service implements Globals {
         }
     }
 
-    private static void sendMessageToFragment(String type, String optionMsgStr) {
-
-        Message msg = Message.obtain();
+    private static void sendMessageToFragment(String key, String value) {
 
         Bundle data = new Bundle();
-        data.putString(WEAR_DATA_KEY, type);
-        data.putString(WEAR_DATA_VALUES, optionMsgStr);
+        data.putString(WEAR_DATA_KEY, key);
+        data.putString(WEAR_DATA_VALUES, value);
 
-        msg.setData(data);
-
-        try {
-            if (messenger != null)
-                messenger.send(msg);
-        } catch (Exception e) {/* ignore error if any occur */}
+        // send broadcast
+        Intent intent = new Intent();
+        intent.setAction(SETTINGS_RCV_ACTION);
+        intent.putExtra(SETTINGS_FRAG_BUNDLE, data);
+        mContext.sendBroadcast(intent);
     }
 
     @Override

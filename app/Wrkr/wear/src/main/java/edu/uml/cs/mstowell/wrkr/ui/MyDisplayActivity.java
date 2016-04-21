@@ -25,13 +25,6 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
         // received a message since we're here, so init a GoogleAPIClient and respond
         mApiClient = new APIClientCommon(this);
         mApiClient.sendMessage(MSG_WEAR_MSG_ACK, "notification received");
-
-        // test all sensors available in the watch
-        /*SensorManager smm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        List<Sensor> sensor = smm.getSensorList(Sensor.TYPE_ALL);
-        for (Sensor s : sensor) {
-            Log.w("wrkr", "ABCDE supplies sensor: " + s.getName());
-        }*/
     }
 
     @Override

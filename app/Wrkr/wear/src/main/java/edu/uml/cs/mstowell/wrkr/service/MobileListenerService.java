@@ -31,6 +31,7 @@ public class MobileListenerService extends WearableListenerService implements Gl
         long[] vibrateStop = {0, 200, 25, 200, 25, 200};
         long[] vibrateExercise = {0, 300, 50, 600};
         final int indexInPatternToRepeat = -1;
+        String vibrateStr = new String(messageEvent.getData());
 
         switch (messageEvent.getPath()) {
             case MSG_INIT_FROM_DEVICE:
@@ -42,13 +43,13 @@ public class MobileListenerService extends WearableListenerService implements Gl
                 break;
 
             case MSG_START_ACCEL:
-                vibrator.vibrate(vibrateStart, indexInPatternToRepeat);
+                if (!vibrateStr.equals(DO_NOT_VIBRATE))
+                    vibrator.vibrate(vibrateStart, indexInPatternToRepeat);
                 startRecordingData();
                 break;
 
             case MSG_STOP_ACCEL:
                 stopRecordingData();
-                String vibrateStr = new String(messageEvent.getData());
                 if (!vibrateStr.equals(DO_NOT_VIBRATE))
                     vibrator.vibrate(vibrateStop, indexInPatternToRepeat);
                 break;
@@ -58,8 +59,6 @@ public class MobileListenerService extends WearableListenerService implements Gl
                 super.onMessageReceived(messageEvent);
                 break;
         }
-
-        return;
     }
 
     public void startRecordingData() {

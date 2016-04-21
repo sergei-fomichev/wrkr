@@ -1,11 +1,11 @@
 package edu.uml.cs.mstowell.wrkr.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
@@ -21,13 +21,11 @@ import org.json.JSONObject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 import edu.uml.cs.mstowell.wrkr.R;
-import edu.uml.cs.mstowell.wrkr.object.SingletonMessenger;
 import edu.uml.cs.mstowell.wrkr.service.RecordDataService;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 
@@ -37,21 +35,14 @@ import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 public class SettingsFragment extends Fragment implements Globals {
 
     private static TextView wearDebug;
-    private static Handler watch2phoneHandler;
+    private SettingsFragReceiver sfr;
 
-    // TODO - probably better off as a broadcast instead of messenger ...
-    private static class Watch2PhoneHandler extends Handler {
-        private final WeakReference<SettingsFragment> mSettingsFrag;
-
-        public Watch2PhoneHandler(SettingsFragment frag) {
-            mSettingsFrag = new WeakReference<>(frag);
-        }
+    private static class SettingsFragReceiver extends BroadcastReceiver {
 
         @Override
-        public void handleMessage(Message msg) {
-            SettingsFragment frag = mSettingsFrag.get();
-            if (frag != null && wearDebug != null) {
-                Bundle bundleData = msg.getData();
+        public void onReceive(Context context, Intent intent) {
+            if (wearDebug != null) {
+                Bundle bundleData = intent.getBundleExtra(SETTINGS_FRAG_BUNDLE);
                 String event = bundleData.getString(WEAR_DATA_KEY, "");
                 String data = bundleData.getString(WEAR_DATA_VALUES, "");
 
@@ -67,11 +58,24 @@ public class SettingsFragment extends Fragment implements Globals {
     }
 
     @Override
+    public void onDestroy() {
+
+        // unregister the broadcast receiver
+        getActivity().unregisterReceiver(sfr);
+
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
 
         wearDebug = (TextView) v.findViewById(R.id.setting_debug_info);
-        watch2phoneHandler = new Watch2PhoneHandler(this);
+
+        // register the wrist tracking receiver
+        sfr = new SettingsFragReceiver();
+        IntentFilter intentFilter = new IntentFilter(SETTINGS_RCV_ACTION);
+        getActivity().registerReceiver(sfr, intentFilter);
 
         Button pingWear = (Button) v.findViewById(R.id.settings_send_notif);
         pingWear.setOnClickListener(new View.OnClickListener() {
@@ -89,8 +93,6 @@ public class SettingsFragment extends Fragment implements Globals {
 
                 Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
                         RecordDataService.class);
-                Messenger messenger = SingletonMessenger.getInstance(watch2phoneHandler);
-                serviceIntent.putExtra(RECORD_SERVICE_MESSENGER, messenger);
                 getActivity().startService(serviceIntent);
 
                 ((MainActivity) getActivity()).sendMessage(MSG_START_ACCEL, "");

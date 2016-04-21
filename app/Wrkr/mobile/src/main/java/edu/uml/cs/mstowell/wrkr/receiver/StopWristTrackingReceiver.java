@@ -41,10 +41,6 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-        // bring back calendar to the start time TODO - probably unnecessary
-        //calendar.add(Calendar.HOUR_OF_DAY, -(STOP_TRACKING_HOUR - START_TRACKING_HOUR));
-        //calendar.add(Calendar.HOUR_OF_DAY, -(STOP_TRACKING_MINUTE - START_TRACKING_MINUTE));
-
         calendar.set(Calendar.HOUR_OF_DAY, START_TRACKING_HOUR);
         calendar.set(Calendar.MINUTE, START_TRACKING_MINUTE);
         calendar.set(Calendar.SECOND, 0);
