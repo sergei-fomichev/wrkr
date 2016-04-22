@@ -3,6 +3,16 @@ Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project
 
 We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
 
+## Progress: April 18 - April 24 2016
+
+### Mobile + Smartwatch App
+
+ - 
+
+### Web + Leap Motion
+
+ - 
+
 ## Progress: April 11 - April 17 2016
 
 ### Mobile + Smartwatch App
