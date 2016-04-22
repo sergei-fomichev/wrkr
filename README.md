@@ -102,7 +102,7 @@ We will update our progress for each week below.  The most recent week appears a
  - Added the exercise progress bar, so you can see how many exercises you have left in a nice way. 
  - Implemented the second hand which goes after the first one.
  - Made the first API command implemented. 
- - ...
+
 ## Progress: Pre- March 22 2016
 
  - Came up with the idea for the app and website
