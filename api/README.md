@@ -88,6 +88,7 @@ http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php
 >"status": "ok"  
 >}  
 >OR Responder [header - 401] if user does not exist  
+
 *Set exercise as done*  
 >{  
 >"decrement":""      
