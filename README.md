@@ -7,7 +7,12 @@ We will update our progress for each week below.  The most recent week appears a
 
 ### Mobile + Smartwatch App
 
- - 
+ - Fixed mobile-side API usage of timestamps
+ - Set up AlarmManagers both on boot and on activity start to ensure that every weekday at 8am, the phone and wear data recording and communication services run, and every weekday at 4pm, the services are killed
+ - Added logistic regression to the application - now real machine learning as opposed to bounded-box fitting is applied
+ - Deleted unused application tests and other remnants from previous weeks
+ - Swapped the Messenger in the SettingsFragment with a BroadcastReceiver to ensure it always receives wear information
+ - Moved call to getNotificationList in HomeFragment to onResume so that user notifications are refreshed often
 
 ### Web + Leap Motion
 
