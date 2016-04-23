@@ -64,3 +64,5 @@
   - exercises.js
 - [scripts for the website](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Website/js/scripts.js)
   - scripts.js
+- [exerciser view](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Leap-Motion/exerciser.html)
+  - exerciser.html
