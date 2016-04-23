@@ -13,6 +13,7 @@ We will update our progress for each week below.  The most recent week appears a
  - Deleted unused application tests and other remnants from previous weeks
  - Swapped the Messenger in the SettingsFragment with a BroadcastReceiver to ensure it always receives wear information
  - Moved call to getNotificationList in HomeFragment to onResume so that user notifications are refreshed often
+ - Closed issues [#3](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/3), [#6](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/6), [#9](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/9), [#10](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/10), and [#12](https://github.com/uml-ubicomp-2016-spring/wrkr/issues/12)
 
 ### Web + Leap Motion
 
