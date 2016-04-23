@@ -45,6 +45,8 @@
   - APIClientCommon.java
   - Globals.java
   - User.java
+- [Logistic Regression Training Data](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/app/WrkrLib/wrkrlib/src/main/res/raw/train.csv)
+  - train.csv
 
 ## Web API
 - [README.md (api spec)](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/api/README.md)
