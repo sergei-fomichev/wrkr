@@ -54,9 +54,11 @@
 - [respond.php](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/api/respond.php)
 
 ## Web code
-- [home page](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Website/index.html)
+- [home page](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Website/)
   - index.html
-- [scripts for LM](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Leap-Motion/js/script.js)
+  - dashboard.html
+  - stat.html
+- [scripts for Leap Motion](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Leap-Motion/js/script.js)
   - script.js
 - [exercises object](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/web/Leap-Motion/js/exercises.js)
   - exercises.js
