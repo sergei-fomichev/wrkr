@@ -17,7 +17,9 @@ We will update our progress for each week below.  The most recent week appears a
 
 ### Web + Leap Motion
 
- - 
+ - Finished the integration of the website and the leap motion app 
+ - Bug fixes in exerciser 
+ - Finished Karma manipulation 
 
 ## Progress: April 11 - April 17 2016
 
