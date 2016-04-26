@@ -22,7 +22,7 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
 
-        // received a message since we're here, so init a GoogleAPIClient and respond
+        // received a message since we're here, init a GoogleAPIClient and respond
         mApiClient = new APIClientCommon(this);
         mApiClient.sendMessage(MSG_WEAR_MSG_ACK, "notification received");
     }
@@ -62,6 +62,6 @@ public class MyDisplayActivity extends Activity implements GoogleApiClient.Conne
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e("wrkr", "ABCDE WEAR DISCONNECTED FROM MOBILE");
+        Log.e("wrkr", "wear disconnected from mobile device");
     }
 }

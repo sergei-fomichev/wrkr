@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Vibrator;
-import android.util.Log;
 
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -20,22 +19,22 @@ import edu.uml.cs.mstowell.wrkrlib.common.Globals;
 public class MobileListenerService extends WearableListenerService implements Globals {
 
     private int INTENT_REQUEST_CODE = 17313;
+    long[] vibrateStart = {0, 400, 30, 200};         //
+    long[] vibrateStop = {0, 200, 25, 200, 25, 200}; // different vibration patterns
+    long[] vibrateExercise = {0, 300, 50, 600};      //
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-        Log.d("wrkr", "ABCDE GOT A MESSAGE FROM THE MOBILE WOO");
-
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        long[] vibrateStart = {0, 400, 30, 200};
-        long[] vibrateStop = {0, 200, 25, 200, 25, 200};
-        long[] vibrateExercise = {0, 300, 50, 600};
+
         final int indexInPatternToRepeat = -1;
         String vibrateStr = new String(messageEvent.getData());
 
         switch (messageEvent.getPath()) {
             case MSG_INIT_FROM_DEVICE:
             case MSG_WRIST_EXER_TIME:
+                // display notification to user that an exercise is due
                 Intent intent = new Intent(this, MyStubBroadcastActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 vibrator.vibrate(vibrateExercise, indexInPatternToRepeat);
@@ -43,12 +42,14 @@ public class MobileListenerService extends WearableListenerService implements Gl
                 break;
 
             case MSG_START_ACCEL:
+                // start the accelerometer data collection service
                 if (!vibrateStr.equals(DO_NOT_VIBRATE))
                     vibrator.vibrate(vibrateStart, indexInPatternToRepeat);
                 startRecordingData();
                 break;
 
             case MSG_STOP_ACCEL:
+                // stop the accelerometer data collection service
                 stopRecordingData();
                 if (!vibrateStr.equals(DO_NOT_VIBRATE))
                     vibrator.vibrate(vibrateStop, indexInPatternToRepeat);

@@ -31,6 +31,7 @@ public class MyPostNotificationReceiver extends BroadcastReceiver {
                                 PendingIntent.FLAG_UPDATE_CURRENT)))
                 .setPriority(Notification.PRIORITY_MAX)
                 .build();
-        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, notification);
+        ((NotificationManager) context.getSystemService(
+                Context.NOTIFICATION_SERVICE)).notify(0, notification);
     }
 }

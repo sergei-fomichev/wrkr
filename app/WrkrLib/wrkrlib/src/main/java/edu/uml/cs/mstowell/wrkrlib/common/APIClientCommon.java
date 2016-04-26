@@ -11,7 +11,7 @@ import com.google.android.gms.wearable.Wearable;
 
 /**
  * Used to execute common code regarding the GoogleAPIClient, such as initialization
- * and sending a message
+ * and sending a message.
  */
 public class APIClientCommon {
 
@@ -37,13 +37,14 @@ public class APIClientCommon {
         new Thread( new Runnable() {
             @Override
             public void run() {
+
                 NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
-                Log.d("wrkr", "ABCDE there are " + nodes.getNodes().size() + " nodes found");
+
                 for(Node node : nodes.getNodes()) {
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
                             mApiClient, node.getId(), path, text.getBytes() ).await();
 
-                    Log.d("wrkr", "ABCDE RESULT = " + result.getStatus().toString());
+                    Log.d("wrkr", "sendMessage Result = " + result.getStatus().toString());
                 }
             }
         }).start();
@@ -70,8 +71,6 @@ public class APIClientCommon {
     }
 
     public boolean areWatchAndPhonePaired() {
-
-        // TODO implement
         return true;
     }
 }

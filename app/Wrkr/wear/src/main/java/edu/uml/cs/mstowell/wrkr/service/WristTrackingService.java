@@ -14,22 +14,20 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.uml.cs.mstowell.wrkr.R;
+import edu.uml.cs.mstowell.wrkr.ml.Logistic;
 import edu.uml.cs.mstowell.wrkrlib.common.APIClientCommon;
 import edu.uml.cs.mstowell.wrkrlib.common.Globals;
-import edu.uml.cs.mstowell.wrkr.ml.Logistic;
 
 /**
  * Wear accelerometer data collection service
@@ -79,8 +77,6 @@ public class WristTrackingService extends Service implements Globals {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        Log.w("wrkr", "ON START COMMAND - " + serviceIsRunning);
 
         if (serviceIsRunning)
             return START_STICKY; // do not re-run below code is service is already started
@@ -132,7 +128,7 @@ public class WristTrackingService extends Service implements Globals {
         NotificationManager mNotificationManger =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManger.notify(NOTIFICATION_ID, notification);
-        startForeground(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification); // start service in the foreground
 
         return START_STICKY; // reschedule the service if killed by the system
     }
@@ -144,16 +140,19 @@ public class WristTrackingService extends Service implements Globals {
 
         boolean isTrained = prefs.getBoolean(LOGISTIC_MODEL_TRAINED, false);
         if (isTrained) {
+            // if the model is already trained, we can immediately get the weight vector
             getWeightsFromPrefs();
             logistic.setWeights(weights);
         } else {
+            // otherwise, we must train the model before we collect data
+            // this will typically only delay the start of data collection by 10 seconds
             try {
                 weights = logistic.runLogisticRegression();
                 for (int i = 0; i < NUM_FEATURES; i++)
                     edit.putString(LOGISTIC_WEIGHTS + i, "" + weights[i]);
+                // save the weights so we never have to train again
                 edit.putBoolean(LOGISTIC_MODEL_TRAINED, true);
                 edit.apply();
-                Log.d("wrkr", "weights: " + Arrays.toString(weights));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -179,13 +178,10 @@ public class WristTrackingService extends Service implements Globals {
             }
 
             // make sure the accelerometer never turns off by resetting it
-            Log.d("wrkr", "ABCDE reseting the accel");
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     setAccelListener();
-                    //destroyWakelock();
-                    //setWakelock();
                 }
             });
 
@@ -241,7 +237,7 @@ public class WristTrackingService extends Service implements Globals {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManger.cancel(NOTIFICATION_ID);
 
-        // always ensure the wakelock is dismissed
+        // ensure the wakelock is dismissed
         destroyWakelock();
 
         super.onDestroy();
@@ -262,7 +258,6 @@ public class WristTrackingService extends Service implements Globals {
 
                     // determine if the user is at the keyboard
                     boolean atKeyboard = classify(data);
-                    Log.d("wrkr", "ABCDE - at keyboard? *******" + atKeyboard + "*******");
                     if (atKeyboard)
                         incrementUserKeyboardTime();
 
@@ -310,9 +305,10 @@ public class WristTrackingService extends Service implements Globals {
                 prob.add(logistic.classify(dataPoint));
             }
 
+            // get the likelihood of the user being at a keyboard
             double likelihood = logistic.mean(prob);
-            Log.d("wrkr", "p(1|x) = " + likelihood);
             if (likelihood > LIKELIHOOD_PERCENTAGE) {
+                // user is at a keyboard
                 return true;
             }
 
@@ -320,6 +316,7 @@ public class WristTrackingService extends Service implements Globals {
             e.printStackTrace();
         }
 
+        // user is not at a keyboard
         return false;
     }
 
@@ -330,10 +327,9 @@ public class WristTrackingService extends Service implements Globals {
         int timeAtKeyboard = prefs.getInt(USER_TIME_AT_KEYBOARD, 0);
         timeAtKeyboard += (DATA_SIZE / DATA_HERTZ);
 
-        if (timeAtKeyboard >= 20) { // TODO - for real, use EXERCISE_TRIGGER_TIME
-            Log.d("wrkr", "ABCDE Time for an exercise!");
+        if (timeAtKeyboard >=  EXERCISE_TRIGGER_TIME) {
+            // time for the user to receive a new exercise
             sendUserNeedsExercise();
-
             // set the time at keyboard back to 0
             edit.putInt(USER_TIME_AT_KEYBOARD, 0).apply();
         } else {

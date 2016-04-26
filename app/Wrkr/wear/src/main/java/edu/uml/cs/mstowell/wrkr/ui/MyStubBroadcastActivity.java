@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 /**
- * Example shell activity which simply broadcasts to the receiver and exits
+ * Shell activity which simply broadcasts to the notification receiver and exits.
+ * This is the chain that starts showing the notification
  */
 public class MyStubBroadcastActivity extends Activity {
     @Override

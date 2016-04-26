@@ -1,11 +1,9 @@
 package edu.uml.cs.mstowell.wrkr.ml;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,13 +31,13 @@ public class Logistic implements Globals {
 
     /** the number of iterations */
     @SuppressWarnings("all")
-    private int ITERATIONS = 500;//3000; TODO changed
+    private int ITERATIONS = 500;//3000;
 
     // need a context to find resources
     Context mContext;
 
     public Logistic(Context c) {
-        this.rate = 0.001; //0.0001; TODO changed
+        this.rate = 0.001; //0.0001;
         weights = new double[NUM_FEATURES];
         this.mContext = c;
     }
@@ -103,7 +101,7 @@ public class Logistic implements Globals {
                 if (line.startsWith("x")) { // header line
                     continue;
                 }
-                String[] columns = line.split(","); // was \\s+
+                String[] columns = line.split(",");
 
                 // last column is the label
                 int i = 0;
@@ -122,9 +120,8 @@ public class Logistic implements Globals {
         return dataset;
     }
 
+    // run the logistic classifier to receive a set of weights from the training data
     public double[] runLogisticRegression() throws FileNotFoundException {
-
-        Log.d("wrkr", "about to run logistic regression");
 
         // training data
         List<Instance> instances = readDataSet(R.raw.train);
@@ -138,111 +135,5 @@ public class Logistic implements Globals {
         for (Double val : prob)
             sum += val;
         return sum / prob.size();
-    }
-
-    @SuppressWarnings("unused")
-    private void test() throws FileNotFoundException {
-
-        List<Double> probabilities;
-
-        // tests that should be high probability
-        List<Instance> instances = readDataSet(R.raw.typing_a_little_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "typing_a_little_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "typing_a_little_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.typing_a_little_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "typing_a_little_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "typing_a_little_3 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.typing_a_lot_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "typing_a_lot_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "typing_a_lot_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.typing_a_lot_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "typing_a_lot_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "typing_a_lot_3 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.sitting_still_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "sitting_still_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "sitting_still_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.sitting_still_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "sitting_still_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "sitting_still_3 overall prob(1|x) = " + mean(probabilities));
-
-        // tests that should be low probability
-        instances = readDataSet(R.raw.walking_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "walking_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "walking_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.walking_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "walking_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "walking_3 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.jogging_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "jogging_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "jogging_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.jogging_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "jogging_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "jogging_3 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.scratching_my_head_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "scratching_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "scratching_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.scratching_my_head_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "scratching_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "scratching_3 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.standing_2);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "standing_2 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "standing_2 overall prob(1|x) = " + mean(probabilities));
-
-        instances = readDataSet(R.raw.standing_3);
-        probabilities = new LinkedList<>();
-        for (Instance instance : instances)
-            probabilities.add(classify(instance.x));
-        //Log.w("wrkr", "standing_3 - prob(1|x) = " + classify(instance.x));
-        Log.w("wrkr", "standing_3 overall prob(1|x) = " + mean(probabilities));
     }
 }
