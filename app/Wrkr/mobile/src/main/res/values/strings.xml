@@ -13,7 +13,8 @@
 
     <string name="help_text"><b>Purpose</b>
         \n\nThis application is designed to keep your wrists and fingers active to help prevent
-        a variety of health issues such as arthritis.
+        a variety of onset RSIs (repetitive strain injuries) such as De Quervain tendinitis or
+        carpal tunnel syndrome.
 
         \n\n\n<b>Requirements</b>
         \n\nYou will need, in addition to this application on your device, a smartwatch that
@@ -28,10 +29,10 @@
         \n\nWhen we detect that you are at a keyboard, the accelerometer on the watch will be
         triggered in a service to batch collect as much data as needed to figure out how long
         you have been idle at the computer doing minimal exercise.  These calculations are done
-        using advanced machine learning on your phone as to help preserve some of your watch\'s
-        battery level.  When we notice you have been idle at a keyboard for about 30 minutes,
-        your mobile device will give you a notification to consider an exercise.  When you open
-        the app, a log of these notifications will be presented on the home screen.  You can
+        with a machine learning classifier on your watch. When we notice you have been idle at
+        a keyboard for about 30 minutes, your wearable device will vibrate and give you a
+        notification to consider an exercise.  When you open the app on your phone, a log of these
+        notifications will be presented on the home screen.  You can
         swipe these away when you do not want to consider that warning to exercise.  When you
         are prompted for an exercise, simply log onto the wrkr website with your Google account
         and you will get a training plan that suits your activity levels.  Perform exercises
@@ -39,7 +40,7 @@
 
         \n\n\n<b>Additional Information</b>
         \n\nThis application is a collaboration between Mike Stowell and Sergei Fomichev as
-        part of the COMP.5800 Ubiquitious Computing course at the University of Massachusetts,
-        Lowell.\n\n\n\n
+        part of the Spring 2016 COMP.5800 Ubiquitous Computing course at the
+        University of Massachusetts, Lowell.\n\n\n\n
     </string>
 </resources>

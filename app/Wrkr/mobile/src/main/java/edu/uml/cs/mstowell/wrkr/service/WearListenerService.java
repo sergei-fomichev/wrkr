@@ -1,7 +1,6 @@
 package edu.uml.cs.mstowell.wrkr.service;
 
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -17,14 +16,12 @@ public class WearListenerService extends WearableListenerService implements Glob
     public void onMessageReceived(MessageEvent messageEvent) {
         super.onMessageReceived(messageEvent);
 
-        Log.d("wrkr", "ABCDE WearListenerService got data from wear");
-
         Intent intent = new Intent();
         intent.setAction(WATCH_TO_PHONE_BROADCAST_ACTION);
         intent.putExtra(WEAR_DATA_KEY, messageEvent.getPath());
         intent.putExtra(WEAR_DATA_VALUES, messageEvent.getData());
 
-        // send the wear data to our broadcast receiver for processing
+        // send the wear data to our broadcast receiver (in RecordDataService) for processing
         sendBroadcast(intent);
     }
 }

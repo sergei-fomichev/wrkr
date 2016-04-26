@@ -43,15 +43,12 @@ public class HomeFragment extends Fragment implements Globals {
     TextView noNotif, karmaTxt;
     Context mContext;
 
-    public static String[][] dataList={
-            {"Wrist exercise due","Inactive for 32 minutes","Open the wrkr website to perform your exercise"},
-            {"Wrist exercise complete!","Completed on 03/22/2016 at 02:10PM",""},
-            {"Wrist exercise due","Inactive for 23 minutes","Open the wrkr website to perform your exercise"}
-    };
+    public static String[][] dataList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // initialize all UI elements
         v = inflater.inflate(R.layout.fragment_home, container, false);
         mContext = MainActivity.mContext;
         root = v.findViewById(R.id.home_fragment_root);
@@ -66,6 +63,8 @@ public class HomeFragment extends Fragment implements Globals {
     @Override
     public void onResume() {
         super.onResume();
+
+        // fetch the notifications from the API
         new GetNotificationListTask().execute();
     }
 
@@ -127,6 +126,7 @@ public class HomeFragment extends Fragment implements Globals {
 
                 for (int i = 0; i < timestamps.length(); i++) {
 
+                    // parse each timestamp to determine the time ago the exercise was issued
                     try {
                         JSONArray subArray = timestamps.getJSONArray(i);
                         long timestamp = subArray.getLong(0);
@@ -171,7 +171,7 @@ public class HomeFragment extends Fragment implements Globals {
     }
 
     private void promptUserSetupProfile() {
-        // TODO - implement
+        Log.e("wrkr", "user null");
     }
 
     // this method thanks to: http://stackoverflow.com/questions/1555262/calculating-the-
@@ -187,15 +187,15 @@ public class HomeFragment extends Fragment implements Globals {
         long diffWeeks = timeDifferenceMilliseconds / (60 * 60 * 1000 * 24 * 7);
 
         if (diffSeconds < 1) {
-            return "one second ago";
+            return " just now";
         } else if (diffMinutes < 1) {
-            return diffSeconds + " seconds ago";
+            return diffSeconds + (diffSeconds == 1 ? " second ago" : " seconds ago");
         } else if (diffHours < 1) {
-            return diffMinutes + " minutes ago";
+            return diffMinutes + (diffMinutes == 1 ? " minute ago" : " minutes ago");
         } else if (diffDays < 1) {
-            return diffHours + " hours ago";
+            return diffHours + (diffHours == 1 ? " hour ago" : " hours ago");
         } else if (diffWeeks < 1) {
-            return diffDays + " days ago";
+            return diffDays + (diffDays == 1 ? " day ago" : " days ago");
         } else {
             return diffWeeks + (diffWeeks == 1 ? " week ago" : " weeks ago");
         }
@@ -207,6 +207,8 @@ public class HomeFragment extends Fragment implements Globals {
 
         @Override
         protected void onPreExecute() {
+            // show a loading dialog in the meantime - we do not want user interaction
+            // until the notification list has either appeared or the user dismisses it
             load = new ProgressDialog(getActivity());
             load.setMessage("Loading ...");
             load.show();
@@ -228,6 +230,7 @@ public class HomeFragment extends Fragment implements Globals {
             lv = (ListView) v.findViewById(R.id.fh_listview);
             lv.setAdapter(adapter);
 
+            // initialize the ListView with swipe capability to swipe to remove notifications
             SwipeDismissListViewTouchListener touchListener =
                     new SwipeDismissListViewTouchListener(
                             lv,
@@ -243,6 +246,7 @@ public class HomeFragment extends Fragment implements Globals {
                                     adapter.notifyDataSetChanged();
                                     setNotificationTextVisibility(adapter.getData().size());
 
+                                    // user swiped a notification away
                                     Snackbar snackbar = Snackbar
                                             .make(root, "Deleted notification", Snackbar.LENGTH_LONG)
                                             .setAction("UNDO", new View.OnClickListener() {
@@ -254,6 +258,7 @@ public class HomeFragment extends Fragment implements Globals {
                                                     setNotificationTextVisibility(
                                                             adapter.getData().size());
 
+                                                    // user hit "Undo"
                                                     Snackbar snackbar1 = Snackbar.make(root,
                                                             "Restored notification",
                                                             Snackbar.LENGTH_SHORT);

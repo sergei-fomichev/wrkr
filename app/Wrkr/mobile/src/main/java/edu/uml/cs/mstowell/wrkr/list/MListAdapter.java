@@ -27,6 +27,7 @@ public class MListAdapter extends BaseAdapter {
         context = mainActivity;
         data = new ArrayList<>();
 
+        // convert data to an ArrayList
         for (String[] array : mData) {
             ArrayList<String> subData = new ArrayList<>();
             Collections.addAll(subData, array);
@@ -69,6 +70,7 @@ public class MListAdapter extends BaseAdapter {
         data.add(position, item);
     }
 
+    @SuppressLint("unused")
     public void insert(String sTitle, String sSubtitle, String sDetail) {
         ArrayList<String> newRow = new ArrayList<>();
 
@@ -83,11 +85,7 @@ public class MListAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        //if (convertView == null) {
-        LayoutInflater vi = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = vi.inflate(R.layout.list_item, parent, false);
-        //}
+        convertView = inflater.inflate(R.layout.list_item, parent, false);
 
         Holder holder = new Holder();
         ArrayList<String> thisData = data.get(position);
@@ -101,6 +99,7 @@ public class MListAdapter extends BaseAdapter {
         holder.detail = (TextView) convertView.findViewById(R.id.list_item_detail);
         holder.detail.setText(thisData.get(2));
 
+        // if we do not have any detail text, hide this field; otherwise, display it
         if (holder.detail.getText().length() == 0) {
             holder.detail.setVisibility(View.GONE);
             holder.subtitle.setPadding(holder.subtitle.getPaddingLeft(),

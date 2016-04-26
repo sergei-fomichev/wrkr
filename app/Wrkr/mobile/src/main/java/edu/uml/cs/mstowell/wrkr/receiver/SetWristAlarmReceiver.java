@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import java.util.Calendar;
 
@@ -25,6 +24,7 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
     }
 
     private void setStartTimer(Context context) {
+
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
         int thisHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -39,10 +39,10 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
         // and stop period, note the AlarmManager will trigger immediately
         long triggerAt = calendar.getTimeInMillis();
         if (today == Calendar.FRIDAY) {
-            Log.d("wrkr", "Calendar -- today is Friday, skipping 3 days");
+            // today is Friday - skip 3 days
             triggerAt += (AlarmManager.INTERVAL_DAY * 3);
         } else if (thisHour >= STOP_TRACKING_HOUR && thisMinute > STOP_TRACKING_MINUTE) {
-            Log.d("wrkr", "Calendar -- passed the stop hour .. skipping 1 day");
+            // past 4pm - skip 1 day
             triggerAt += (AlarmManager.INTERVAL_DAY);
         }
 
@@ -54,6 +54,7 @@ public class SetWristAlarmReceiver extends BroadcastReceiver implements Globals 
         am.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAt, AlarmManager.INTERVAL_DAY, pi);
     }
 
+    // set the data recording to stop at the STOP_TRACKING_HOUR
     private void setStopTimer(Context context) {
 
         Calendar calendar = Calendar.getInstance();

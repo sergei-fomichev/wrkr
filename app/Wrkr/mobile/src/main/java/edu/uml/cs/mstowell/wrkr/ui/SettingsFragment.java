@@ -42,6 +42,8 @@ public class SettingsFragment extends Fragment implements Globals {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (wearDebug != null) {
+
+                // received data from wear - show the data
                 Bundle bundleData = intent.getBundleExtra(SETTINGS_FRAG_BUNDLE);
                 String event = bundleData.getString(WEAR_DATA_KEY, "");
                 String data = bundleData.getString(WEAR_DATA_VALUES, "");
@@ -50,6 +52,7 @@ public class SettingsFragment extends Fragment implements Globals {
                 wearDebug.setText(Html.fromHtml("From wear:<br/>Event: "
                         + event + "<br/>Data: " + data));
 
+                // uncomment if you would like to write out training data to the SD card
                 /*if (event.equals(MSG_WEAR_DATA)) {
                     writeDataCSV(data);
                 }*/
@@ -77,15 +80,16 @@ public class SettingsFragment extends Fragment implements Globals {
         IntentFilter intentFilter = new IntentFilter(SETTINGS_RCV_ACTION);
         getActivity().registerReceiver(sfr, intentFilter);
 
+        // send a dummy notification to the wearable
         Button pingWear = (Button) v.findViewById(R.id.settings_send_notif);
         pingWear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity) getActivity()).sendMessage(MSG_WRIST_EXER_TIME, "");
-                Log.d("wrkr", "ABCDE Message sent to wear device");
             }
         });
 
+        // manually start the accelerometer service
         Button startAccel = (Button) v.findViewById(R.id.settings_start_accel);
         startAccel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,12 +98,11 @@ public class SettingsFragment extends Fragment implements Globals {
                 Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
                         RecordDataService.class);
                 getActivity().startService(serviceIntent);
-
                 ((MainActivity) getActivity()).sendMessage(MSG_START_ACCEL, "");
-                Log.d("wrkr", "ABCDE accel start sent to wear device");
             }
         });
 
+        // manually stop the accelerometer service
         Button stopAccel = (Button) v.findViewById(R.id.settings_stop_accel);
         stopAccel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,15 +111,14 @@ public class SettingsFragment extends Fragment implements Globals {
                 Intent serviceIntent = new Intent(getActivity().getApplicationContext(),
                         RecordDataService.class);
                 getActivity().stopService(serviceIntent);
-
                 ((MainActivity) getActivity()).sendMessage(MSG_STOP_ACCEL, "");
-                Log.d("wrkr", "ABCDE accel stop sent to wear device");
             }
         });
 
         return v;
     }
 
+    // writes training data to a CSV file
     @SuppressWarnings("unused, all")
     private void writeDataCSV(String data) {
 
@@ -156,8 +158,6 @@ public class SettingsFragment extends Fragment implements Globals {
 
             out.close();
             gpxwriter.close();
-
-            Log.d("wrkr", "############# ABCDE wrote " + fileName + " ################");
 
         } catch (Exception e) {
             e.printStackTrace();

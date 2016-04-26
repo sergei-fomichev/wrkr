@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Messenger;
 import android.util.Log;
 
 import edu.uml.cs.mstowell.wrkr.R;
@@ -32,7 +31,6 @@ public class RecordDataService extends Service implements Globals {
     private final int NOTIFICATION_ID = 1;
     private boolean serviceIsRunning = false;
     private WatchToPhoneBroadcastReceiver mReceiver;
-    private static Messenger messenger;
     private static APIClientCommon mApiClient;
     private static Context mContext;
 
@@ -51,7 +49,6 @@ public class RecordDataService extends Service implements Globals {
 
         // declare the broadcast receiver to receive user activity updates
         mReceiver = new WatchToPhoneBroadcastReceiver();
-        Log.d("wrkr", " ** service created ** ");
     }
 
     @Override
@@ -62,10 +59,6 @@ public class RecordDataService extends Service implements Globals {
 
         // initialize running state
         serviceIsRunning = true;
-
-        Bundle extras = intent.getExtras();
-        if (extras != null)
-            messenger = (Messenger) extras.get(RECORD_SERVICE_MESSENGER);
 
         // register the watch2phone receiver
         IntentFilter intentFilter = new IntentFilter(WATCH_TO_PHONE_BROADCAST_ACTION);
@@ -91,8 +84,7 @@ public class RecordDataService extends Service implements Globals {
         NotificationManager mNotificationManger =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManger.notify(NOTIFICATION_ID, notification);
-        startForeground(NOTIFICATION_ID, notification);
-        Log.d("wrkr", "** notification should be created **");
+        startForeground(NOTIFICATION_ID, notification); // start as a foreground process
 
         return START_STICKY; // reschedule the service if killed by the system
     }
@@ -116,10 +108,6 @@ public class RecordDataService extends Service implements Globals {
                 mApiClient.disconnect();
             }
         }
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NOTIFICATION_ID);
     }
 
     public static class WatchToPhoneBroadcastReceiver extends BroadcastReceiver {
@@ -127,17 +115,18 @@ public class RecordDataService extends Service implements Globals {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.d("wrkr", "ABCDE WatchToPhoneBroadcastReceiver received data from WearListener");
-
+            // received data from wearable
             String event = intent.getStringExtra(WEAR_DATA_KEY);
+            if (event == null)
+                event = "ERROR";
             byte[] rawData = intent.getByteArrayExtra(WEAR_DATA_VALUES);
             String data = new String(rawData);
 
+            // send data to SettingsFragment for view
             sendMessageToFragment(event, data);
 
-            if (event == null)
-                event = "ERROR";
             if (event.equals(MSG_USER_NEEDS_EXERCISE)) {
+                // if the user needs an exercise, communicate so with the API
                 sendUserNeedsExercise(context, Long.parseLong(data));
             }
         }
@@ -145,6 +134,7 @@ public class RecordDataService extends Service implements Globals {
 
     private static void sendUserNeedsExercise(Context c, long timestamp) {
 
+        // execute the API call in the background
         PostExerciseTask pet = new PostExerciseTask();
         pet.c = c;
         pet.timestamp = timestamp;
@@ -168,9 +158,7 @@ public class RecordDataService extends Service implements Globals {
                 // need to obtain the uid from the API
                 User u = RestAPI.getUser(strEmail);
                 if (u == null) {
-                    // TODO - handle case where user isn't set up in the DB yet - probably just
-                    // TODO   prevent this whole thing from happening and be like YOU MUST SET THIS UP NOW
-                    Log.e("wrkr", "USER IS NULL!");
+                    Log.e("wrkr", "null user");
                 } else {
                     uid = u.id;
                     edit.putInt(USER_ID, uid).apply();
@@ -180,13 +168,10 @@ public class RecordDataService extends Service implements Globals {
             // send the server that the user has an exercise due
             User u = RestAPI.postExercise(uid, timestamp);
             if (u == null) {
-                // TODO - handle this case
-                Log.e("wrkr", "USER IS NULL AFTER POST EXERCISE!");
-            } else {
-                Log.d("wrkr", "ABCDE user " + uid + " has " + u.exercises + " exercise(s) due");
+                Log.e("wrkr", "null user");
             }
 
-            // send the watch a notification (acts as an ACK)
+            // send the watch a notification (acts as an ACK) and vibrate the user's wrist
             mApiClient.sendMessage(MSG_WRIST_EXER_TIME, "");
             return null;
         }
@@ -198,7 +183,7 @@ public class RecordDataService extends Service implements Globals {
         data.putString(WEAR_DATA_KEY, key);
         data.putString(WEAR_DATA_VALUES, value);
 
-        // send broadcast
+        // send broadcast to SettingsFragment to display data from the wearable
         Intent intent = new Intent();
         intent.setAction(SETTINGS_RCV_ACTION);
         intent.putExtra(SETTINGS_FRAG_BUNDLE, data);

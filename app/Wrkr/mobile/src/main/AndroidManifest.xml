@@ -39,14 +39,7 @@
         </receiver>
         <receiver android:name=".receiver.StartWristTrackingReceiver"/>
         <receiver android:name=".receiver.StopWristTrackingReceiver"/>
-        <!--
-        <receiver android:name=".service.RecordDataService$WatchToPhoneBroadcastReceiver">
-            <intent-filter>
-                <action android:name="edu.uml.cs.mstowell.WEAR_MSG_RCV_BROADCAST">
-                </action>
-            </intent-filter>
-        </receiver>
-        -->
+
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 

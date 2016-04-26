@@ -38,6 +38,7 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
     }
 
     private void setStartTimer(Context context) {
+
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
 
@@ -50,8 +51,7 @@ public class StopWristTrackingReceiver extends BroadcastReceiver implements Glob
                 ? calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY * 3)
                 : calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY));
 
-        Log.d("wrkr", "Scheduling next time to start wrist service");
-
+        // schedule next time to track user's accelerometer data
         PendingIntent pi = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, StartWristTrackingReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);

@@ -53,9 +53,8 @@ public class ProfileFragment extends Fragment implements Globals {
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
             getActivity().startActivityForResult(intent, REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
-            // the user hasn't synced a Google account to their device yet - either
-            // launcher an account adding intent or prompt for a manual email
-            // address entry
+            // the user hasn't synced a Google account to their device yet -
+            // launch an account adding intent
             Intent intent = new Intent(Settings.ACTION_ADD_ACCOUNT);
             intent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[]{"com.google"});
             getActivity().startActivity(intent);

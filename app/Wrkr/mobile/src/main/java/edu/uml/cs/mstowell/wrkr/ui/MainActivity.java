@@ -21,7 +21,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(view, "Launching website", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                // wait 1.5 seconds before launching a browser
+                // wait 1.5 seconds before launching a browser with our website URL in it
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
@@ -129,9 +128,8 @@ public class MainActivity extends AppCompatActivity
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
             startActivityForResult(intent, REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
-            // the user hasn't synced a Google account to their device yet - either
-            // launcher an account adding intent or prompt for a manual email
-            // address entry
+            // the user hasn't synced a Google account to their device yet -
+            // launch an account adding intent
             Intent intent = new Intent(Settings.ACTION_ADD_ACCOUNT);
             intent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[]{"com.google"});
             startActivity(intent);
@@ -176,29 +174,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
         // close the nav drawer
@@ -236,7 +211,8 @@ public class MainActivity extends AppCompatActivity
     public void transitionFragment(Fragment fragment, int newIndex) {
 
         fragmentIndex = newIndex;
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment);
         fragmentTransaction.commit();
     }
@@ -256,6 +232,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(String... params) {
+            // send the user to the database
             u = RestAPI.postUser(params[0]);
             return null;
         }
@@ -267,7 +244,7 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences.Editor edit = prefs.edit();
 
             if (u == null) {
-                // TODO - handle case
+                Log.e("wrkr", "user from API is null");
             } else {
                 edit.putInt(USER_ID, u.id).apply();
             }
@@ -289,7 +266,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e("wrkr", "ABCDE CONNECTION TO WEAR DEVICE SUSPENDED");
+        Log.e("wrkr", "connection to wearable device suspended");
     }
 
     @Override
