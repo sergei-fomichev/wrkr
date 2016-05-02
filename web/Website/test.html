@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-signin-client_id" content="1008213894257-b98bdee3g0bklck0dm0q1t6umdvkegft.apps.googleusercontent.com">
+<title>Leap</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<style>
+	
+body {
+	line-height: 2em;
+	font-size: 12pt;
+	font-family: Helvetica;
+}
+#output{
+	font-size: 18pt;
+}
+.action{
+	color: black !important;
+}
+.jumbotron{
+	padding: 20px 0;
+	margin-bottom: 20px;
+} 
+.progress{
+	margin-bottom: 0px;
+}
+.hand{
+	border-radius: 6px;
+	margin: 0 15px 10px;
+}
+.hand>p{
+	padding: 10px 0;
+	margin: 0;
+}	  
+.circle{
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	background-color: transparent;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 300px;
+	height: 200px;
+}
+.ibox{
+	background-color: rgb(191, 191, 191);
+	width: 300px;
+	height: 225px;
+	display: none;
+}
+#start-wrkr{
+	background-color: #6520c7;
+	border: none;
+}
+.connect-device{
+	width: 180px;
+	position: absolute;
+	top: auto;
+	left: auto;
+	padding: 0px;
+	opacity: 0.8;
+	display: none;
+	z-index: 10;
+	cursor: pointer;
+	right: 0px;
+	bottom: 13px;
+}
+.hover-hand{
+	max-width: 100%;
+}
+.btn-default{
+	padding: 10px 16px;
+}
+#email{
+	margin: 12px 0;
+	width: 220px;
+}
+</style>
+
+</head>
+
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<h2>WRKR-test</h2>
+			<form>
+				<input id="email" type="email" name="email" required placeholder="Please, enter your Email">
+				<br>
+				<button type="submit" class="btn btn-lg btn-primary" id="start-wrkr">Begin exercising</button>
+				<a href="dashboard.html" class="btn btn-default" role="button">Back to the website</a>
+		
+			</form>
+		</div>
+		<div class="row">
+		<div class="col-md-12 hand bg-info">
+		</div>
+	</div>  
+	<div class="row">
+		<div class="col-md-4 exList">
+		</div>
+		<div class="col-md-5 exDescription">
+				
+		</div>
+		<div class="col-md-3">
+			<div class="ibox">
+				<canvas id="circle" width="300" height="225"></canvas>
+				<p>For the best signal do not leave the area</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div id="output"></div>
+</div>
+	  
+
+<footer>
+	<div id="test" style="display:none">5</div>
+</footer>
+<div class="connect-device">
+	<img class="hover-hand" src="img/hands-over.gif">
+</div>
+
+
+<script src="http://code.jquery.com/jquery-2.2.2.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="http://js.leapmotion.com/leap-0.6.3.js"></script>
+<script src="http://js.leapmotion.com/leap-plugins-0.1.11.min.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+<script src="js/script.js"></script>
+
+</body>
+
+</html>
