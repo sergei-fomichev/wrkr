@@ -19,7 +19,7 @@ twistsV.src = "img/twistsV.jpg";
 
 
 var hand;
-var handType = [["Right", "left", 1]/*,["Left", "right", 1], ["Both", "", 2]*/];
+var handType = [["Right", "left", 1],["Left", "right", 1],["Both", "", 2]];
 var handStatus;
 var hs;
 var extendedFingers = 0;
@@ -38,7 +38,9 @@ var color = '#6520c7';
 var normalizedPosition = [];
 
 var incomplete;
-
+var userId;
+var userKarma;
+var test = false;
 
 
 
@@ -76,14 +78,12 @@ function draw_circle(){
 }
 function interactive(frame){	
 	draw_circle();
-	
-	//console.log(frame.interactionBox.width.toString());
+
 	for(i = 0; i < frame.hands.length; i++){
 		for(j = 0; j < frame.hands[i].fingers.length; j++){
 			var finger = frame.hands[i].fingers[j];
 		
 			var position = finger.dipPosition;
-			//console.log(position[1]);
 			normalizedPosition[0] = (position[0] + 200)/400;
 			normalizedPosition[1] = (position[1] - 25)/350;
 			var canvasX = canvas.width * normalizedPosition[0];
@@ -95,10 +95,47 @@ function interactive(frame){
 			}
 		
 	}
+}
+
+function ex_done(test){
+	if(test == true){
+		var email = $("#email").val();
+		console.log(email);
+		$.ajax({
+			method: "POST",
+			url: "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php",
+			dataType: "json",
+			data: {"email_test": email},
+		    success: function(data) {
+				console.log(data);
+		    }
+		});
+		return;
+	}
+	if(userKarma < 145)
+		userKarma += 5;
+	$.ajax({
+		type: "PUT",
+		url: "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php",
+		contentType: "json",
+		data: {"decrement": "", 
+		"id": userId},
+	    success: function(data) {
+			console.log(data);
+	    }
+	});
+	$.ajax({
+		type: "PUT",
+		url: "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php",
+		contentType: "json",
+		data: {"setkarma": "", 
+		"id": userId,
+		"karma": userKarma},
+	    success: function(data) {
+			console.log(data);
+	    }
+	});
 	
-
-
-
 }
 
 function abort()
@@ -118,8 +155,9 @@ function next_wrkr(){
 		handStatus = hs.next();
 		if(handStatus.done === true){
 			incomplete--;
+			ex_done(test);
 			$(".incomplete").text(incomplete);
-			if(incomplete == 0){
+			if(incomplete == 0 || test == true){
 				$(".exList, .exDescription, .ibox").remove();
 				$(".hand").removeClass("bg-success").addClass("bg-warning").html("<p>You are all set. You can go back to the website now.</p>");
 				abort();
@@ -127,7 +165,7 @@ function next_wrkr(){
 			$("#start-wrkr").trigger("click");
 			return false;
 		}
-
+		$('.action').attr('style', '');
 		$(".hand").html("<p>"+ handType[handStatus.value][0] +" hand(s)</p>");
 		exercise = Object.keys(exercises)[0];
 		
@@ -140,7 +178,6 @@ function next_wrkr(){
 	
 		exerciseRepeats = exercises[exercise].numRepeats;
 		$("#exerciseRepeats").text(exerciseRepeats);
-		//repDone = 0;
 		
 		return false;
 	}
@@ -160,6 +197,7 @@ $(".action").click(function(){
 	$(this).addClass( "active" );
 	exerciseCounter = 0;
 });
+
 
 $("#start-wrkr").click(function begin_workout(){
 		//for(var keys in exercises){
@@ -238,7 +276,9 @@ $("#start-wrkr").click(function begin_workout(){
 			return false;
 
 		});
-
+		if($("#test").text()){
+			test = true;
+		}
 		$.ajax({
 			method: "GET",
 			url: "js/exercises.js",
@@ -260,19 +300,17 @@ $("#start-wrkr").click(function begin_workout(){
 			$.when(
 				$.ajax({
 					method: "GET",
-					async: false,
 					url: "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php",
 					data: { exist: "", email: googleUser.getBasicProfile().getEmail() },
 					dataType: "json"
 				})
 				.done(function( msg ) {
 					userId = msg.id;
-					userScore = msg.karma;
+					userKarma = msg.karma;
 				}))
 				.then(function(msg){
 					$.ajax({
 						method: "GET",
-						sync: false,
 						url: "http://weblab.cs.uml.edu/~sfomiche/wrkr/api/api.php",
 						data: { exercises: "", id: userId},
 						dataType: "json"
@@ -280,6 +318,10 @@ $("#start-wrkr").click(function begin_workout(){
 					.done(function( msg ) {
 						incomplete = msg.exercises;
 						$(".incomplete").text(msg.exercises);
+						
+						if(incomplete == 0){
+							start.disabled = true;
+						}
 					});
 				});
 		
