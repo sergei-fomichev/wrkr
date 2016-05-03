@@ -1,9 +1,12 @@
 # wrkr
 Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project.  Mike is responsible for the mobile and smartwatch app, Sergei is responsible for the web server and Leap Motion.
 
-## Video Demo
+## Demo, Presentations, and Reports
 
-https://www.youtube.com/watch?v=Dy4j9HQMYvg
+**Video demo:** https://www.youtube.com/watch?v=Dy4j9HQMYvg
+**Presentation:** see wrkr_presentation.pdf
+**Report:** see wrkr_report_team_submission.pdf
+
 
 ## Progress: April 25 - May 01 2016
 
