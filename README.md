@@ -3,9 +3,9 @@ Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project
 
 ## Demo, Presentations, and Reports
 
-**Video demo:** https://www.youtube.com/watch?v=Dy4j9HQMYvg
-**Presentation:** see wrkr_presentation.pdf
-**Report:** see wrkr_report_team_submission.pdf
+**Video demo:** https://www.youtube.com/watch?v=Dy4j9HQMYvg  
+**Presentation:** see wrkr_presentation.pdf  
+**Report:** see wrkr_report_team_submission.pdf  
 
 
 ## Progress: April 25 - May 01 2016
