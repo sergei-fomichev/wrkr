@@ -5,8 +5,6 @@ Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project
 
 https://www.youtube.com/watch?v=Dy4j9HQMYvg
 
-We will update our progress for each week below.  The most recent week appears at top, and older progress appears at the bottom.
-
 ## Progress: April 25 - May 01 2016
 
 As the final week of the project, we focussed on cleaning the code and minor bug fixes and annoyances. These included small issues such as an unused settings menu existing in the mobile application, and larger issues such as the exerciser not updating a completed exercise due to a PUT -> POST request rewrite in the API. Leap Motion exercise web page allowes a test run for those who doesn't have an app for some reason(no smart watches) but have a Leap Motion device and would like to try. Otherwise, we wrote a paper to go along with the project and created a video demo [here](https://www.youtube.com/watch?v=Dy4j9HQMYvg), as well as prepared for an in-class demonstration.
