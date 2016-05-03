@@ -4,8 +4,8 @@ Sergei Fomichev and Mike Stowell - see the Wiki for a description of our project
 ## Demo, Presentations, and Reports
 
 **Video demo:** https://www.youtube.com/watch?v=Dy4j9HQMYvg  
-**Presentation:** see wrkr_presentation.pdf  
-**Report:** REPORT.pdf  
+**Presentation:** see [wrkr_presentation.pdf](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/wrkr_presentation.pdf)  
+**Report:** see [REPORT.pdf](https://github.com/uml-ubicomp-2016-spring/wrkr/blob/master/REPORT.pdf)  
 
 
 ## Progress: April 25 - May 01 2016
